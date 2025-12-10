@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "WebRobot ETL API Documentation",
   "scripts": {
-    "start": "redocly preview-docs",
-    "build": "redocly build-docs",
+    "start": "redocly preview-docs openapi.yaml",
+    "build": "redocly build-docs openapi.yaml",
     "lint": "redocly lint openapi.yaml",
     "bundle": "redoc-cli bundle openapi.yaml -o dist/index.html"
   },
