@@ -36,104 +36,280 @@ security:
 paths:
   /webrobot/cloud/scheduler/cronjobs:
     get:
+      tags:
+        - Cloud
+        - Scheduler
+      summary: Lista tutti i CronJob Kubernetes
+      description: |
+        Restituisce la lista di tutti i CronJob configurati nel cluster Kubernetes.
+        
+        I CronJob vengono utilizzati per schedulare l'esecuzione periodica di job Spark.
       operationId: listCronJobs
       parameters:
       - name: namespace
         in: query
+        description: Namespace Kubernetes da filtrare (opzionale)
         schema:
           type: string
+          example: "webrobot"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista di CronJob recuperata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Cloud
+        - Scheduler
+      summary: Crea un nuovo CronJob Kubernetes
+      description: |
+        Crea un nuovo CronJob Kubernetes per schedulare l'esecuzione periodica di un job Spark.
+        
+        Il CronJob eseguirà il job secondo la schedule specificata (formato cron).
       operationId: createCronJob
       requestBody:
+        required: true
+        description: Configurazione del CronJob da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CronJobRequest'
       responses:
-        default:
-          description: default response
+        '201':
+          description: CronJob creato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Richiesta non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/scheduler/cronjobs/{name}:
     get:
+      tags:
+        - Cloud
+        - Scheduler
+      summary: Ottiene un CronJob specifico
+      description: |
+        Restituisce i dettagli di un CronJob Kubernetes specifico.
       operationId: getCronJob
       parameters:
       - name: name
         in: path
         required: true
+        description: Nome del CronJob
         schema:
           type: string
+          example: "daily-etl-job"
       - name: namespace
         in: query
+        description: Namespace Kubernetes (opzionale)
         schema:
           type: string
+          example: "webrobot"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del CronJob
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: CronJob non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Cloud
+        - Scheduler
+      summary: Elimina un CronJob Kubernetes
+      description: |
+        Elimina un CronJob Kubernetes e tutte le sue esecuzioni programmate.
+        
+        **Attenzione:** Questa operazione è irreversibile.
       operationId: deleteCronJob
       parameters:
       - name: name
         in: path
         required: true
+        description: Nome del CronJob da eliminare
         schema:
           type: string
+          example: "daily-etl-job"
       - name: namespace
         in: query
+        description: Namespace Kubernetes (opzionale)
         schema:
           type: string
+          example: "webrobot"
       responses:
-        default:
-          description: default response
+        '200':
+          description: CronJob eliminato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: CronJob non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/spark/capabilities:
     get:
+      tags:
+        - Cloud
+        - Spark
+      summary: Ottiene le capacità del cluster Spark
+      description: |
+        Restituisce informazioni sulle capacità e configurazioni disponibili del cluster Spark,
+        incluse versioni supportate, risorse disponibili e configurazioni.
       operationId: getCapabilities
       responses:
-        default:
-          description: default response
+        '200':
+          description: Capacità del cluster Spark
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/spark/info:
     get:
+      tags:
+        - Cloud
+        - Spark
+      summary: Ottiene informazioni sul cluster Spark
+      description: |
+        Restituisce informazioni generali sul cluster Spark, incluse versioni, configurazioni
+        e stato del cluster.
       operationId: getInfo
       responses:
-        default:
-          description: default response
+        '200':
+          description: Informazioni sul cluster Spark
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/spark/health:
     get:
+      tags:
+        - Cloud
+        - Spark
+        - Health
+      summary: Health check del servizio Spark
+      description: |
+        Verifica lo stato di salute del servizio Spark e del cluster.
       operationId: healthCheck
       responses:
-        default:
-          description: default response
+        '200':
+          description: Servizio Spark operativo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "UP"
+        '503':
+          description: Servizio Spark non disponibile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/training/info:
     get:
+      tags:
+        - Cloud
+        - Training
+      summary: Ottiene informazioni sul servizio di training
+      description: |
+        Restituisce informazioni sul servizio di training AI/ML, incluse versioni e configurazioni.
       operationId: getInfo_1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Informazioni sul servizio di training
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/cloud/training/health:
     get:
+      tags:
+        - Cloud
+        - Training
+        - Health
+      summary: Health check del servizio di training
+      description: |
+        Verifica lo stato di salute del servizio di training AI/ML.
       operationId: healthCheck_1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Servizio di training operativo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "UP"
+        '503':
+          description: Servizio di training non disponibile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/{country}/execute:
     post:
       operationId: executeJob
@@ -165,25 +341,123 @@ paths:
             application/json: {}
   /webrobot/api/ean-image-sourcing/{country}/images:
     post:
+      tags:
+        - EAN Plugin
+        - Images
+      summary: Cerca e recupera immagini per prodotti EAN
+      description: |
+        Cerca immagini per prodotti identificati da codici EAN nel dataset del paese specificato.
+        
+        Restituisce immagini con:
+        - URL completo dell'immagine
+        - Dati base64 (se richiesto)
+        - Score di similarità (0.0 - 1.0)
+        - Metadati aggiuntivi
+        
+        **Note:**
+        - Le immagini vengono cercate nel dataset più recente disponibile
+        - I risultati sono ordinati per score decrescente
+        - Il campo `includeBase64` nella richiesta controlla se includere i dati base64
       operationId: getImagesSimplified
       parameters:
       - name: country
         in: path
         required: true
+        description: Codice paese ISO (es. "denmark", "italy", "france")
         schema:
           type: string
+          example: "denmark"
       requestBody:
+        required: true
+        description: |
+          Richiesta di ricerca immagini per prodotti EAN.
+          
+          Specifica i codici EAN dei prodotti per cui cercare immagini.
         content:
           application/json:
             schema:
               type: object
-              additionalProperties:
-                type: object
+              required:
+                - eans
+              properties:
+                eans:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista di codici EAN da cercare
+                  example: ["5901234123457", "5901234123458"]
+                includeBase64:
+                  type: boolean
+                  description: Se true, include i dati base64 delle immagini
+                  default: false
+                  example: true
+                limit:
+                  type: integer
+                  description: Numero massimo di immagini per prodotto
+                  default: 5
+                  example: 10
+            examples:
+              basic:
+                summary: Ricerca base senza base64
+                value:
+                  eans: ["5901234123457"]
+              withBase64:
+                summary: Ricerca con dati base64
+                value:
+                  eans: ["5901234123457", "5901234123458"]
+                  includeBase64: true
+                  limit: 10
       responses:
-        default:
-          description: default response
+        '200':
+          description: Immagini trovate con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ean:
+                          type: string
+                          description: Codice EAN del prodotto
+                          example: "5901234123457"
+                        images:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                                description: URL completo dell'immagine
+                                example: "https://example.com/image.jpg"
+                              base64:
+                                type: string
+                                nullable: true
+                                description: Dati base64 dell'immagine (se richiesto)
+                              score:
+                                type: number
+                                format: float
+                                description: Score di similarità (0.0 - 1.0)
+                                example: 0.85
+                              source:
+                                type: string
+                                description: Fonte dell'immagine
+                                example: "google_images"
+        '400':
+          description: Richiesta non valida - lista EAN vuota o formato non valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Dataset non trovato per il paese specificato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/info:
     get:
       operationId: getPluginInfo
@@ -194,28 +468,114 @@ paths:
             application/json: {}
   /webrobot/api/ean-image-sourcing/{country}/status:
     get:
+      tags:
+        - EAN Plugin
+        - Jobs
+      summary: Ottiene lo status dell'ultimo job EAN eseguito per un paese
+      description: |
+        Restituisce informazioni sull'ultimo job EAN Image Sourcing eseguito per il paese specificato.
+        
+        Include dettagli sull'esecuzione come:
+        - Status del job (PENDING, RUNNING, COMPLETED, FAILED)
+        - Timestamp di inizio e fine
+        - Tempo di esecuzione
+        - URL Spark UI (se disponibile)
+        - Numero di executor pod
+        - Messaggi di errore (se fallito)
       operationId: getStatus
       parameters:
       - name: country
         in: path
         required: true
+        description: Codice paese ISO (es. "denmark", "italy", "france")
         schema:
           type: string
+          example: "denmark"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Status del job recuperato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  country:
+                    type: string
+                    example: "denmark"
+                  hasJobs:
+                    type: boolean
+                    description: Indica se ci sono job per questo paese
+                  latestJobStatus:
+                    type: string
+                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                    example: "COMPLETED"
+                  latestJobId:
+                    type: string
+                    example: "210"
+                  projectId:
+                    type: string
+                    example: "98"
+                  latestExecution:
+                    type: object
+                    properties:
+                      executionId:
+                        type: string
+                        example: "spark-2d53940045a6-95379617"
+                      status:
+                        type: string
+                        example: "COMPLETED"
+                      submittedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-12-10T19:36:47.798498"
+                      completedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-12-10T19:58:04.825877"
+                      executionTimeSeconds:
+                        type: integer
+                        description: Tempo di esecuzione in secondi
+                        example: 1277
+                      errorMessage:
+                        type: string
+                        nullable: true
+                        description: Messaggio di errore se il job è fallito
+                      sparkUiUrl:
+                        type: string
+                        nullable: true
+                        description: URL della Spark UI per monitorare l'esecuzione
+                      executorPodCount:
+                        type: integer
+                        description: Numero di pod executor utilizzati
+                        example: 2
+        '404':
+          description: Nessun job trovato per il paese specificato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/{country}/query:
     post:
+      tags:
+        - EAN Plugin
+        - Query
+      summary: Esegue una query sul dataset EAN
+      description: |
+        Esegue una query personalizzata sul dataset EAN del paese specificato.
+        
+        Permette di interrogare il dataset con filtri e condizioni personalizzate.
       operationId: queryImages
       parameters:
       - name: country
         in: path
         required: true
+        description: Codice paese ISO (es. "denmark", "italy", "france")
         schema:
           type: string
+          example: "denmark"
       requestBody:
+        required: true
+        description: Query da eseguire sul dataset
         content:
           application/json:
             schema:
@@ -223,20 +583,52 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Risultati della query
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Query non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Dataset non trovato per il paese specificato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/{country}/schedule:
     post:
+      tags:
+        - EAN Plugin
+        - Scheduler
+      summary: Schedula un job EAN ricorrente
+      description: |
+        Crea o aggiorna la schedulazione di un job EAN Image Sourcing ricorrente per un paese.
+        
+        Il job verrà eseguito automaticamente secondo la schedule specificata (formato cron).
       operationId: scheduleJob
       parameters:
       - name: country
         in: path
         required: true
+        description: Codice paese ISO (es. "denmark", "italy", "france")
         schema:
           type: string
+          example: "denmark"
       requestBody:
+        required: true
+        description: Configurazione della schedulazione (formato cron)
         content:
           application/json:
             schema:
@@ -244,1816 +636,4417 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Schedulazione creata/aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Schedule non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/{country}/upload:
     post:
+      tags:
+        - EAN Plugin
+        - Upload
+      summary: Carica un dataset EAN
+      description: |
+        Carica un nuovo dataset EAN per il paese specificato.
+        
+        Il file deve essere in formato CSV con i codici EAN e i relativi dati.
       operationId: uploadCsv
       parameters:
       - name: country
         in: path
         required: true
+        description: Codice paese ISO (es. "denmark", "italy", "france")
         schema:
           type: string
+          example: "denmark"
       requestBody:
+        required: true
+        description: File CSV da caricare
         content:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/FormDataMultiPart'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dataset caricato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: File non valido o formato errato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}:
     delete:
+      tags:
+        - AI Providers
+        - Training
+      summary: Cancella un job di training AI
+      description: |
+        Cancella un job di training AI in esecuzione o in coda per il provider specificato.
+        
+        **Attenzione:** Questa operazione è irreversibile e interrompe il training se in corso.
       operationId: cancelTraining
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI (es. "huggingface", "openai", "cohere")
         schema:
           type: string
+          example: "huggingface"
       - name: jobId
         in: path
         required: true
+        description: ID del job di training da cancellare
         schema:
           type: string
+          example: "job-12345"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Job cancellato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/download:
     get:
+      tags:
+        - AI Providers
+        - Training
+      summary: Scarica un modello addestrato
+      description: |
+        Scarica un modello AI addestrato dal provider specificato.
+        
+        Il modello viene scaricato nel percorso specificato o nel percorso di default.
       operationId: downloadModel
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       - name: jobId
         in: path
         required: true
+        description: ID del job di training
         schema:
           type: string
+          example: "job-12345"
       - name: outputPath
         in: query
+        description: Percorso di destinazione per il download (opzionale)
         schema:
           type: string
+          example: "/path/to/models"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Modello scaricato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Modello o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/cost-estimate:
     post:
+      tags:
+        - AI Providers
+        - Training
+      summary: Stima il costo di un job di training
+      description: |
+        Calcola una stima del costo per un job di training AI basato sui parametri specificati.
+        
+        La stima include costi di compute, storage e altri servizi necessari.
       operationId: estimateCost
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       requestBody:
+        required: true
+        description: Parametri del job di training per la stima
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TrainingRequestBean'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Stima del costo calcolata
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estimatedCost:
+                    type: number
+                    format: float
+                    description: Costo stimato in USD
+                  currency:
+                    type: string
+                    example: "USD"
+        '400':
+          description: Parametri non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/models:
     get:
+      tags:
+        - AI Providers
+        - Models
+      summary: Ottiene i modelli supportati da un provider
+      description: |
+        Restituisce la lista di tutti i modelli AI supportati dal provider specificato,
+        incluse informazioni su versioni, capacità e requisiti.
       operationId: getSupportedModels
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei modelli supportati
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '404':
+          description: Provider non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers:
     get:
+      tags:
+        - AI Providers
+      summary: Ottiene la lista di provider AI supportati
+      description: |
+        Restituisce la lista di tutti i provider AI supportati dalla piattaforma,
+        incluse informazioni su capacità e configurazioni disponibili.
       operationId: getSupportedProviders
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei provider supportati
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/logs:
     get:
+      tags:
+        - AI Providers
+        - Training
+      summary: Ottiene i log di un job di training
+      description: |
+        Restituisce i log di esecuzione di un job di training AI.
+        
+        I log includono informazioni su progresso, errori e metriche del training.
       operationId: getTrainingLogs
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       - name: jobId
         in: path
         required: true
+        description: ID del job di training
         schema:
           type: string
+          example: "job-12345"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Log del job di training
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      type: string
+        '404':
+          description: Job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/status:
     get:
+      tags:
+        - AI Providers
+        - Training
+      summary: Ottiene lo status di un job di training
+      description: |
+        Restituisce lo stato attuale di un job di training AI, incluse informazioni su
+        progresso, durata e eventuali errori.
       operationId: getTrainingStatus
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       - name: jobId
         in: path
         required: true
+        description: ID del job di training
         schema:
           type: string
+          example: "job-12345"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Status del job di training
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                  progress:
+                    type: number
+                    format: float
+                    description: Percentuale di completamento (0-100)
+        '404':
+          description: Job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/huggingface/models/publish:
     post:
+      tags:
+        - AI Providers
+        - Models
+      summary: Pubblica un modello su Hugging Face
+      description: |
+        Pubblica un modello addestrato sulla piattaforma Hugging Face Model Hub.
+        
+        Il modello deve essere stato addestrato e deve essere disponibile per la pubblicazione.
       operationId: publishModel
       requestBody:
+        required: true
+        description: Informazioni per la pubblicazione del modello
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ModelPublishRequest'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Modello pubblicato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Richiesta non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/training:
     post:
+      tags:
+        - AI Providers
+        - Training
+      summary: Avvia un nuovo job di training AI
+      description: |
+        Avvia un nuovo job di training per un modello AI utilizzando il provider specificato.
+        
+        Il job viene eseguito in background e può essere monitorato tramite gli endpoint di status e logs.
       operationId: startTraining
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       requestBody:
+        required: true
+        description: Configurazione del job di training
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TrainingRequestBean'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Job di training avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+                    description: ID del job di training creato
+        '400':
+          description: Configurazione non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/ai-providers/providers/{provider}/datasets:
     post:
+      tags:
+        - AI Providers
+        - Datasets
+      summary: Carica un dataset per il training AI
+      description: |
+        Carica un dataset da utilizzare per il training di modelli AI sul provider specificato.
+        
+        Il dataset deve essere in un formato supportato dal provider.
       operationId: uploadDataset
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider AI
         schema:
           type: string
+          example: "huggingface"
       requestBody:
+        required: true
+        description: Informazioni sul dataset da caricare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DatasetUploadRequest'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Dataset caricato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Dataset non valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/agents:
     post:
+      tags:
+        - Agents
+      summary: Crea un nuovo agente PySpark
+      description: |
+        Crea un nuovo agente PySpark che può essere utilizzato per eseguire job ETL.
+        
+        Un agente contiene il codice PySpark che viene eseguito quando un job viene avviato.
+        L'agente deve essere associato a una categoria.
       operationId: createAgent
       requestBody:
+        required: true
+        description: Dati dell'agente da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AgentDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Agente creato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/agents/{agentId}:
     delete:
+      tags:
+        - Agents
+      summary: Elimina un agente
+      description: |
+        Elimina un agente PySpark dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. Gli job che utilizzano questo agente
+        non potranno più essere eseguiti.
       operationId: deleteAgent
       parameters:
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agente da eliminare
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Agente eliminato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Agente non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/agents/{categoryId}/{agentId}:
     get:
+      tags:
+        - Agents
+      summary: Ottiene un agente specifico
+      description: |
+        Restituisce i dettagli di un agente PySpark specifico, incluso il codice sorgente.
       operationId: getAgent
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID della categoria a cui appartiene l'agente
         schema:
           type: string
+          example: "1"
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agente
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli dell'agente
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDto'
+        '404':
+          description: Agente non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Agents
+      summary: Aggiorna un agente
+      description: |
+        Aggiorna i dati di un agente PySpark esistente, incluso il codice sorgente.
+        
+        **Note:** L'aggiornamento del codice sorgente richiede che nessun job sia in esecuzione
+        con questo agente.
       operationId: updateAgent
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID della categoria a cui appartiene l'agente
         schema:
           type: string
+          example: "1"
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agente da aggiornare
         schema:
           type: string
+          example: "123"
       requestBody:
+        required: true
+        description: Dati aggiornati dell'agente
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AgentDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Agente aggiornato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Agente non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Agente in uso - impossibile aggiornare
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/agents/{categoryId}/name/{agentName}:
     get:
+      tags:
+        - Agents
+      summary: Ottiene un agente per nome
+      description: |
+        Restituisce i dettagli di un agente PySpark cercandolo per nome all'interno di una categoria.
       operationId: getAgentFromName
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID della categoria
         schema:
           type: string
+          example: "1"
       - name: agentName
         in: path
         required: true
+        description: Nome dell'agente
         schema:
           type: string
+          example: "my-agent"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli dell'agente
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDto'
+        '404':
+          description: Agente non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/agents/{categoryId}:
     get:
+      tags:
+        - Agents
+      summary: Ottiene tutti gli agenti di una categoria
+      description: |
+        Restituisce la lista di tutti gli agenti PySpark appartenenti a una categoria specifica.
       operationId: getAllAgents
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID della categoria
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista degli agenti della categoria
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentDto'
+        '404':
+          description: Categoria non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `agents:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/categories:
     get:
+      tags:
+        - Categories
+      summary: Ottiene tutte le categorie
+      description: |
+        Restituisce la lista di tutte le categorie disponibili nel sistema.
+        
+        Le categorie sono utilizzate per organizzare progetti, agenti e job.
       operationId: getAllCategories
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle categorie
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobCategoryDto'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Categories
+      summary: Crea una nuova categoria
+      description: |
+        Crea una nuova categoria per organizzare progetti, agenti e job.
       operationId: createCategory
       requestBody:
+        required: true
+        description: Dati della categoria da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobCategoryDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Categoria creata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCategoryDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/categories/id/{categoryId}:
     get:
+      tags:
+        - Categories
+      summary: Ottiene una categoria specifica
+      description: |
+        Restituisce i dettagli di una categoria specifica, incluso l'elenco dei progetti associati.
       operationId: getCategory
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID univoco della categoria
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli della categoria
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCategoryDto'
+        '404':
+          description: Categoria non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Categories
+      summary: Aggiorna una categoria
+      description: |
+        Aggiorna i dati di una categoria esistente.
       operationId: updateCategory
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID univoco della categoria da aggiornare
         schema:
           type: string
+          example: "1"
       requestBody:
+        required: true
+        description: Dati aggiornati della categoria
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobCategoryDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Categoria aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCategoryDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Categoria non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Categories
+      summary: Elimina una categoria
+      description: |
+        Elimina una categoria dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. I progetti associati non verranno eliminati.
       operationId: deleteCategory
       parameters:
       - name: categoryId
         in: path
         required: true
+        description: ID univoco della categoria da eliminare
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Categoria eliminata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Categoria non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/categories/{categoryName}:
     get:
+      tags:
+        - Categories
+      summary: Ottiene una categoria per nome
+      description: |
+        Restituisce i dettagli di una categoria cercandola per nome.
       operationId: getCategoryFromName
       parameters:
       - name: categoryName
         in: path
         required: true
+        description: Nome della categoria
         schema:
           type: string
+          example: "my-category"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli della categoria
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCategoryDto'
+        '404':
+          description: Categoria non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/categories/test:
     get:
+      tags:
+        - Categories
+        - Test
+      summary: Endpoint di test per categorie
+      description: |
+        Endpoint di test per verificare la funzionalità delle categorie.
       operationId: test
       responses:
-        default:
-          description: default response
+        '200':
+          description: Test completato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/cloud-credentials:
     get:
+      tags:
+        - Cloud Credentials
+      summary: Ottiene tutte le credenziali cloud
+      description: |
+        Restituisce la lista di tutte le credenziali cloud configurate nel sistema,
+        con supporto per paginazione e filtri per provider.
+        
+        Le credenziali cloud vengono utilizzate per accedere a servizi esterni come
+        AWS, Azure, GCP, ecc. durante l'esecuzione di job Spark.
       operationId: getAllCloudCredentials
       parameters:
       - name: provider
         in: query
+        description: Filtra per provider cloud (es. "aws", "azure", "gcp")
         schema:
           type: string
+          example: "aws"
       - name: page
         in: query
+        description: Numero di pagina (0-based)
         schema:
           type: integer
           format: int32
           default: 0
+          example: 0
       - name: pageSize
         in: query
+        description: Dimensione della pagina
         schema:
           type: integer
           format: int32
           default: 50
+          example: 50
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle credenziali cloud
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloudCredential'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Cloud Credentials
+      summary: Crea una nuova credenziale cloud
+      description: |
+        Crea una nuova credenziale cloud per accedere a servizi cloud esterni.
+        
+        Le credenziali vengono criptate e memorizzate in modo sicuro nel database.
       operationId: createCloudCredential
       requestBody:
+        required: true
+        description: Dati della credenziale cloud da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CloudCredential'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Credenziale creata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloudCredential'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/cloud-credentials/id/{credentialId}:
     get:
+      tags:
+        - Cloud Credentials
+      summary: Ottiene una credenziale cloud specifica
+      description: |
+        Restituisce i dettagli di una credenziale cloud specifica.
+        
+        **Nota:** Le credenziali sensibili vengono restituite in forma criptata.
       operationId: getCloudCredentialById
       parameters:
       - name: credentialId
         in: path
         required: true
+        description: ID univoco della credenziale
         schema:
           type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli della credenziale
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloudCredential'
+        '404':
+          description: Credenziale non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Cloud Credentials
+      summary: Aggiorna una credenziale cloud
+      description: |
+        Aggiorna i dati di una credenziale cloud esistente.
+        
+        Le nuove credenziali vengono criptate prima di essere salvate.
       operationId: updateCloudCredential
       parameters:
       - name: credentialId
         in: path
         required: true
+        description: ID univoco della credenziale da aggiornare
         schema:
           type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
       requestBody:
+        required: true
+        description: Dati aggiornati della credenziale
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CloudCredential'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Credenziale aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloudCredential'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Credenziale non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Cloud Credentials
+      summary: Elimina una credenziale cloud
+      description: |
+        Elimina una credenziale cloud dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa
+        credenziale non potranno più accedere ai servizi cloud.
       operationId: deleteCloudCredential
       parameters:
       - name: credentialId
         in: path
         required: true
+        description: ID univoco della credenziale da eliminare
         schema:
           type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Credenziale eliminata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Credenziale non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/cloud-credentials/provider/{provider}:
     get:
+      tags:
+        - Cloud Credentials
+      summary: Ottiene le credenziali cloud per provider
+      description: |
+        Restituisce la lista di tutte le credenziali cloud configurate per un provider specifico.
       operationId: getCloudCredentialsByProvider
       parameters:
       - name: provider
         in: path
         required: true
+        description: Nome del provider cloud (es. "aws", "azure", "gcp")
         schema:
           type: string
+          example: "aws"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle credenziali per il provider
           content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}:
-    get:
-      operationId: getDataset
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloudCredential'
+        '404':
+          description: Provider non trovato
           content:
-            application/json: {}
-    delete:
-      operationId: deleteDataset
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
           content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/version/id/{versionsetId}:
-    get:
-      operationId: getVersionset
-      parameters:
-      - name: versionsetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
           content:
-            application/json: {}
-    delete:
-      operationId: deleteDatasetVersion
-      parameters:
-      - name: versionsetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{projectId}/{botId}/versions:
-    get:
-      operationId: getAllDatasetVersions
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/datasets:
-    get:
-      operationId: getAllDatasets
-      parameters:
-      - name: status
-        in: query
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{datasetId}/versions:
-    get:
-      operationId: getAllVersionsets
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}/input/url:
-    get:
-      operationId: getDatasetInputFile
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}/input/{offset}/{limit}:
-    get:
-      operationId: getDatasetInputFilePagination
-      parameters:
-      - name: offset
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: limit
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{datasetId}/input/size:
-    get:
-      operationId: getDatasetInputFileSize
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/datasets/{datasetId}/status:
-    get:
-      operationId: getDatasetStatus
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{categoryId}/{jobId}/{datasetId}/versions/{versionsetId}/input/url:
-    get:
-      operationId: getDatasetVersionInputFile
-      parameters:
-      - name: categoryId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: jobId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: versionsetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{datasetId}/versions/{versionsetId}/input/{offset}/{limit}:
-    get:
-      operationId: getDatasetVersionInputFilePagination
-      parameters:
-      - name: projectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: botId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: offset
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: limit
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: versionsetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{categoryId}/{jobId}/upload/{attachmentName}:
-    get:
-      operationId: getUploadFileUrl
-      parameters:
-      - name: projectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: botId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: attachmentName
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{datasetId}/versions/version/{version}:
-    post:
-      operationId: getVersionsetFromVersion
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: version
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TimePeriod'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{datasetId}/versions/version/{version}/base:
-    get:
-      operationId: getVersionsetFromVersionBase
-      parameters:
-      - name: datasetId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: version
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
-  /webrobot/api/datasets-legacy/{projectId}/{botId}:
-    post:
-      operationId: uploadDataset_1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DatasetUploadApiDto'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets:
     get:
+      tags:
+        - Datasets
+      summary: Ottiene tutti i dataset
+      description: |
+        Restituisce la lista di tutti i dataset disponibili nel sistema, con supporto per filtri.
+        
+        I dataset possono essere filtrati per tipo, formato e stato di indicizzazione.
       operationId: getAllDatasets_1
       parameters:
       - name: type
         in: query
+        description: Filtra per tipo di dataset
         schema:
           type: string
+          example: "parquet"
       - name: indexed
         in: query
+        description: Filtra per stato di indicizzazione (true/false)
         schema:
           type: string
+          example: "true"
       - name: format
         in: query
+        description: Filtra per formato (parquet, csv, json, ecc.)
         schema:
           type: string
+          example: "parquet"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei dataset
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetDto'
+        '401':
+          description: Non autorizzato - scope `datasets:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Datasets
+      summary: Crea un nuovo dataset
+      description: |
+        Crea un nuovo dataset nel sistema con le configurazioni specificate.
+        
+        Il dataset può essere associato a un progetto e utilizzato come input o output per job ETL.
       operationId: createDataset
       requestBody:
+        required: true
+        description: Dati del dataset da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DatasetDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Dataset creato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `datasets:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/{datasetId}:
     get:
+      tags:
+        - Datasets
+      summary: Ottiene un dataset specifico
+      description: |
+        Restituisce i dettagli di un dataset specifico, incluse informazioni su schema, formato e percorso.
       operationId: getDataset_1
       parameters:
       - name: datasetId
         in: path
         required: true
+        description: ID univoco del dataset
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del dataset
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDto'
+        '404':
+          description: Dataset non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `datasets:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Datasets
+      summary: Aggiorna un dataset
+      description: |
+        Aggiorna i dati di un dataset esistente, incluse configurazioni e metadati.
       operationId: updateDataset
       parameters:
       - name: datasetId
         in: path
         required: true
+        description: ID univoco del dataset da aggiornare
         schema:
           type: string
+          example: "123"
       requestBody:
+        required: true
+        description: Dati aggiornati del dataset
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DatasetDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dataset aggiornato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Dataset non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `datasets:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Datasets
+      summary: Elimina un dataset
+      description: |
+        Elimina un dataset dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questo dataset
+        come input o output potrebbero non funzionare correttamente.
       operationId: deleteDataset_1
       parameters:
       - name: datasetId
         in: path
         required: true
+        description: ID univoco del dataset da eliminare
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dataset eliminato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Dataset non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `datasets:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/query:
     post:
+      tags:
+        - Datasets
+        - Query
+      summary: Esegue una query SQL su un dataset
+      description: |
+        Esegue una query SQL (Presto/Trino) su un dataset per recuperare o analizzare i dati.
+        
+        La query viene eseguita sul catalogo MinIO e può utilizzare tutte le funzionalità SQL supportate da Trino.
       operationId: executeQuery
       requestBody:
+        required: true
+        description: Query SQL da eseguire
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PrestoQueryRequest'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Risultati della query
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Query non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/query/task/{taskId}/info:
     get:
+      tags:
+        - Datasets
+        - Query
+        - Tasks
+      summary: Ottiene informazioni sul dataset associato a un task
+      description: |
+        Restituisce informazioni sul dataset di output associato a un task specifico.
       operationId: getDatasetInfoByTask
       parameters:
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Informazioni sul dataset
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Task o dataset non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/query/columns:
     get:
+      tags:
+        - Datasets
+        - Query
+      summary: Ottiene le colonne di una tabella
+      description: |
+        Restituisce la lista delle colonne e i relativi tipi di una tabella nel catalogo Trino.
       operationId: getTableColumns
       parameters:
       - name: catalog
         in: query
+        description: Nome del catalogo (default: minio)
         schema:
           type: string
           default: minio
+          example: "minio"
       - name: schema
         in: query
+        description: Nome dello schema (default: default)
         schema:
           type: string
           default: default
+          example: "default"
       - name: table
         in: query
+        required: true
+        description: Nome della tabella
         schema:
           type: string
+          example: "my_table"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle colonne
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    type:
+                      type: string
+        '404':
+          description: Tabella non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/query/tables:
     get:
+      tags:
+        - Datasets
+        - Query
+      summary: Lista tutte le tabelle disponibili
+      description: |
+        Restituisce la lista di tutte le tabelle disponibili in un catalogo e schema specifici.
       operationId: listTables
       parameters:
       - name: catalog
         in: query
+        description: Nome del catalogo (default: minio)
         schema:
           type: string
           default: minio
+          example: "minio"
       - name: schema
         in: query
+        description: Nome dello schema (default: default)
         schema:
           type: string
           default: default
+          example: "default"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle tabelle
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/datasets/query/task/{taskId}:
     post:
+      tags:
+        - Datasets
+        - Query
+        - Tasks
+      summary: Esegue una query SQL sul dataset di output di un task
+      description: |
+        Esegue una query SQL sul dataset di output associato a un task specifico.
+        
+        Utile per analizzare i risultati di un task dopo la sua esecuzione.
       operationId: queryDatasetByTask
       parameters:
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task
         schema:
           type: string
+          example: "123"
       requestBody:
+        required: true
+        description: Query SQL da eseguire
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PrestoQueryRequest'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Risultati della query
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Query non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task o dataset non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/etl-library-versions:
     get:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Ottiene tutte le versioni della libreria ETL
+      description: |
+        Restituisce la lista di tutte le versioni della libreria ETL disponibili nel sistema,
+        con supporto per filtri per tipo di build e stato attivo.
       operationId: getAllVersions
       parameters:
       - name: buildType
         in: query
+        description: Filtra per tipo di build (es. "development", "production")
         schema:
           type: string
+          example: "development"
       - name: activeOnly
         in: query
+        description: Restituisce solo le versioni attive
         schema:
           type: boolean
+          default: false
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle versioni ETL
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Crea o aggiorna una versione della libreria ETL
+      description: |
+        Crea una nuova versione della libreria ETL o aggiorna una versione esistente.
+        
+        Le versioni ETL vengono utilizzate per eseguire job Spark con versioni specifiche della libreria.
       operationId: createOrUpdateVersion
       requestBody:
+        required: true
+        description: Dati della versione ETL
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EtlLibraryVersionApiDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Versione creata o aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '201':
+          description: Versione creata con successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/etl-library-versions/id/{id}:
     get:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Ottiene una versione ETL specifica
+      description: |
+        Restituisce i dettagli di una versione della libreria ETL identificata dall'ID.
       operationId: getVersionById
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco della versione
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli della versione ETL
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '404':
+          description: Versione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Aggiorna una versione ETL
+      description: |
+        Aggiorna i dati di una versione della libreria ETL esistente.
       operationId: updateVersion
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco della versione da aggiornare
         schema:
           type: integer
           format: int64
+          example: 1
       requestBody:
+        required: true
+        description: Dati aggiornati della versione
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EtlLibraryVersionApiDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Versione aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Versione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Elimina una versione ETL
+      description: |
+        Elimina una versione della libreria ETL dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa versione
+        potrebbero non funzionare correttamente.
       operationId: deleteVersion
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco della versione da eliminare
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Versione eliminata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Versione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/etl-library-versions/build-type/{buildType}/build-number/{buildNumber}:
     get:
+      tags:
+        - Admin
+        - ETL Library
+      summary: Ottiene una versione ETL per tipo e numero di build
+      description: |
+        Restituisce i dettagli di una versione della libreria ETL identificata da tipo di build
+        e numero di build.
       operationId: getVersionByBuildTypeAndBuildNumber
       parameters:
       - name: buildType
         in: path
         required: true
+        description: Tipo di build (es. "development", "production")
         schema:
           type: string
+          example: "development"
       - name: buildNumber
         in: path
         required: true
+        description: Numero di build
         schema:
           type: integer
           format: int32
+          example: 123
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli della versione ETL
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+        '404':
+          description: Versione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/download:
     get:
+      tags:
+        - Package
+      summary: Ottiene l'URL per il download di un package
+      description: |
+        Restituisce un URL temporaneo per scaricare un package di progetti e configurazioni.
       operationId: getUrlDownload
       responses:
-        default:
-          description: default response
+        '200':
+          description: URL di download
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: URL temporaneo per il download
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/upload:
     get:
+      tags:
+        - Package
+      summary: Ottiene l'URL per il caricamento di un package
+      description: |
+        Restituisce un URL temporaneo per caricare un package di progetti e configurazioni.
       operationId: getUrlUpload
       responses:
-        default:
-          description: default response
+        '200':
+          description: URL di upload
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: URL temporaneo per il caricamento
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/export/all:
     get:
+      tags:
+        - Package
+      summary: Avvia l'export di tutti i progetti
+      description: |
+        Avvia il processo di export di tutti i progetti e le configurazioni del sistema
+        in un package compresso.
       operationId: start_export_All
       responses:
-        default:
-          description: default response
+        '200':
+          description: Export avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exportId:
+                    type: string
+                    description: ID dell'operazione di export
+        '401':
+          description: Non autorizzato - scope `package:export` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/export/id/{projectId}:
     get:
+      tags:
+        - Package
+      summary: Avvia l'export di un progetto specifico
+      description: |
+        Avvia il processo di export di un progetto specifico e le sue configurazioni
+        in un package compresso.
       operationId: start_export_project
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto da esportare
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Export avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exportId:
+                    type: string
+                    description: ID dell'operazione di export
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `package:export` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/import/all:
     get:
+      tags:
+        - Package
+      summary: Avvia l'import di tutti i progetti
+      description: |
+        Avvia il processo di import di tutti i progetti e le configurazioni da un package compresso.
+        
+        **Attenzione:** Questa operazione può sovrascrivere progetti esistenti.
       operationId: start_import_All
       responses:
-        default:
-          description: default response
+        '200':
+          description: Import avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  importId:
+                    type: string
+                    description: ID dell'operazione di import
+        '401':
+          description: Non autorizzato - scope `package:import` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/package/import/id/{projectId}:
     get:
+      tags:
+        - Package
+      summary: Avvia l'import di un progetto specifico
+      description: |
+        Avvia il processo di import di un progetto specifico e le sue configurazioni da un package compresso.
+        
+        **Attenzione:** Questa operazione può sovrascrivere il progetto esistente se presente.
       operationId: start_import_project
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto da importare
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Import avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  importId:
+                    type: string
+                    description: ID dell'operazione di import
+        '404':
+          description: Progetto non trovato nel package
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `package:import` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugins/{pluginId}/disable:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Disabilita un plugin
+      description: |
+        Disabilita un plugin nel sistema per un tipo di build specifico.
+        
+        I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin
       parameters:
       - name: pluginId
         in: path
         required: true
+        description: ID univoco del plugin
         schema:
           type: string
+          example: "ean-image-sourcing"
       - name: buildType
         in: query
+        description: Tipo di build (default: development)
         schema:
           type: string
           default: development
+          example: "development"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Plugin disabilitato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Plugin non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugins/{pluginId}/enable:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Abilita un plugin
+      description: |
+        Abilita un plugin nel sistema per un tipo di build specifico.
+        
+        I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin
       parameters:
       - name: pluginId
         in: path
         required: true
+        description: ID univoco del plugin
         schema:
           type: string
+          example: "ean-image-sourcing"
       - name: buildType
         in: query
+        description: Tipo di build (default: development)
         schema:
           type: string
           default: development
+          example: "development"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Plugin abilitato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Plugin non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugins:
     get:
+      tags:
+        - Admin
+        - Plugins
+      summary: Lista tutti i plugin
+      description: |
+        Restituisce la lista di tutti i plugin disponibili nel sistema, filtrati per tipo di build.
       operationId: listPlugins
       parameters:
       - name: buildType
         in: query
+        description: Tipo di build (default: development)
         schema:
           type: string
           default: development
+          example: "development"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei plugin
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugins/upload:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Carica un nuovo plugin
+      description: |
+        Carica un nuovo plugin nel sistema come file JAR.
+        
+        Il plugin può essere associato a una o più organizzazioni e a un tipo di build specifico.
       operationId: uploadPlugin
       requestBody:
+        required: true
+        description: File del plugin e metadati
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - file
+                - pluginId
               properties:
                 file:
                   $ref: '#/components/schemas/FormDataContentDisposition'
+                  description: File JAR del plugin
                 pluginId:
                   type: string
+                  description: ID univoco del plugin
+                  example: "my-plugin"
                 buildType:
                   type: string
+                  description: Tipo di build (default: development)
                   default: development
+                  example: "development"
                 buildNumber:
                   type: integer
                   format: int32
+                  description: Numero di build del plugin
+                  example: 1
                 organizationIds:
                   type: string
+                  description: Lista di ID organizzazioni separate da virgola
+                  example: "1,2,3"
       responses:
-        default:
-          description: default response
+        '201':
+          description: Plugin caricato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: File o dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugin-installations/{id}:
     get:
+      tags:
+        - Admin
+        - Plugins
+      summary: Ottiene un'installazione plugin specifica
+      description: |
+        Restituisce i dettagli di un'installazione plugin identificata dall'ID.
       operationId: getInstallationById
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco dell'installazione
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli dell'installazione plugin
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginInstallation'
+        '404':
+          description: Installazione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Admin
+        - Plugins
+      summary: Aggiorna un'installazione plugin
+      description: |
+        Aggiorna i dati di un'installazione plugin esistente, incluse configurazioni e metadati.
       operationId: updateInstallation
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco dell'installazione da aggiornare
         schema:
           type: integer
           format: int64
+          example: 1
       requestBody:
+        required: true
+        description: Dati aggiornati dell'installazione
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PluginInstallation'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Installazione aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginInstallation'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Installazione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Admin
+        - Plugins
+      summary: Elimina un'installazione plugin
+      description: |
+        Elimina un'installazione plugin dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. Il plugin non sarà più disponibile
+        per l'uso nei job.
       operationId: deleteInstallation
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco dell'installazione da eliminare
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Installazione eliminata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Installazione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugin-installations/{id}/disable:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Disabilita un'installazione plugin
+      description: |
+        Disabilita un'installazione plugin nel sistema.
+        
+        I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin_1
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco dell'installazione
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Installazione disabilitata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Installazione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugin-installations/{id}/enable:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Abilita un'installazione plugin
+      description: |
+        Abilita un'installazione plugin nel sistema.
+        
+        I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin_1
       parameters:
       - name: id
         in: path
         required: true
+        description: ID univoco dell'installazione
         schema:
           type: integer
           format: int64
+          example: 1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Installazione abilitata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Installazione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugin-installations:
     get:
+      tags:
+        - Admin
+        - Plugins
+      summary: Ottiene tutte le installazioni plugin
+      description: |
+        Restituisce la lista di tutte le installazioni plugin disponibili nel sistema,
+        con supporto per filtri per organizzazione e stato abilitato.
       operationId: getAllInstallations
       parameters:
       - name: organizationId
         in: query
+        description: Filtra per ID organizzazione
         schema:
           type: string
+          example: "1"
       - name: enabledOnly
         in: query
+        description: Restituisce solo le installazioni abilitate
         schema:
           type: boolean
+          default: false
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle installazioni plugin
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PluginInstallation'
+        '401':
+          description: Non autorizzato - scope `admin:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Registra un nuovo plugin
+      description: |
+        Registra un nuovo plugin nel sistema come installazione.
+        
+        Il plugin può essere associato a una o più organizzazioni.
       operationId: registerPlugin
       requestBody:
+        required: true
+        description: Dati dell'installazione plugin
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PluginInstallation'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Plugin registrato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginInstallation'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/admin/plugin-installations/reload:
     post:
+      tags:
+        - Admin
+        - Plugins
+      summary: Ricarica tutti i plugin
+      description: |
+        Ricarica tutti i plugin nel sistema, aggiornando le configurazioni e le installazioni.
+        
+        Utile dopo aver caricato o modificato plugin per applicare le modifiche senza riavviare il sistema.
       operationId: reloadPlugins
       responses:
-        default:
-          description: default response
+        '200':
+          description: Plugin ricaricati con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Plugins reloaded successfully"
+        '401':
+          description: Non autorizzato - scope `admin:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs:
     get:
+      tags:
+        - Projects
+        - Jobs
+      summary: Ottiene tutti i job di un progetto
+      description: |
+        Restituisce la lista di tutti i job ETL associati a un progetto specifico.
       operationId: getProjectJobs
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei job del progetto
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobDto'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Projects
+        - Jobs
+      summary: Aggiunge un job a un progetto
+      description: |
+        Crea un nuovo job ETL e lo associa a un progetto esistente.
+        
+        Il job deve essere associato a un Agent con codice PySpark valido.
       operationId: addJobToProject
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       requestBody:
+        required: true
+        description: Dati del job da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Job creato e aggiunto al progetto con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects:
     get:
+      tags:
+        - Projects
+      summary: Ottiene tutti i progetti
+      description: |
+        Restituisce la lista di tutti i progetti disponibili nel sistema.
+        
+        I progetti sono utilizzati per organizzare job, task e dataset correlati.
       operationId: getAllProjects
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei progetti
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobProjectDto'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Projects
+      summary: Crea un nuovo progetto
+      description: |
+        Crea un nuovo progetto nel sistema.
+        
+        Un progetto può contenere più job ETL e può essere schedulato per esecuzione automatica.
       operationId: createProject
       requestBody:
+        required: true
+        description: Dati del progetto da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobProjectDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Progetto creato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobProjectDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks:
     get:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Ottiene tutti i task di un job
+      description: |
+        Restituisce la lista di tutti i task associati a un job specifico.
+        
+        I task rappresentano le singole operazioni che compongono un job ETL.
       operationId: getAllTasks
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei task del job
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDto'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Crea un nuovo task in un job
+      description: |
+        Crea un nuovo task e lo associa a un job esistente.
+        
+        Un task può essere di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: createTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       requestBody:
+        required: true
+        description: Dati del task da creare
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TaskDto'
       responses:
-        default:
-          description: default response
+        '201':
+          description: Task creato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}:
     get:
+      tags:
+        - Projects
+      summary: Ottiene un progetto specifico
+      description: |
+        Restituisce i dettagli di un progetto specifico, incluso l'elenco dei job associati.
       operationId: getProject
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del progetto
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobProjectDto'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Projects
+      summary: Aggiorna un progetto
+      description: |
+        Aggiorna i dati di un progetto esistente, incluse configurazioni e schedulazione.
       operationId: updateProject
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto da aggiornare
         schema:
           type: string
+          example: "98"
       requestBody:
+        required: true
+        description: Dati aggiornati del progetto
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobProjectDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Progetto aggiornato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobProjectDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Projects
+      summary: Elimina un progetto
+      description: |
+        Elimina un progetto dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. Tutti i job, task e dati associati
+        al progetto verranno eliminati.
       operationId: deleteProject
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto da eliminare
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Progetto eliminato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}:
     get:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Ottiene un task specifico
+      description: |
+        Restituisce i dettagli di un task specifico, incluse configurazioni e stato di esecuzione.
       operationId: getTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del task
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Aggiorna un task
+      description: |
+        Aggiorna i dati di un task esistente, incluse configurazioni e metadati.
       operationId: updateTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task da aggiornare
         schema:
           type: string
+          example: "1"
       requestBody:
+        required: true
+        description: Dati aggiornati del task
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TaskDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Task aggiornato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Elimina un task
+      description: |
+        Elimina un task da un job.
+        
+        **Attenzione:** Questa operazione è irreversibile. Il task verrà rimosso dal job.
       operationId: deleteTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task da eliminare
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Task eliminato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/execute:
     post:
+      tags:
+        - Jobs
+        - ETL Execution
+      summary: Esegue un job Spark immediatamente
+      description: |
+        Esegue un job Spark in modalità immediata, allocando risorse nel cluster Kubernetes.
+        
+        Il job viene eseguito con le configurazioni specificate nel job stesso o tramite
+        parametri opzionali nella richiesta.
+        
+        **Note importanti:**
+        - Il job deve essere associato a un Agent con codice PySpark valido
+        - Le credenziali cloud vengono iniettate automaticamente se configurate
+        - Il webhook viene chiamato automaticamente all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
+        
+        **Rate Limiting:** Max 10 esecuzioni simultanee per progetto
       operationId: executeJob_1
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job da eseguire
         schema:
           type: string
+          example: "210"
       requestBody:
+        required: false
+        description: |
+          Parametri opzionali per l'esecuzione del job.
+          
+          Se non specificati, vengono usati i valori di default del job.
         content:
           application/json:
             schema:
               type: object
-              additionalProperties:
-                type: object
+              properties:
+                cloudCredentialIds:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista di ID credenziali cloud da utilizzare
+                arguments:
+                  type: array
+                  items:
+                    type: string
+                  description: Argomenti aggiuntivi da passare al job Spark
+            examples:
+              default:
+                summary: Esecuzione con parametri di default
+                value: {}
+              withCredentials:
+                summary: Esecuzione con credenziali cloud specifiche
+                value:
+                  cloudCredentialIds:
+                    - "550e8400-e29b-41d4-a716-446655440000"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Job eseguito con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                    description: ID univoco dell'esecuzione Spark
+                    example: "spark-2d53940045a6-95379617"
+                  status:
+                    type: string
+                    description: Stato dell'esecuzione
+                    example: "SUBMITTED"
+                  message:
+                    type: string
+                    description: Messaggio descrittivo
+                    example: "Job execution submitted successfully"
+                  clusterId:
+                    type: string
+                    description: ID del cluster utilizzato
+                    example: "default-cluster"
+                  success:
+                    type: boolean
+                    description: Indica se la submission è avvenuta con successo
+                    example: true
+        '400':
+          description: Richiesta non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - API key mancante o non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permessi insufficienti - scope `etl:execute` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Job già in esecuzione
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/logs:
     get:
+      tags:
+        - Projects
+        - Jobs
+        - Execution
+      summary: Ottiene i log di un'esecuzione job
+      description: |
+        Restituisce i log di esecuzione di un job Spark specifico, con supporto per filtri
+        per tipo di pod (driver/executor) e limitazione del numero di righe.
       operationId: getExecutionLogs
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: executionId
         in: path
         required: true
+        description: ID univoco dell'esecuzione Spark
         schema:
           type: string
+          example: "spark-2d53940045a6-95379617"
       - name: podType
         in: query
+        description: Tipo di pod da cui recuperare i log (driver, executor, o tutti se non specificato)
         schema:
           type: string
+          enum: [driver, executor]
+          example: "driver"
       - name: tail
         in: query
+        description: Numero di righe finali da recuperare (opzionale)
         schema:
           type: integer
           format: int32
+          example: 100
       responses:
-        default:
-          description: default response
+        '200':
+          description: Log dell'esecuzione
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      type: string
+        '404':
+          description: Esecuzione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/status:
     get:
+      tags:
+        - Projects
+        - Jobs
+        - Execution
+      summary: Ottiene lo status di un'esecuzione job
+      description: |
+        Restituisce lo stato dettagliato di un'esecuzione job Spark, incluse informazioni su
+        progresso, durata, metriche e eventuali errori.
+        
+        Lo status viene recuperato dal database e include dettagli come:
+        - Stato dell'esecuzione (PENDING, RUNNING, COMPLETED, FAILED)
+        - Timestamp di inizio e fine
+        - Tempo di esecuzione
+        - URL Spark UI
+        - Numero di executor pod
+        - Messaggi di errore (se fallito)
       operationId: getExecutionStatus
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: executionId
         in: path
         required: true
+        description: ID univoco dell'esecuzione Spark
         schema:
           type: string
+          example: "spark-2d53940045a6-95379617"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Status dell'esecuzione
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                    example: "spark-2d53940045a6-95379617"
+                  status:
+                    type: string
+                    enum: [PENDING, RUNNING, COMPLETED, FAILED, UNKNOWN]
+                    example: "COMPLETED"
+                  startedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  completedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  executionTimeSeconds:
+                    type: integer
+                    nullable: true
+                    description: Tempo di esecuzione in secondi
+                  errorMessage:
+                    type: string
+                    nullable: true
+                  sparkUiUrl:
+                    type: string
+                    nullable: true
+                  executorPodCount:
+                    type: integer
+                    nullable: true
+        '404':
+          description: Esecuzione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}:
     get:
+      tags:
+        - Projects
+        - Jobs
+      summary: Ottiene un job specifico
+      description: |
+        Restituisce i dettagli di un job ETL specifico, incluse configurazioni e stato di esecuzione.
       operationId: getJob
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del job
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDto'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Projects
+        - Jobs
+      summary: Aggiorna un job
+      description: |
+        Aggiorna i dati di un job esistente, incluse configurazioni e metadati.
       operationId: updateJob
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job da aggiornare
         schema:
           type: string
+          example: "210"
       requestBody:
+        required: true
+        description: Dati aggiornati del job
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobDto'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Job aggiornato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDto'
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Projects
+        - Jobs
+      summary: Rimuove un job da un progetto
+      description: |
+        Rimuove un job da un progetto, eliminando l'associazione.
+        
+        **Attenzione:** Il job stesso non viene eliminato, solo l'associazione al progetto.
       operationId: removeJobFromProject
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job da rimuovere
         schema:
           type: string
+          example: "210"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Job rimosso dal progetto con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:delete` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/{projectName}:
     get:
+      tags:
+        - Projects
+      summary: Ottiene un progetto per nome
+      description: |
+        Restituisce i dettagli di un progetto cercandolo per nome.
       operationId: getProjectFromName
       parameters:
       - name: projectName
         in: path
         required: true
+        description: Nome del progetto
         schema:
           type: string
+          example: "my-project"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Dettagli del progetto
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobProjectDto'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/schedule:
     get:
+      tags:
+        - Projects
+        - Scheduler
+      summary: Ottiene la schedulazione di un progetto
+      description: |
+        Restituisce la configurazione di schedulazione di un progetto, incluse informazioni
+        su quando e come viene eseguito automaticamente.
       operationId: getProjectSchedule
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Configurazione di schedulazione
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectScheduleRequest'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
+      tags:
+        - Projects
+        - Scheduler
+      summary: Imposta la schedulazione di un progetto
+      description: |
+        Imposta o aggiorna la schedulazione di un progetto per esecuzione automatica.
+        
+        La schedulazione utilizza cron expressions per definire quando eseguire il progetto.
       operationId: setProjectSchedule
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       requestBody:
+        required: true
+        description: Configurazione di schedulazione
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectScheduleRequest'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Schedulazione impostata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectScheduleRequest'
+        '400':
+          description: Configurazione non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:write` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/status:
     get:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Ottiene lo status di un task
+      description: |
+        Restituisce lo stato attuale di un task, incluse informazioni su esecuzione e progresso.
       operationId: getTaskStatus
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Status del task
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                  progress:
+                    type: number
+                    format: float
+                    description: Progresso in percentuale (0-100)
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/completion:
     post:
+      tags:
+        - Projects
+        - Jobs
+        - Webhooks
+      summary: Webhook per notificare il completamento di un job
+      description: |
+        Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
+        di un'esecuzione job.
+        
+        Questo endpoint viene chiamato automaticamente dal sistema Spark quando un job termina
+        (con status RUNNING, COMPLETED o FAILED).
       operationId: jobCompletionWebhook
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       requestBody:
+        required: true
+        description: Dati del webhook di completamento
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobCompletionWebhookRequest'
       responses:
-        default:
-          description: default response
+        '200':
+          description: Webhook processato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Dati del webhook non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/start:
     post:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Avvia un task
+      description: |
+        Avvia l'esecuzione di un task specifico.
+        
+        Il task deve essere di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: startTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task da avviare
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Task avviato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Task già in esecuzione
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:execute` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/stop:
     post:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+      summary: Ferma un task
+      description: |
+        Ferma l'esecuzione di un task in corso.
+        
+        **Attenzione:** Questa operazione può interrompere un task in esecuzione, causando
+        potenziali perdite di dati o inconsistenza.
       operationId: stopTask
       parameters:
       - name: projectId
         in: path
         required: true
+        description: ID univoco del progetto
         schema:
           type: string
+          example: "98"
       - name: jobId
         in: path
         required: true
+        description: ID univoco del job
         schema:
           type: string
+          example: "210"
       - name: taskId
         in: path
         required: true
+        description: ID univoco del task da fermare
         schema:
           type: string
+          example: "1"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Task fermato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Task non in esecuzione
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:execute` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/test:
     get:
+      tags:
+        - Projects
+      summary: Test endpoint per progetti
+      description: |
+        Endpoint di test per verificare la connettività e l'autenticazione dell'API progetti.
       operationId: test_1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Test completato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OK"
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/html/{url}/{protocol}:
     get:
       operationId: getHtml
@@ -2191,14 +5184,23 @@ paths:
             application/json: {}
   /webrobot/api/python-extensions/python-extensions/{extensionId}:
     put:
+      tags:
+        - Python Extensions
+      summary: Aggiorna un'estensione Python
+      description: |
+        Aggiorna i dati di un'estensione Python esistente, incluse configurazioni e metadati.
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
         in: path
         required: true
+        description: ID univoco dell'estensione
         schema:
           type: string
+          example: "my-extension"
       requestBody:
+        required: true
+        description: Dati aggiornati dell'estensione
         content:
           application/json:
             schema:
@@ -2206,74 +5208,233 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Estensione aggiornata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Estensione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
+      tags:
+        - Python Extensions
+      summary: Elimina un'estensione Python
+      description: |
+        Elimina un'estensione Python dal sistema.
+        
+        **Attenzione:** Questa operazione è irreversibile. Gli agent che utilizzano questa
+        estensione potrebbero non funzionare correttamente.
       operationId: deletePythonExtension
       parameters:
       - name: extensionId
         in: path
         required: true
+        description: ID univoco dell'estensione da eliminare
         schema:
           type: string
+          example: "my-extension"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Estensione eliminata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Estensione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/python-extensions/{extensionId}/generate-pyspark:
     post:
+      tags:
+        - Python Extensions
+      summary: Genera codice PySpark da un'estensione
+      description: |
+        Genera codice PySpark da un'estensione Python registrata nel sistema.
+        
+        Utile per convertire estensioni Python in codice PySpark utilizzabile nei job Spark.
       operationId: generatePysparkCode
       parameters:
       - name: extensionId
         in: path
         required: true
+        description: ID univoco dell'estensione
         schema:
           type: string
+          example: "my-extension"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Codice PySpark generato con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Codice PySpark generato
+        '404':
+          description: Estensione non trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/agents/{agentId}/extensions:
     get:
+      tags:
+        - Python Extensions
+        - Agents
+      summary: Ottiene le estensioni di un agent
+      description: |
+        Restituisce la lista di tutte le estensioni Python associate a un agent specifico.
       operationId: getAgentExtensions
       parameters:
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agent
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle estensioni dell'agent
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '404':
+          description: Agent non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/agents/{agentId}/python-extensions:
     get:
+      tags:
+        - Python Extensions
+        - Agents
+      summary: Ottiene le estensioni Python di un agent
+      description: |
+        Restituisce la lista di tutte le estensioni Python associate a un agent specifico.
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agent
         schema:
           type: string
+          example: "123"
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista delle estensioni Python dell'agent
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '404':
+          description: Agent non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
+      tags:
+        - Python Extensions
+        - Agents
+      summary: Aggiorna le estensioni Python di un agent
+      description: |
+        Aggiorna la lista di estensioni Python associate a un agent specifico.
       operationId: updateAgentPythonExtensions
       parameters:
       - name: agentId
         in: path
         required: true
+        description: ID univoco dell'agent
         schema:
           type: string
+          example: "123"
       requestBody:
+        required: true
+        description: Lista di estensioni Python da associare all'agent
         content:
           application/json:
             schema:
@@ -2281,30 +5442,106 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Estensioni aggiornate con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Agent non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/info:
     get:
+      tags:
+        - Python Extensions
+      summary: Ottiene informazioni sul plugin Python Extensions
+      description: |
+        Restituisce informazioni generali sul plugin Python Extensions, incluse versioni e
+        configurazioni.
       operationId: getPluginInfo_1
       responses:
-        default:
-          description: default response
+        '200':
+          description: Informazioni sul plugin
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/supported-types:
     get:
+      tags:
+        - Python Extensions
+      summary: Ottiene i tipi di estensione supportati
+      description: |
+        Restituisce la lista di tutti i tipi di estensione Python supportati dal sistema.
       operationId: getSupportedExtensionTypes
       responses:
-        default:
-          description: default response
+        '200':
+          description: Lista dei tipi supportati
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/process-yaml:
     post:
+      tags:
+        - Python Extensions
+      summary: Processa estensioni Python da YAML
+      description: |
+        Processa e registra estensioni Python da una definizione YAML.
+        
+        Utile per importare estensioni da file di configurazione.
       operationId: processYamlExtensions
       requestBody:
+        required: true
+        description: Definizione YAML delle estensioni
         content:
           application/json:
             schema:
@@ -2312,14 +5549,43 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Estensioni processate con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: YAML non valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/python-extensions/register:
     post:
+      tags:
+        - Python Extensions
+      summary: Registra una nuova estensione Python
+      description: |
+        Registra una nuova estensione Python nel sistema.
+        
+        L'estensione può essere utilizzata dagli agent per estendere le funzionalità dei job Spark.
       operationId: registerPythonExtension
       requestBody:
+        required: true
+        description: Dati dell'estensione da registrare
         content:
           application/json:
             schema:
@@ -2327,14 +5593,43 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '201':
+          description: Estensione registrata con successo
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/python-extensions/validate:
     post:
+      tags:
+        - Python Extensions
+      summary: Valida un'estensione Python
+      description: |
+        Valida la struttura e la sintassi di un'estensione Python senza registrarla nel sistema.
+        
+        Utile per verificare la correttezza di un'estensione prima della registrazione.
       operationId: validatePythonExtension
       requestBody:
+        required: true
+        description: Dati dell'estensione da validare
         content:
           application/json:
             schema:
@@ -2342,10 +5637,39 @@ paths:
               additionalProperties:
                 type: object
       responses:
-        default:
-          description: default response
+        '200':
+          description: Estensione valida
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    description: Lista di errori di validazione (se presenti)
+        '400':
+          description: Estensione non valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -2357,6 +5681,22 @@ components:
         
         Esempio: `super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!`
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Messaggio di errore descrittivo
+          example: "Job not found or invalid configuration"
+        code:
+          type: integer
+          description: Codice di stato HTTP
+          example: 400
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp dell'errore
+          example: "2025-12-10T23:15:30Z"
     CronJobRequest:
       type: object
       properties:
