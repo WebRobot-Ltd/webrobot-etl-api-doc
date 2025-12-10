@@ -1,0 +1,9 @@
+# Configurazione minima per Redocly Cloud
+# Evita l'uso di @redocly/realm che ha il bug
+extends:
+  - minimal
+
+apis:
+  main:
+    root: openapi.yaml
+
