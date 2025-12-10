@@ -1,0 +1,41 @@
+apis:
+  main:
+    root: openapi.yaml
+    title: WebRobot ETL API
+    version: 1.0.0
+    baseUrl: https://api.webrobot.eu/api
+
+theme:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: javascript
+        - lang: python
+    theme:
+      colors:
+        primary:
+          main: '#1976d2'
+      typography:
+        fontSize: '14px'
+        fontFamily: 'Inter, system-ui, sans-serif'
+        headings:
+          fontFamily: 'Inter, system-ui, sans-serif'
+          fontWeight: '600'
+      sidebar:
+        backgroundColor: '#fafafa'
+      rightPanel:
+        backgroundColor: '#263238'
+
+lint:
+  extends:
+    - recommended
+  rules:
+    no-unused-components: error
+    operation-description: warn
+    operation-summary: warn
+    tag-description: warn
+
+# decorators:
+#   - decorators/info.yaml
+

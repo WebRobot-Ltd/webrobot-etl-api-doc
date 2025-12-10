@@ -1,0 +1,24 @@
+{
+  "name": "webrobot-etl-api-doc",
+  "version": "1.0.0",
+  "description": "WebRobot ETL API Documentation",
+  "scripts": {
+    "start": "redocly preview-docs",
+    "build": "redocly build-docs",
+    "lint": "redocly lint openapi.yaml",
+    "bundle": "redoc-cli bundle openapi.yaml -o dist/index.html"
+  },
+  "keywords": [
+    "api",
+    "documentation",
+    "openapi",
+    "redocly"
+  ],
+  "author": "WebRobot",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "@redocly/cli": "^1.10.0",
+    "redoc-cli": "^0.13.21"
+  }
+}
+
