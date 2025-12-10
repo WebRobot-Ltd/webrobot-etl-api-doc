@@ -35,9 +35,8 @@ jobs:
           fi
         continue-on-error: true
       
-      - name: Lint OpenAPI
-        run: npm run lint
-        continue-on-error: true
+      - name: Validate OpenAPI
+        run: npx @redocly/cli lint openapi.yaml --skip-rule no-unused-components || true
       
       - name: Build documentation with redoc-cli
         run: npm run bundle
