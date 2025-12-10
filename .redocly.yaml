@@ -1,0 +1,5 @@
+# Configurazione minimale - solo OpenAPI spec
+apis:
+  webrobot-etl-api@v1:
+    root: openapi.yaml
+
