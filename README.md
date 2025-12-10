@@ -58,12 +58,26 @@ npx js-yaml openapi.json > openapi.yaml
 
 ## Deployment
 
-La documentazione può essere deployata su:
+### GitHub Pages (Consigliato)
 
-- **GitHub Pages**: Abilita GitHub Pages nel repository
-- **Netlify**: Connetto il repository a Netlify
-- **Vercel**: Connetto il repository a Vercel
-- **Redocly Cloud**: Usa Redocly Cloud per hosting gratuito
+La documentazione viene automaticamente deployata su GitHub Pages tramite GitHub Actions quando si fa push su `main` o `master`.
+
+**Setup:**
+1. Vai su Settings > Pages nel repository GitHub
+2. Seleziona "GitHub Actions" come source
+3. Il workflow `.github/workflows/deploy.yml` genererà automaticamente la documentazione
+
+**URL:** https://docs.webrobot.eu (se configurato il CNAME)
+
+### Redocly Cloud
+
+⚠️ **Nota:** Redocly Cloud attualmente ha un bug interno (`resourceFromAttributes is not a function`) che impedisce il build. 
+Stiamo usando GitHub Pages come alternativa.
+
+### Altre opzioni
+
+- **Netlify**: Connetti il repository a Netlify
+- **Vercel**: Connetti il repository a Vercel
 
 ## Riferimenti
 
