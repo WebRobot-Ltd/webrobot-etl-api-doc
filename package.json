@@ -18,6 +18,7 @@
   "license": "PROPRIETARY",
   "devDependencies": {
     "@redocly/cli": "^1.10.0",
+    "@redocly/realm": "^0.128.0",
     "redoc-cli": "^0.13.21"
   }
 }

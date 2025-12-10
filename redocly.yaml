@@ -2,12 +2,3 @@ apis:
   main:
     root: openapi.yaml
 
-lint:
-  extends:
-    - recommended
-  rules:
-    no-unused-components: warn
-    operation-description: warn
-    operation-summary: warn
-    tag-description: warn
-
