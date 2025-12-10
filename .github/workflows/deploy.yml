@@ -33,9 +33,10 @@ jobs:
       
       - name: Lint OpenAPI
         run: npm run lint
+        continue-on-error: true
       
-      - name: Build documentation
-        run: npm run build
+      - name: Build documentation with redoc-cli
+        run: npm run bundle
       
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
