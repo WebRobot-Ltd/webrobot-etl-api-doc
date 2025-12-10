@@ -2320,14 +2320,14 @@ paths:
       parameters:
       - name: catalog
         in: query
-        description: Nome del catalogo (default: minio)
+        description: "Nome del catalogo (default: minio)"
         schema:
           type: string
           default: minio
           example: "minio"
       - name: schema
         in: query
-        description: Nome dello schema (default: default)
+        description: "Nome dello schema (default: default)"
         schema:
           type: string
           default: default
@@ -2383,14 +2383,14 @@ paths:
       parameters:
       - name: catalog
         in: query
-        description: Nome del catalogo (default: minio)
+        description: "Nome del catalogo (default: minio)"
         schema:
           type: string
           default: minio
           example: "minio"
       - name: schema
         in: query
-        description: Nome dello schema (default: default)
+        description: "Nome dello schema (default: default)"
         schema:
           type: string
           default: default
@@ -3008,7 +3008,7 @@ paths:
           example: "ean-image-sourcing"
       - name: buildType
         in: query
-        description: Tipo di build (default: development)
+        description: "Tipo di build (default: development)"
         schema:
           type: string
           default: development
@@ -3059,7 +3059,7 @@ paths:
           example: "ean-image-sourcing"
       - name: buildType
         in: query
-        description: Tipo di build (default: development)
+        description: "Tipo di build (default: development)"
         schema:
           type: string
           default: development
@@ -3101,7 +3101,7 @@ paths:
       parameters:
       - name: buildType
         in: query
-        description: Tipo di build (default: development)
+        description: "Tipo di build (default: development)"
         schema:
           type: string
           default: development
@@ -3158,7 +3158,7 @@ paths:
                   example: "my-plugin"
                 buildType:
                   type: string
-                  description: Tipo di build (default: development)
+                  description: "Tipo di build (default: development)"
                   default: development
                   example: "development"
                 buildNumber:
