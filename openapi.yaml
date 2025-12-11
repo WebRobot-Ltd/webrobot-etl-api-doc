@@ -200,7 +200,7 @@ paths:
       operationId: getCapabilities
       responses:
         '200':
-          description: Cluster capabilities Spark
+          description: Spark cluster capabilities
           content:
             application/json:
               schema:
@@ -223,7 +223,7 @@ paths:
       operationId: getInfo
       responses:
         '200':
-          description: Cluster information Spark
+          description: Spark cluster information
           content:
             application/json:
               schema:
@@ -240,9 +240,9 @@ paths:
         - Cloud
         - Spark
         - Health
-      summary: Service health check Spark
+      summary: Spark service health check
       description: |
-        Checks the health status of the service Spark e of the cluster.
+        Checks the health status of the Spark service and cluster.
       operationId: healthCheck
       responses:
         '200':
@@ -266,13 +266,13 @@ paths:
       tags:
         - Cloud
         - Training
-      summary: Get informazioni sul servizio di training
+      summary: Get training service information
       description: |
-        Returns informazioni sul servizio di training AI/ML, including versions and configurations.
+        Returns information about the AI/ML training service, including versions and configurations.
       operationId: getInfo_1
       responses:
         '200':
-          description: Service information di training
+          description: Training service information
           content:
             application/json:
               schema:
@@ -289,9 +289,9 @@ paths:
         - Cloud
         - Training
         - Health
-      summary: Service health check di training
+      summary: Training service health check
       description: |
-        Checks the health status of the service di training AI/ML.
+        Checks the health status of the AI/ML training service.
       operationId: healthCheck_1
       responses:
         '200':
@@ -575,7 +575,7 @@ paths:
           example: "denmark"
       requestBody:
         required: true
-        description: Query to execute sul dataset
+        description: Query to execute on the dataset
         content:
           application/json:
             schema:
@@ -612,11 +612,11 @@ paths:
       tags:
         - EAN Plugin
         - Scheduler
-      summary: Schedula un job EAN ricorrente
+      summary: Schedule a recurring EAN job
       description: |
-        Creates or updates the schedule di un job EAN Image Sourcing ricorrente per un paese.
+        Creates or updates the schedule for a recurring EAN Image Sourcing job for a country.
         
-        The job will be executed automaticamente according to the specified schedule (formato cron).
+        The job will be executed automatically according to the specified schedule (cron format).
       operationId: scheduleJob
       parameters:
       - name: country
@@ -628,7 +628,7 @@ paths:
           example: "denmark"
       requestBody:
         required: true
-        description: Schedule configuration (formato cron)
+        description: Schedule configuration (cron format)
         content:
           application/json:
             schema:
@@ -4173,8 +4173,8 @@ paths:
         
         **Note importanti:**
         - The job must be associated a un Agent con codice PySpark valido
-        - Le credenziali cloud vengono iniettate automaticamente se configurate
-        - Il webhook is called automaticamente all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
+        - Le credenziali cloud vengono iniettate automatically se configurate
+        - Il webhook is called automatically all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
         
         **Rate Limiting:** Max 10 esecuzioni simultanee per progetto
       operationId: executeJob_1
@@ -4668,7 +4668,7 @@ paths:
       summary: Get la schedulazione di un progetto
       description: |
         Returns la configurazione di schedulazione di un progetto, incluse informazioni
-        su quando e come viene eseguito automaticamente.
+        su quando e come viene eseguito automatically.
       operationId: getProjectSchedule
       parameters:
       - name: projectId
@@ -4835,7 +4835,7 @@ paths:
         Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
         di un'esecuzione job.
         
-        Questo endpoint is called automaticamente dal sistema Spark quando un job termina
+        Questo endpoint is called automatically dal sistema Spark quando un job termina
         (con status RUNNING, COMPLETED o FAILED).
       operationId: jobCompletionWebhook
       parameters:
@@ -5466,7 +5466,7 @@ paths:
         - Tasks
       summary: Marca i task zombie come FAILED
       description: |
-        Rileva e marca automaticamente come FAILED i task che risultano RUNNING ma sono in esecuzione
+        Rileva e marca automatically come FAILED i task che risultano RUNNING ma sono in esecuzione
         da più tempo of the timeout specified (task "zombie").
         
         Un task è considerato "zombie" se:
