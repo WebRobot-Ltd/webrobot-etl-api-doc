@@ -853,7 +853,7 @@ paths:
       tags:
         - AI Providers
         - Models
-      summary: Get i modelli supportati da un provider
+      summary: Get models supported by a provider
       description: |
         Returns the list of all AI models supported by the specified provider,
         including information on versions, capabilities and requirements.
@@ -916,7 +916,7 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Get i log di un job di training
+      summary: Get logs of a training job
       description: |
         Returns i log di esecuzione di un job di training AI.
         
@@ -966,7 +966,7 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Get lo status di un job di training
+      summary: Get status of a training job
       description: |
         Returns the current status of an AI training job, including information on
         progresso, durata e eventuali errori.
@@ -1235,9 +1235,9 @@ paths:
     get:
       tags:
         - Agents
-      summary: Get un agente specifico
+      summary: Get a specific agent
       description: |
-        Returns i dettagli di un agente PySpark specifico, incluso il codice sorgente.
+        Returns i dettagli di un agente PySpark specifico, including the source code.
       operationId: getAgent
       parameters:
       - name: categoryId
@@ -1282,9 +1282,9 @@ paths:
     put:
       tags:
         - Agents
-      summary: Update un agente
+      summary: Update an agent
       description: |
-        Aggiorna i dati di un agente PySpark esistente, incluso il codice sorgente.
+        Updates the data of an existing PySpark agent, including the source code.
         
         **Note:** L'aggiornamento del codice sorgente richiede che nessun job sia in esecuzione
         with this agent.
@@ -1352,7 +1352,7 @@ paths:
     get:
       tags:
         - Agents
-      summary: Get un agente per nome
+      summary: Get an agent by name
       description: |
         Returns i dettagli di un agente PySpark cercandolo per nome all'interno di una categoria.
       operationId: getAgentFromName
@@ -1402,7 +1402,7 @@ paths:
         - Agents
       summary: Get all agents of a category
       description: |
-        Returns la lista di tutti gli agenti PySpark appartenenti a una categoria specifica.
+        Returns the list of all PySpark agents belonging to a specific category.
       operationId: getAllAgents
       parameters:
       - name: categoryId
@@ -1443,11 +1443,11 @@ paths:
     get:
       tags:
         - Categories
-      summary: Get tutte le categorie
+      summary: Get all categories
       description: |
-        Returns la lista di tutte le categorie disponibili in the sistema.
+        Returns the list of all categories available in the system.
         
-        Le categorie sono utilizzate per organizzare progetti, agenti e job.
+        Le categorie sono utilizzate to organize progetti, agenti e job.
       operationId: getAllCategories
       responses:
         '200':
@@ -1475,7 +1475,7 @@ paths:
         - Categories
       summary: Create a new category
       description: |
-        Creates a new categoria per organizzare progetti, agenti e job.
+        Creates a new category to organize projects, agents and jobs.
       operationId: createCategory
       requestBody:
         required: true
@@ -1513,7 +1513,7 @@ paths:
     get:
       tags:
         - Categories
-      summary: Get una categoria specifica
+      summary: Get a specific category
       description: |
         Returns i dettagli di una categoria specifica, incluso l'elenco dei progetti associati.
       operationId: getCategory
@@ -1553,9 +1553,9 @@ paths:
     put:
       tags:
         - Categories
-      summary: Update una categoria
+      summary: Update a category
       description: |
-        Aggiorna i dati di una categoria esistente.
+        Updates the data of an existing category.
       operationId: updateCategory
       parameters:
       - name: categoryId
@@ -1606,9 +1606,9 @@ paths:
     delete:
       tags:
         - Categories
-      summary: Delete una categoria
+      summary: Delete a category
       description: |
-        Elimina una categoria dal sistema.
+        Deletes a category from the system.
         
         **Attenzione:** Questa operazione è irreversibile. I progetti associati non verranno eliminati.
       operationId: deleteCategory
@@ -1649,7 +1649,7 @@ paths:
     get:
       tags:
         - Categories
-      summary: Get una categoria per nome
+      summary: Get a category by name
       description: |
         Returns i dettagli di una categoria cercandola per nome.
       operationId: getCategoryFromName
@@ -1712,12 +1712,12 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Get tutte le credenziali cloud
+      summary: Get all cloud credentials
       description: |
-        Returns la lista di tutte le credenziali cloud configurate in the sistema,
+        Returns the list of all cloud credentials configured in the system,
         con supporto per paginazione e filtri per provider.
         
-        Le credenziali cloud vengono utilizzate per accedere a servizi esterni come
+        Le credenziali cloud vengono utilizzate to access servizi esterni come
         AWS, Azure, GCP, ecc. durante l'esecuzione di job Spark.
       operationId: getAllCloudCredentials
       parameters:
@@ -1769,7 +1769,7 @@ paths:
         - Cloud Credentials
       summary: Create a new cloud credential
       description: |
-        Creates a new credenziale cloud per accedere a servizi cloud esterni.
+        Creates a new cloud credential to access external cloud services.
         
         Le credenziali vengono criptate e memorizzate in modo sicuro nel database.
       operationId: createCloudCredential
@@ -1809,7 +1809,7 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Get una credenziale cloud specifica
+      summary: Get a specific cloud credential
       description: |
         Returns i dettagli di una credenziale cloud specifica.
         
@@ -1851,9 +1851,9 @@ paths:
     put:
       tags:
         - Cloud Credentials
-      summary: Update una credenziale cloud
+      summary: Update a cloud credential
       description: |
-        Aggiorna i dati di una credenziale cloud esistente.
+        Updates the data of an existing cloud credential.
         
         Le nuove credenziali vengono criptate prima di essere salvate.
       operationId: updateCloudCredential
@@ -1908,7 +1908,7 @@ paths:
         - Cloud Credentials
       summary: Delete una credenziale cloud
       description: |
-        Elimina una credenziale cloud dal sistema.
+        Deletes a cloud credential from the system.
         
         **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa
         credenziale non potranno più accedere ai servizi cloud.
@@ -1952,7 +1952,7 @@ paths:
         - Cloud Credentials
       summary: Get le credenziali cloud per provider
       description: |
-        Returns la lista di tutte le credenziali cloud configurate per un provider specifico.
+        Returns the list of all cloud credentials configured for a specific provider.
       operationId: getCloudCredentialsByProvider
       parameters:
       - name: provider
@@ -1993,9 +1993,9 @@ paths:
     get:
       tags:
         - Datasets
-      summary: Get tutti i dataset
+      summary: Get all datasets
       description: |
-        Returns la lista di tutti i dataset disponibili in the sistema, con supporto per filtri.
+        Returns the list of all datasets available in the system, with support for filters.
         
         I dataset possono essere filtrati per tipo, formato e stato di indicizzazione.
       operationId: getAllDatasets_1
@@ -2044,7 +2044,7 @@ paths:
         - Datasets
       summary: Create a new dataset
       description: |
-        Creates a new dataset in the sistema con le configurazioni specificate.
+        Creates a new dataset in the system with the specified configurations.
         
         The dataset può essere associato a un progetto e utilizzato come input o output per job ETL.
       operationId: createDataset
@@ -2126,7 +2126,7 @@ paths:
         - Datasets
       summary: Update un dataset
       description: |
-        Aggiorna i dati di un dataset esistente, incluse configurazioni e metadati.
+        Updates the data of an existing dataset, including configurations and metadata.
       operationId: updateDataset
       parameters:
       - name: datasetId
@@ -2179,7 +2179,7 @@ paths:
         - Datasets
       summary: Delete un dataset
       description: |
-        Elimina un dataset dal sistema.
+        Deletes a dataset from the system.
         
         **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questo dataset
         come input o output potrebbero non funzionare correttamente.
@@ -2315,7 +2315,7 @@ paths:
         - Query
       summary: Get le colonne di una tabella
       description: |
-        Returns la lista of the colonne e i relativi tipi di una tabella in the catalogo Trino.
+        Returns the list of columns and their types of a table in the Trino catalog.
       operationId: getTableColumns
       parameters:
       - name: catalog
@@ -2378,7 +2378,7 @@ paths:
         - Query
       summary: List tutte le tabelle disponibili
       description: |
-        Returns la lista di tutte le tabelle disponibili in un catalogo e schema specifici.
+        Returns the list of all tables available in a specific catalog and schema.
       operationId: listTables
       parameters:
       - name: catalog
@@ -2486,7 +2486,7 @@ paths:
         - ETL Library
       summary: Get tutte le versioni della libreria ETL
       description: |
-        Returns la lista di tutte le versioni of the libreria ETL disponibili in the sistema,
+        Returns the list of all ETL library versions available in the system,
         con supporto per filtri per tipo di build e stato attivo.
       operationId: getAllVersions
       parameters:
@@ -3096,7 +3096,7 @@ paths:
         - Plugins
       summary: List tutti i plugin
       description: |
-        Returns la lista di tutti i plugin disponibili in the sistema, filtrati per tipo di build.
+        Returns la lista di tutti i plugin available in the system, filtrati per tipo di build.
       operationId: listPlugins
       parameters:
       - name: buildType
@@ -3244,7 +3244,7 @@ paths:
         - Plugins
       summary: Update un'installazione plugin
       description: |
-        Aggiorna i dati di un'installazione plugin esistente, incluse configurazioni e metadati.
+        Aggiorna i dati di un'installazione plugin esistente, including configurations and metadata.
       operationId: updateInstallation
       parameters:
       - name: id
@@ -3435,7 +3435,7 @@ paths:
         - Plugins
       summary: Get tutte le installazioni plugin
       description: |
-        Returns la lista di tutte le installazioni plugin disponibili in the sistema,
+        Returns la lista di tutte le installazioni plugin available in the system,
         con supporto per filtri per organizzazione e stato abilitato.
       operationId: getAllInstallations
       parameters:
@@ -3654,9 +3654,9 @@ paths:
         - Projects
       summary: Get tutti i progetti
       description: |
-        Returns la lista di tutti i progetti disponibili in the sistema.
+        Returns la lista di tutti i progetti available in the system.
         
-        I progetti sono utilizzati per organizzare job, task e dataset correlati.
+        I progetti sono utilizzati to organize job, task e dataset correlati.
       operationId: getAllProjects
       responses:
         '200':
@@ -4039,7 +4039,7 @@ paths:
         - Tasks
       summary: Update un task
       description: |
-        Aggiorna i dati di un task esistente, incluse configurazioni e metadati.
+        Aggiorna i dati di un task esistente, including configurations and metadata.
       operationId: updateTask
       parameters:
       - name: projectId
@@ -4514,7 +4514,7 @@ paths:
         - Jobs
       summary: Update un job
       description: |
-        Aggiorna i dati di un job esistente, incluse configurazioni e metadati.
+        Aggiorna i dati di un job esistente, including configurations and metadata.
       operationId: updateJob
       parameters:
       - name: projectId
@@ -5703,7 +5703,7 @@ paths:
         - Python Extensions
       summary: Update un'estensione Python
       description: |
-        Aggiorna i dati di un'estensione Python esistente, incluse configurazioni e metadati.
+        Aggiorna i dati di un'estensione Python esistente, including configurations and metadata.
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
