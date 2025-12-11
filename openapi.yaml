@@ -804,7 +804,7 @@ paths:
       description: |
         Calcola una stima of the costo per un job di training AI basato sui parametri specificati.
         
-        La stima include costi di compute, storage e altri servizi necessari.
+        The estimate includes compute, storage and other necessary service costs.
       operationId: estimateCost
       parameters:
       - name: provider
@@ -855,7 +855,7 @@ paths:
         - Models
       summary: Get i modelli supportati da un provider
       description: |
-        Returns la lista di tutti i modelli AI supportati dal provider specified,
+        Returns the list of all AI models supported by the specified provider,
         including information on versions, capabilities and requirements.
       operationId: getSupportedModels
       parameters:
@@ -893,7 +893,7 @@ paths:
         - AI Providers
       summary: Get list of supported AI providers
       description: |
-        Returns la lista di tutti i provider AI supportati dalla piattaforma,
+        Returns the list of all AI providers supported by the platform,
         including information on available capabilities and configurations.
       operationId: getSupportedProviders
       responses:
@@ -1022,7 +1022,7 @@ paths:
       description: |
         Pubblica un modello addestrato sulla piattaforma Hugging Face Model Hub.
         
-        The model deve essere stato addestrato e deve essere disponibile per la pubblicazione.
+        The model must have been trained and must be available for publication.
       operationId: publishModel
       requestBody:
         required: true
@@ -1108,7 +1108,7 @@ paths:
       description: |
         Carica un dataset da utilizzare for the training di modelli AI on the provider specified.
         
-        The dataset deve essere in un formato supportato dal provider.
+        The dataset must be in a format supported by the provider.
       operationId: uploadDataset
       parameters:
       - name: provider
@@ -1150,7 +1150,7 @@ paths:
         - Agents
       summary: Create a new PySpark agent
       description: |
-        Creates a new agente PySpark che può essere used per eseguire job ETL.
+        Creates a new PySpark agent that can be used to execute ETL jobs.
         
         An agent contains the PySpark code that is executed when a job is started.
         L'agente must be associated with aa categoria.
@@ -1195,8 +1195,8 @@ paths:
       description: |
         Elimina un agente PySpark dal sistema.
         
-        **Attenzione:** Questa operazione è irreversibile. Gli job che utilizzano questo agente
-        non potranno più essere eseguiti.
+        **Warning:** This operation is irreversible. Jobs that use this agent
+        will no longer be able to be executed.
       operationId: deleteAgent
       parameters:
       - name: agentId
@@ -1287,7 +1287,7 @@ paths:
         Aggiorna i dati di un agente PySpark esistente, incluso il codice sorgente.
         
         **Note:** L'aggiornamento del codice sorgente richiede che nessun job sia in esecuzione
-        con questo agente.
+        with this agent.
       operationId: updateAgent
       parameters:
       - name: categoryId
@@ -1400,7 +1400,7 @@ paths:
     get:
       tags:
         - Agents
-      summary: Get tutti gli agenti di una categoria
+      summary: Get all agents of a category
       description: |
         Returns la lista di tutti gli agenti PySpark appartenenti a una categoria specifica.
       operationId: getAllAgents
