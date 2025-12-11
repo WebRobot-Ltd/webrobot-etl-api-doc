@@ -800,9 +800,9 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Stima il costo di un job di training
+      summary: Estimate the cost of a training job
       description: |
-        Calcola una stima of the costo per un job di training AI basato sui parametri specificati.
+        Calculates a cost estimate for an AI training job based on the specified parameters.
         
         The estimate includes compute, storage and other necessary service costs.
       operationId: estimateCost
@@ -816,14 +816,14 @@ paths:
           example: "huggingface"
       requestBody:
         required: true
-        description: Parametri del job di training per la stima
+        description: Training job parameters for estimation
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TrainingRequestBean'
       responses:
         '200':
-          description: Stima del costo calcolata
+          description: Calculated cost estimate
           content:
             application/json:
               schema:
@@ -1018,9 +1018,9 @@ paths:
       tags:
         - AI Providers
         - Models
-      summary: Pubblica un modello su Hugging Face
+      summary: Publish a model to Hugging Face
       description: |
-        Pubblica un modello addestrato sulla piattaforma Hugging Face Model Hub.
+        Publishes a trained model to the Hugging Face Model Hub platform.
         
         The model must have been trained and must be available for publication.
       operationId: publishModel
@@ -1033,7 +1033,7 @@ paths:
               $ref: '#/components/schemas/ModelPublishRequest'
       responses:
         '200':
-          description: Modello pubblicato con successo
+          description: Model published successfully
           content:
             application/json:
               schema:
@@ -1153,7 +1153,7 @@ paths:
         Creates a new PySpark agent that can be used to execute ETL jobs.
         
         An agent contains the PySpark code that is executed when a job is started.
-        L'agente must be associated with aa categoria.
+        The agent must be associated with a category.
       operationId: createAgent
       requestBody:
         required: true
@@ -1191,9 +1191,9 @@ paths:
     delete:
       tags:
         - Agents
-      summary: Delete un agente
+      summary: Delete an agent
       description: |
-        Elimina un agente PySpark dal sistema.
+        Deletes a PySpark agent from the system.
         
         **Warning:** This operation is irreversible. Jobs that use this agent
         will no longer be able to be executed.
