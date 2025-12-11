@@ -219,7 +219,7 @@ paths:
       summary: Get Spark cluster information
       description: |
         Returns general information about the Spark cluster, including versions, configurations
-        e stato of the cluster.
+        e status of the cluster.
       operationId: getInfo
       responses:
         '200':
@@ -351,12 +351,12 @@ paths:
         Returns images with:
         - Full image URL
         - Base64 data (if requested)
-        - Similarity score (0.0 - 1.0)
+        - Similarity schours (0.0 - 1.0)
         - Additional metadata
         
         **Note:**
         - Images are searched in the most recent available dataset
-        - Results are sorted by descending score
+        - Results are sorted by descending schours
         - The `includeBase64` field in the request controls whether to include base64 data
       operationId: getImagesSimplified
       parameters:
@@ -437,10 +437,10 @@ paths:
                                 type: string
                                 nullable: true
                                 description: Base64 data of the image (if requested)
-                              score:
+                              schours:
                                 type: number
                                 format: float
-                                description: Similarity score (0.0 - 1.0)
+                                description: Similarity schours (0.0 - 1.0)
                                 example: 0.85
                               source:
                                 type: string
@@ -1059,7 +1059,7 @@ paths:
       description: |
         Starts a new job di training for a model AI utilizzando il provider specified.
         
-        The job is executed in the background and can be monitored through the status and logs endpoints.
+        The job is executed in the background and can be monithoursd through the status and logs endpoints.
       operationId: startTraining
       parameters:
       - name: provider
@@ -1286,7 +1286,7 @@ paths:
       description: |
         Updates the data of an existing PySpark agent, including the source code.
         
-        **Note:** L'aggiornamento del codice sorgente richiede che nessun job sia in esecuzione
+        **Note:** L'aggiornamento del codice sorgente richiede che nessun job sia running
         with this agent.
       operationId: updateAgent
       parameters:
@@ -1997,7 +1997,7 @@ paths:
       description: |
         Returns the list of all datasets available in the system, with support for filters.
         
-        I dataset can be filtrati per tipo, formato e stato di indicizzazione.
+        I dataset can be filtrati per tipo, formato e status di indicizzazione.
       operationId: getAllDatasets_1
       parameters:
       - name: type
@@ -2008,7 +2008,7 @@ paths:
           example: "parquet"
       - name: indexed
         in: query
-        description: Filtra per stato di indicizzazione (true/false)
+        description: Filtra per status di indicizzazione (true/false)
         schema:
           type: string
           example: "true"
@@ -2487,7 +2487,7 @@ paths:
       summary: Get all ETL library versions
       description: |
         Returns the list of all ETL library versions available in the system,
-        con supporto per filtri per tipo di build e stato attivo.
+        con supporto per filtri per tipo di build e status attivo.
       operationId: getAllVersions
       parameters:
       - name: buildType
@@ -2996,7 +2996,7 @@ paths:
       description: |
         Disable a plugin in the system per un tipo di build specifico.
         
-        I plugin disabilitati non saranno available for l'uso nethe jobs.
+        I plugin disabilitati non will be available for l'uso nethe jobs.
       operationId: disablePlugin
       parameters:
       - name: pluginId
@@ -3047,7 +3047,7 @@ paths:
       description: |
         Enable a plugin in the system per un tipo di build specifico.
         
-        I plugin abilitati saranno available for l'uso nethe jobs.
+        I plugin abilitati will be available for l'uso nethe jobs.
       operationId: enablePlugin
       parameters:
       - name: pluginId
@@ -3301,7 +3301,7 @@ paths:
       description: |
         Deletes a plugin installation from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. Il plugin non sarà più disponibile
+        **Attenzione:** Questa operazione è irreversibile. Il plugin non will be più disponibile
         per l'uso nethe jobs.
       operationId: deleteInstallation
       parameters:
@@ -3347,7 +3347,7 @@ paths:
       description: |
         Disable a plugin installation in the system.
         
-        I plugin disabilitati non saranno available for l'uso nethe jobs.
+        I plugin disabilitati non will be available for l'uso nethe jobs.
       operationId: disablePlugin_1
       parameters:
       - name: id
@@ -3392,7 +3392,7 @@ paths:
       description: |
         Enable a plugin installation in the system.
         
-        I plugin abilitati saranno available for l'uso nethe jobs.
+        I plugin abilitati will be available for l'uso nethe jobs.
       operationId: enablePlugin_1
       parameters:
       - name: id
@@ -3436,7 +3436,7 @@ paths:
       summary: Get all plugin installations
       description: |
         Returns the list of all plugin installations available in the system,
-        con supporto per filtri per organizzazione e stato abilitato.
+        con supporto per filtri per organizzazione e status abilitato.
       operationId: getAllInstallations
       parameters:
       - name: organizationId
@@ -3983,7 +3983,7 @@ paths:
         - Tasks
       summary: Get un task specifico
       description: |
-        Returns i dettagli di un task specifico, incluse configurazioni e stato di esecuzione.
+        Returns i dettagli di un task specifico, incluse configurazioni e status di esecuzione.
       operationId: getTask
       parameters:
       - name: projectId
@@ -4276,7 +4276,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Job già in esecuzione
+          description: Job già running
           content:
             application/json:
               schema:
@@ -4372,7 +4372,7 @@ paths:
         - Execution
       summary: Get lo status di un'esecuzione job
       description: |
-        Returns lo stato dettagliato di un'esecuzione job Spark, incluse informazioni su
+        Returns lo status dettagliato di un'esecuzione job Spark, incluse informazioni su
         progresso, durata, metriche e eventuali errori.
         
         Lo status viene recuperato dal database e include dettagli come:
@@ -4381,7 +4381,7 @@ paths:
         - Tempo di esecuzione
         - URL Spark UI
         - Numero di executor pod
-        - Messaggi di errore (se fallito)
+        - Messaggi di error (se fallito)
       operationId: getExecutionStatus
       parameters:
       - name: projectId
@@ -4466,7 +4466,7 @@ paths:
         - Jobs
       summary: Get un job specifico
       description: |
-        Returns i dettagli of a job ETL specifico, incluse configurazioni e stato di esecuzione.
+        Returns i dettagli of a job ETL specifico, incluse configurazioni e status di esecuzione.
       operationId: getJob
       parameters:
       - name: projectId
@@ -4767,7 +4767,7 @@ paths:
         - Tasks
       summary: Get lo status di un task
       description: |
-        Returns lo stato attuale di un task, incluse informazioni su esecuzione e progresso.
+        Returns lo status attuale di un task, incluse informazioni su esecuzione e progresso.
       operationId: getTaskStatus
       parameters:
       - name: projectId
@@ -4933,7 +4933,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Task già in esecuzione
+          description: Task già running
           content:
             application/json:
               schema:
@@ -4958,9 +4958,9 @@ paths:
         - Tasks
       summary: Stop a task
       description: |
-        Ferma l'esecuzione di un task in corso.
+        Ferma l'esecuzione di un task in progress.
         
-        **Attenzione:** Questa operazione può interrompere un task in esecuzione, causando
+        **Attenzione:** Questa operazione può interrompere un task running, causando
         potenziali perdite dthe data o inconsistenza.
       operationId: stopTask
       parameters:
@@ -4999,7 +4999,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Task non in esecuzione
+          description: Task non running
           content:
             application/json:
               schema:
@@ -5272,7 +5272,7 @@ paths:
                       runningCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni in corso
+                        description: Numero di esecuzioni in progress
         '404':
           description: Progetto o job non trovato
           content:
@@ -5417,7 +5417,7 @@ paths:
                       runningCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni in corso
+                        description: Numero di esecuzioni in progress
                   jobs:
                     type: array
                     description: Metriche aggregate per ognthe jobs del progetto
@@ -5466,28 +5466,28 @@ paths:
         - Tasks
       summary: Mark zombie tasks as FAILED
       description: |
-        Rileva e marca automatically come FAILED the tasks che risultano RUNNING ma sono in esecuzione
-        da più tempo of the timeout specified (task "zombie").
+        Detects and marks automatically come FAILED the tasks that are RUNNING but are running
+        for longer of the timeout specified (task "zombie").
         
         Un task è considerato "zombie" se:
         - Ha status RUNNING
-        - È in esecuzione da più tempo del timeout specificato (default: 24 ore)
+        - È running da longer than the timeout specificato (default: 24 hours)
         - Il timestamp di `startedAt` (o `scheduledTime` come fallback) supera il timeout
         
         Quando un task viene marcato come zombie:
         - Lo status viene aggiornato a FAILED
-        - L'executionLog viene aggiornato con status FAILED, completedAt e un messaggio di errore
+        - L'executionLog viene aggiornato con status FAILED, completedAt e un message di error
         - Viene calcolata la durata totale dell'esecuzione
         
-        **Nota:** Questo endpoint richiede privilegi di amministratore (scope `admin`).
+        **Nota:** Questo endpoint richiede privilegi di amministrathours (scope `admin`).
       operationId: markZombieTasks
       parameters:
       - name: timeoutHours
         in: query
         required: false
         description: |
-          Timeout in ore per considerare un task come "zombie" (default: 24).
-          I task RUNNING da più tempo di questo valore verranno marcati come FAILED.
+          Timeout in hours per considerare un task come "zombie" (default: 24).
+          I task RUNNING for longer di questo value verranno marcati come FAILED.
         schema:
           type: integer
           format: int64
@@ -5514,7 +5514,7 @@ paths:
                   timeoutHours:
                     type: integer
                     format: int64
-                    description: Timeout utilizzato (in ore)
+                    description: Timeout utilizzato (in hours)
                   message:
                     type: string
                     description: Messaggio di conferma
@@ -6201,16 +6201,16 @@ components:
       properties:
         error:
           type: string
-          description: Messaggio di errore descrittivo
+          description: Messaggio di error descrittivo
           example: "Job not found or invalid configuration"
         code:
           type: integer
-          description: Codice di stato HTTP
+          description: Codice di status HTTP
           example: 400
         timestamp:
           type: string
           format: date-time
-          description: Timestamp dell'errore
+          description: Timestamp dell'error
           example: "2025-12-10T23:15:30Z"
     CronJobRequest:
       type: object
