@@ -918,7 +918,7 @@ paths:
         - Training
       summary: Get logs of a training job
       description: |
-        Returns i log di esecuzione di un job di training AI.
+        Returns i log di esecuzione of a job di training AI.
         
         The logs include informazioni su progresso, errori e metriche of training.
       operationId: getTrainingLogs
@@ -1243,20 +1243,20 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID della categoria a cui appartiene l'agente
+        description: ID delthe category a cui appartiene the agent
         schema:
           type: string
           example: "1"
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agente
+        description: Unique ID delthe agent
         schema:
           type: string
           example: "123"
       responses:
         '200':
-          description: Dettagli dell'agente
+          description: Dettagli delthe agent
           content:
             application/json:
               schema:
@@ -1293,7 +1293,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID della categoria a cui appartiene l'agente
+        description: ID delthe category a cui appartiene the agent
         schema:
           type: string
           example: "1"
@@ -1354,13 +1354,13 @@ paths:
         - Agents
       summary: Get an agent by name
       description: |
-        Returns i dettagli di un agente PySpark cercandolo per nome all'interno di una categoria.
+        Returns i dettagli di un agente PySpark cercandolo per nome all'interno of a category.
       operationId: getAgentFromName
       parameters:
       - name: categoryId
         in: path
         required: true
-        description: ID della categoria
+        description: ID delthe category
         schema:
           type: string
           example: "1"
@@ -1373,7 +1373,7 @@ paths:
           example: "my-agent"
       responses:
         '200':
-          description: Dettagli dell'agente
+          description: Dettagli delthe agent
           content:
             application/json:
               schema:
@@ -1408,13 +1408,13 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID della categoria
+        description: ID delthe category
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Lista degli agenti della categoria
+          description: Lista dethe agents delthe category
           content:
             application/json:
               schema:
@@ -1515,19 +1515,19 @@ paths:
         - Categories
       summary: Get a specific category
       description: |
-        Returns i dettagli di una categoria specifica, incluso l'elenco dei progetti associati.
+        Returns i dettagli of a category specifica, incluso l'elenco dethe projects associati.
       operationId: getCategory
       parameters:
       - name: categoryId
         in: path
         required: true
-        description: Unique ID della categoria
+        description: Unique ID delthe category
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Dettagli della categoria
+          description: Dettagli delthe category
           content:
             application/json:
               schema:
@@ -1567,7 +1567,7 @@ paths:
           example: "1"
       requestBody:
         required: true
-        description: Dati aggiornati della categoria
+        description: Dati aggiornati delthe category
         content:
           application/json:
             schema:
@@ -1651,7 +1651,7 @@ paths:
         - Categories
       summary: Get a category by name
       description: |
-        Returns i dettagli di una categoria cercandola per nome.
+        Returns i dettagli of a category cercandola per nome.
       operationId: getCategoryFromName
       parameters:
       - name: categoryName
@@ -1663,7 +1663,7 @@ paths:
           example: "my-category"
       responses:
         '200':
-          description: Dettagli della categoria
+          description: Dettagli delthe category
           content:
             application/json:
               schema:
@@ -1718,7 +1718,7 @@ paths:
         con supporto per paginazione e filtri per provider.
         
         Le credenziali cloud vengono utilizzate to access servizi esterni come
-        AWS, Azure, GCP, ecc. durante l'esecuzione di job Spark.
+        AWS, Azure, GCP, ecc. durante l'esecuzione dthe jobs Spark.
       operationId: getAllCloudCredentials
       parameters:
       - name: provider
@@ -1745,7 +1745,7 @@ paths:
           example: 50
       responses:
         '200':
-          description: Lista delle credenziali cloud
+          description: Lista delthe credentials cloud
           content:
             application/json:
               schema:
@@ -1950,7 +1950,7 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Get le credenziali cloud per provider
+      summary: Get the credentials cloud per provider
       description: |
         Returns the list of all cloud credentials configured for a specific provider.
       operationId: getCloudCredentialsByProvider
@@ -1964,7 +1964,7 @@ paths:
           example: "aws"
       responses:
         '200':
-          description: Lista delle credenziali for the provider
+          description: Lista delthe credentials for the provider
           content:
             application/json:
               schema:
@@ -1997,7 +1997,7 @@ paths:
       description: |
         Returns the list of all datasets available in the system, with support for filters.
         
-        I dataset possono essere filtrati per tipo, formato e stato di indicizzazione.
+        I dataset can be filtrati per tipo, formato e stato di indicizzazione.
       operationId: getAllDatasets_1
       parameters:
       - name: type
@@ -2046,7 +2046,7 @@ paths:
       description: |
         Creates a new dataset in the system with the specified configurations.
         
-        The dataset può essere associato a un progetto e utilizzato come input o output per job ETL.
+        The dataset can be associated with un progetto e utilizzato come input o output per job ETL.
       operationId: createDataset
       requestBody:
         required: true
@@ -2224,7 +2224,7 @@ paths:
         - Query
       summary: Executes a query SQL su un dataset
       description: |
-        Executes a query SQL (Presto/Trino) su un dataset per recuperare o analizzare i dati.
+        Executes a query SQL (Presto/Trino) su un dataset per recuperare o analizzare the data.
         
         The query is executed on the MinIO catalog and can use all SQL features supported by Trino.
       operationId: executeQuery
@@ -2620,7 +2620,7 @@ paths:
         - ETL Library
       summary: Update una versione ETL
       description: |
-        Aggiorna i dati di una versione of the libreria ETL esistente.
+        Aggiorna the data di una versione of the libreria ETL esistente.
       operationId: updateVersion
       parameters:
       - name: id
@@ -2771,7 +2771,7 @@ paths:
         - Package
       summary: Get URL for package download
       description: |
-        Returns un URL temporaneo per scaricare un package di progetti e configurazioni.
+        Returns un URL temporaneo per scaricare un package dthe projects e configurazioni.
       operationId: getUrlDownload
       responses:
         '200':
@@ -2803,7 +2803,7 @@ paths:
         - Package
       summary: Get URL for package upload
       description: |
-        Returns un URL temporaneo per caricare un package di progetti e configurazioni.
+        Returns un URL temporaneo per caricare un package dthe projects e configurazioni.
       operationId: getUrlUpload
       responses:
         '200':
@@ -2946,7 +2946,7 @@ paths:
         - Package
       summary: Start import of a specific project
       description: |
-        Starts the process di import di un progetto specifico and its configurations da un package compresso.
+        Starts the process di import of a project specifico and its configurations da un package compresso.
         
         **Attenzione:** Questa operazione può sovrascrivere il progetto esistente se presente.
       operationId: start_import_project
@@ -2996,7 +2996,7 @@ paths:
       description: |
         Disable a plugin in the system per un tipo di build specifico.
         
-        I plugin disabilitati non saranno disponibili per l'uso nei job.
+        I plugin disabilitati non saranno available for l'uso nethe jobs.
       operationId: disablePlugin
       parameters:
       - name: pluginId
@@ -3047,7 +3047,7 @@ paths:
       description: |
         Enable a plugin in the system per un tipo di build specifico.
         
-        I plugin abilitati saranno disponibili per l'uso nei job.
+        I plugin abilitati saranno available for l'uso nethe jobs.
       operationId: enablePlugin
       parameters:
       - name: pluginId
@@ -3108,7 +3108,7 @@ paths:
           example: "development"
       responses:
         '200':
-          description: Lista dei plugin
+          description: Lista dethe plugins
           content:
             application/json:
               schema:
@@ -3136,7 +3136,7 @@ paths:
       description: |
         Uploads a new plugin to the system as a JAR file.
         
-        Il plugin può essere associato a una o più organizzazioni e a un tipo di build specifico.
+        Il plugin can be associated with una o più organizzazioni e a un tipo di build specifico.
       operationId: uploadPlugin
       requestBody:
         required: true
@@ -3244,7 +3244,7 @@ paths:
         - Plugins
       summary: Update un'installazione plugin
       description: |
-        Aggiorna i dati di un'installazione plugin esistente, including configurations and metadata.
+        Aggiorna the data di un'installazione plugin esistente, including configurations and metadata.
       operationId: updateInstallation
       parameters:
       - name: id
@@ -3302,7 +3302,7 @@ paths:
         Deletes a plugin installation from the system.
         
         **Attenzione:** Questa operazione è irreversibile. Il plugin non sarà più disponibile
-        per l'uso nei job.
+        per l'uso nethe jobs.
       operationId: deleteInstallation
       parameters:
       - name: id
@@ -3347,7 +3347,7 @@ paths:
       description: |
         Disable a plugin installation in the system.
         
-        I plugin disabilitati non saranno disponibili per l'uso nei job.
+        I plugin disabilitati non saranno available for l'uso nethe jobs.
       operationId: disablePlugin_1
       parameters:
       - name: id
@@ -3392,7 +3392,7 @@ paths:
       description: |
         Enable a plugin installation in the system.
         
-        I plugin abilitati saranno disponibili per l'uso nei job.
+        I plugin abilitati saranno available for l'uso nethe jobs.
       operationId: enablePlugin_1
       parameters:
       - name: id
@@ -3447,13 +3447,13 @@ paths:
           example: "1"
       - name: enabledOnly
         in: query
-        description: Restituisce solo le installazioni abilitate
+        description: Restituisce solo the installations abilitate
         schema:
           type: boolean
           default: false
       responses:
         '200':
-          description: Lista delle installazioni plugin
+          description: Lista delle installazionthe plugins
           content:
             application/json:
               schema:
@@ -3480,7 +3480,7 @@ paths:
       description: |
         Register a new plugin in the system come installazione.
         
-        Il plugin può essere associato a una o più organizzazioni.
+        Il plugin can be associated with una o più organizzazioni.
       operationId: registerPlugin
       requestBody:
         required: true
@@ -3567,7 +3567,7 @@ paths:
           example: "98"
       responses:
         '200':
-          description: Lista dei job del progetto
+          description: Lista dethe jobs del progetto
           content:
             application/json:
               schema:
@@ -3660,7 +3660,7 @@ paths:
       operationId: getAllProjects
       responses:
         '200':
-          description: Lista dei progetti
+          description: Lista dethe projects
           content:
             application/json:
               schema:
@@ -3686,7 +3686,7 @@ paths:
       description: |
         Creates a new progetto in the system.
         
-        Un progetto può contenere più job ETL e può essere schedulato per esecuzione automatica.
+        Un progetto può contenere più job ETL e can be schedulato per esecuzione automatica.
       operationId: createProject
       requestBody:
         required: true
@@ -3749,7 +3749,7 @@ paths:
           example: "210"
       responses:
         '200':
-          description: Lista dei task del job
+          description: Lista dethe tasks del job
           content:
             application/json:
               schema:
@@ -3783,7 +3783,7 @@ paths:
       description: |
         Creates a new task e lo associa a un job esistente.
         
-        Un task può essere di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        Un task can be di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: createTask
       parameters:
       - name: projectId
@@ -3844,7 +3844,7 @@ paths:
         - Projects
       summary: Get un progetto specifico
       description: |
-        Returns i dettagli di un progetto specifico, incluso l'elenco dei job associati.
+        Returns i dettagli of a project specifico, incluso l'elenco dethe jobs associati.
       operationId: getProject
       parameters:
       - name: projectId
@@ -3884,7 +3884,7 @@ paths:
         - Projects
       summary: Update un progetto
       description: |
-        Aggiorna i dati di un progetto esistente, including configurations and scheduling.
+        Aggiorna the data of a project esistente, including configurations and scheduling.
       operationId: updateProject
       parameters:
       - name: projectId
@@ -4039,7 +4039,7 @@ paths:
         - Tasks
       summary: Update un task
       description: |
-        Aggiorna i dati di un task esistente, including configurations and metadata.
+        Aggiorna the data di un task esistente, including configurations and metadata.
       operationId: updateTask
       parameters:
       - name: projectId
@@ -4108,7 +4108,7 @@ paths:
         - Tasks
       summary: Delete un task
       description: |
-        Elimina un task da un job.
+        Elimina un task from a job.
         
         **Attenzione:** Questa operazione è irreversibile. Il task verrà rimosso dal job.
       operationId: deleteTask
@@ -4295,7 +4295,7 @@ paths:
         - Execution
       summary: Get i log di un'esecuzione job
       description: |
-        Returns i log di esecuzione di un job Spark specifico, con supporto per filtri
+        Returns i log di esecuzione of a job Spark specifico, con supporto per filtri
         per tipo di pod (driver/executor) e limitazione of the numero di righe.
       operationId: getExecutionLogs
       parameters:
@@ -4466,7 +4466,7 @@ paths:
         - Jobs
       summary: Get un job specifico
       description: |
-        Returns i dettagli di un job ETL specifico, incluse configurazioni e stato di esecuzione.
+        Returns i dettagli of a job ETL specifico, incluse configurazioni e stato di esecuzione.
       operationId: getJob
       parameters:
       - name: projectId
@@ -4514,7 +4514,7 @@ paths:
         - Jobs
       summary: Update un job
       description: |
-        Aggiorna i dati di un job esistente, including configurations and metadata.
+        Aggiorna the data of a job esistente, including configurations and metadata.
       operationId: updateJob
       parameters:
       - name: projectId
@@ -4625,7 +4625,7 @@ paths:
         - Projects
       summary: Get un progetto per nome
       description: |
-        Returns i dettagli di un progetto cercandolo per nome.
+        Returns i dettagli of a project cercandolo per nome.
       operationId: getProjectFromName
       parameters:
       - name: projectName
@@ -4665,10 +4665,10 @@ paths:
       tags:
         - Projects
         - Scheduler
-      summary: Get la schedulazione di un progetto
+      summary: Get la schedulazione of a project
       description: |
-        Returns la configurazione di schedulazione di un progetto, incluse informazioni
-        su quando e come viene eseguito automatically.
+        Returns la configurazione di schedulazione of a project, incluse informazioni
+        su quando e come is executed automatically.
       operationId: getProjectSchedule
       parameters:
       - name: projectId
@@ -4709,7 +4709,7 @@ paths:
         - Scheduler
       summary: Set project schedule
       description: |
-        Imposta o aggiorna la schedulazione di un progetto per esecuzione automatica.
+        Imposta o aggiorna la schedulazione of a project per esecuzione automatica.
         
         La schedulazione utilizza cron expressions per definire quando eseguire il progetto.
       operationId: setProjectSchedule
@@ -4895,7 +4895,7 @@ paths:
       description: |
         Avvia l'esecuzione di un task specifico.
         
-        Il task deve essere di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        Il task must be di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: startTask
       parameters:
       - name: projectId
@@ -4961,7 +4961,7 @@ paths:
         Ferma l'esecuzione di un task in corso.
         
         **Attenzione:** Questa operazione può interrompere un task in esecuzione, causando
-        potenziali perdite di dati o inconsistenza.
+        potenziali perdite dthe data o inconsistenza.
       operationId: stopTask
       parameters:
       - name: projectId
@@ -5145,7 +5145,7 @@ paths:
         - Projects
         - Jobs
         - Metrics
-      summary: Get le metriche aggregate di un job
+      summary: Get le metriche aggregate of a job
       description: |
         Returns the aggregated metrics of all executions of a job, including sums, averages
         e conteggi per status.
@@ -5296,7 +5296,7 @@ paths:
       tags:
         - Projects
         - Metrics
-      summary: Get le metriche aggregate di un progetto
+      summary: Get le metriche aggregate of a project
       description: |
         Returns the aggregated metrics of all executions of all jobs of a project,
         incluse somme, medie e conteggi per status.
@@ -5420,7 +5420,7 @@ paths:
                         description: Numero di esecuzioni in corso
                   jobs:
                     type: array
-                    description: Metriche aggregate per ogni job del progetto
+                    description: Metriche aggregate per ognthe jobs del progetto
                     items:
                       type: object
                       properties:
@@ -5466,7 +5466,7 @@ paths:
         - Tasks
       summary: Mark zombie tasks as FAILED
       description: |
-        Rileva e marca automatically come FAILED i task che risultano RUNNING ma sono in esecuzione
+        Rileva e marca automatically come FAILED the tasks che risultano RUNNING ma sono in esecuzione
         da più tempo of the timeout specified (task "zombie").
         
         Un task è considerato "zombie" se:
@@ -5504,10 +5504,10 @@ paths:
                   markedCount:
                     type: integer
                     format: int64
-                    description: Numero di task marcati come FAILED
+                    description: Numero dthe tasks marcati come FAILED
                   markedTaskIds:
                     type: array
-                    description: Lista degli ID dei task marcati come FAILED
+                    description: Lista degli ID dethe tasks marcati come FAILED
                     items:
                       type: integer
                       format: int64
@@ -5537,7 +5537,7 @@ paths:
         - Projects
       summary: Test endpoint for projects
       description: |
-        Endpoint di test per verificare la connettività e l'autenticazione dell'API progetti.
+        Endpoint di test per verificare la connettività e l'autenticazione delthe API progetti.
       operationId: test_1
       responses:
         '200':
@@ -5703,7 +5703,7 @@ paths:
         - Python Extensions
       summary: Update un'estensione Python
       description: |
-        Aggiorna i dati di un'estensione Python esistente, including configurations and metadata.
+        Aggiorna the data di un'estensione Python esistente, including configurations and metadata.
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
@@ -5804,7 +5804,7 @@ paths:
       description: |
         Generate PySpark code from an extension Python registrata in the system.
         
-        Utile per convertire estensioni Python in codice PySpark utilizzabile nei job Spark.
+        Utile per convertire estensioni Python in codice PySpark utilizzabile nethe jobs Spark.
       operationId: generatePysparkCode
       parameters:
       - name: extensionId
@@ -5850,7 +5850,7 @@ paths:
         - Agents
       summary: Get le estensioni di un agent
       description: |
-        Returns la lista of all estensioni Python associate a un agent specifico.
+        Returns the list of all estensioni Python associate a un agent specifico.
       operationId: getAgentExtensions
       parameters:
       - name: agentId
@@ -5894,7 +5894,7 @@ paths:
         - Agents
       summary: Get le estensioni Python di un agent
       description: |
-        Returns la lista of all estensioni Python associate a un agent specifico.
+        Returns the list of all estensioni Python associate a un agent specifico.
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
@@ -5937,7 +5937,7 @@ paths:
         - Agents
       summary: Update le estensioni Python di un agent
       description: |
-        Aggiorna la lista di estensioni Python associate a un agent specifico.
+        Aggiorna the list di estensioni Python associate a un agent specifico.
       operationId: updateAgentPythonExtensions
       parameters:
       - name: agentId
@@ -6021,7 +6021,7 @@ paths:
         - Python Extensions
       summary: Get i tipi di estensione supportati
       description: |
-        Returns la lista of all tipi di estensione Python supportati from the system.
+        Returns the list of all tipi di estensione Python supportati from the system.
       operationId: getSupportedExtensionTypes
       responses:
         '200':
@@ -6096,7 +6096,7 @@ paths:
       description: |
         Registra una nuova estensione Python in the system.
         
-        L'estensione può essere utilizzata dagli agent per estendere le funzionalità dei job Spark.
+        L'estensione can be utilizzata dagli agent per estendere le funzionalità dethe jobs Spark.
       operationId: registerPythonExtension
       requestBody:
         required: true
