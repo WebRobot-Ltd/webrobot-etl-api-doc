@@ -5016,6 +5016,521 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/metrics:
+    get:
+      tags:
+        - Projects
+        - Jobs
+        - Tasks
+        - Metrics
+      summary: Ottiene le metriche di un task
+      description: |
+        Restituisce le metriche dettagliate di un task specifico, incluse durata, record processati,
+        utilizzo memoria, CPU e altre metriche di performance.
+        
+        Le metriche vengono estratte dall'executionLog del task e includono informazioni su:
+        - Durata dell'esecuzione
+        - Record processati e output
+        - Utilizzo memoria (driver ed executor)
+        - Utilizzo CPU
+        - Conteggio errori e warning
+        - Dimensione file di output
+      operationId: getTaskMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        description: ID univoco del progetto
+        schema:
+          type: string
+          example: "98"
+      - name: jobId
+        in: path
+        required: true
+        description: ID univoco del job
+        schema:
+          type: string
+          example: "220"
+      - name: taskId
+        in: path
+        required: true
+        description: ID univoco del task
+        schema:
+          type: string
+          example: "229"
+      responses:
+        '200':
+          description: Metriche del task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: integer
+                    format: int64
+                    description: ID del task
+                  durationSeconds:
+                    type: integer
+                    format: int64
+                    description: Durata dell'esecuzione in secondi
+                  recordsProcessed:
+                    type: integer
+                    format: int64
+                    description: Numero di record processati
+                  recordsOutput:
+                    type: integer
+                    format: int64
+                    description: Numero di record in output
+                  outputFileSizeBytes:
+                    type: integer
+                    format: int64
+                    description: Dimensione del file di output in bytes
+                  driverMemoryUsedBytes:
+                    type: integer
+                    format: int64
+                    description: Memoria utilizzata dal driver in bytes
+                  executorMemoryUsedBytes:
+                    type: integer
+                    format: int64
+                    description: Memoria utilizzata dagli executor in bytes
+                  executorCount:
+                    type: integer
+                    format: int32
+                    description: Numero di executor utilizzati
+                  totalCpuTimeSeconds:
+                    type: integer
+                    format: int64
+                    description: Tempo totale CPU utilizzato in secondi
+                  errorCount:
+                    type: integer
+                    format: int32
+                    description: Numero di errori durante l'esecuzione
+                  warningCount:
+                    type: integer
+                    format: int32
+                    description: Numero di warning durante l'esecuzione
+                  status:
+                    type: string
+                    description: Status finale del task
+                  startedAt:
+                    type: string
+                    format: date-time
+                    description: Timestamp di inizio esecuzione
+                  completedAt:
+                    type: string
+                    format: date-time
+                    description: Timestamp di completamento esecuzione
+        '404':
+          description: Progetto, job o task non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/metrics:
+    get:
+      tags:
+        - Projects
+        - Jobs
+        - Metrics
+      summary: Ottiene le metriche aggregate di un job
+      description: |
+        Restituisce le metriche aggregate di tutte le esecuzioni di un job, incluse somme, medie
+        e conteggi per status.
+        
+        Le metriche vengono calcolate a livello database per performance ottimali e includono:
+        - Numero totale di esecuzioni
+        - Durata totale e media
+        - Record processati e output totali
+        - Utilizzo memoria totale
+        - Conteggio esecuzioni per status (COMPLETED, FAILED, RUNNING)
+        
+        È possibile filtrare le metriche per periodo utilizzando i parametri `startTime` e `endTime`.
+      operationId: getJobMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        description: ID univoco del progetto
+        schema:
+          type: string
+          example: "98"
+      - name: jobId
+        in: path
+        required: true
+        description: ID univoco del job
+        schema:
+          type: string
+          example: "220"
+      - name: startTime
+        in: query
+        required: false
+        description: |
+          Timestamp di inizio per filtrare le esecuzioni (formato ISO 8601).
+          Esempio: "2025-12-11T00:00:00Z"
+        schema:
+          type: string
+          format: date-time
+          example: "2025-12-11T00:00:00Z"
+      - name: endTime
+        in: query
+        required: false
+        description: |
+          Timestamp di fine per filtrare le esecuzioni (formato ISO 8601).
+          Esempio: "2025-12-11T23:59:59Z"
+        schema:
+          type: string
+          format: date-time
+          example: "2025-12-11T23:59:59Z"
+      responses:
+        '200':
+          description: Metriche aggregate del job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: integer
+                    format: int64
+                    description: ID del job
+                  startTime:
+                    type: string
+                    format: date-time
+                    description: Timestamp di inizio filtro (se specificato)
+                  endTime:
+                    type: string
+                    format: date-time
+                    description: Timestamp di fine filtro (se specificato)
+                  aggregated:
+                    type: object
+                    properties:
+                      totalExecutions:
+                        type: integer
+                        format: int64
+                        description: Numero totale di esecuzioni
+                      totalDurationSeconds:
+                        type: integer
+                        format: int64
+                        description: Durata totale in secondi
+                      averageDurationSeconds:
+                        type: number
+                        format: double
+                        description: Durata media in secondi
+                      totalRecordsProcessed:
+                        type: integer
+                        format: int64
+                        description: Totale record processati
+                      totalRecordsOutput:
+                        type: integer
+                        format: int64
+                        description: Totale record in output
+                      totalOutputFileSizeBytes:
+                        type: integer
+                        format: int64
+                        description: Dimensione totale file di output in bytes
+                      totalDriverMemoryUsedBytes:
+                        type: integer
+                        format: int64
+                        description: Memoria totale utilizzata dal driver in bytes
+                      totalExecutorMemoryUsedBytes:
+                        type: integer
+                        format: int64
+                        description: Memoria totale utilizzata dagli executor in bytes
+                      totalCpuTimeSeconds:
+                        type: integer
+                        format: int64
+                        description: Tempo totale CPU utilizzato in secondi
+                      totalErrorCount:
+                        type: integer
+                        format: int64
+                        description: Totale errori
+                      totalWarningCount:
+                        type: integer
+                        format: int64
+                        description: Totale warning
+                      completedCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni completate con successo
+                      failedCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni fallite
+                      runningCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni in corso
+        '404':
+          description: Progetto o job non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `jobs:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webrobot/api/projects/id/{projectId}/metrics:
+    get:
+      tags:
+        - Projects
+        - Metrics
+      summary: Ottiene le metriche aggregate di un progetto
+      description: |
+        Restituisce le metriche aggregate di tutte le esecuzioni di tutti i job di un progetto,
+        incluse somme, medie e conteggi per status.
+        
+        Le metriche vengono calcolate a livello database per performance ottimali e includono:
+        - Numero totale di esecuzioni per progetto
+        - Durata totale e media
+        - Record processati e output totali
+        - Utilizzo memoria totale
+        - Conteggio esecuzioni per status (COMPLETED, FAILED, RUNNING)
+        - Raggruppamento per job con metriche per singolo job
+        
+        È possibile filtrare le metriche per periodo utilizzando i parametri `startTime` e `endTime`.
+      operationId: getProjectMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        description: ID univoco del progetto
+        schema:
+          type: string
+          example: "98"
+      - name: startTime
+        in: query
+        required: false
+        description: |
+          Timestamp di inizio per filtrare le esecuzioni (formato ISO 8601).
+          Esempio: "2025-12-11T00:00:00Z"
+        schema:
+          type: string
+          format: date-time
+          example: "2025-12-11T00:00:00Z"
+      - name: endTime
+        in: query
+        required: false
+        description: |
+          Timestamp di fine per filtrare le esecuzioni (formato ISO 8601).
+          Esempio: "2025-12-11T23:59:59Z"
+        schema:
+          type: string
+          format: date-time
+          example: "2025-12-11T23:59:59Z"
+      responses:
+        '200':
+          description: Metriche aggregate del progetto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: integer
+                    format: int64
+                    description: ID del progetto
+                  startTime:
+                    type: string
+                    format: date-time
+                    description: Timestamp di inizio filtro (se specificato)
+                  endTime:
+                    type: string
+                    format: date-time
+                    description: Timestamp di fine filtro (se specificato)
+                  aggregated:
+                    type: object
+                    properties:
+                      totalExecutions:
+                        type: integer
+                        format: int64
+                        description: Numero totale di esecuzioni nel progetto
+                      totalDurationSeconds:
+                        type: integer
+                        format: int64
+                        description: Durata totale in secondi
+                      averageDurationSeconds:
+                        type: number
+                        format: double
+                        description: Durata media in secondi
+                      totalRecordsProcessed:
+                        type: integer
+                        format: int64
+                        description: Totale record processati
+                      totalRecordsOutput:
+                        type: integer
+                        format: int64
+                        description: Totale record in output
+                      totalOutputFileSizeBytes:
+                        type: integer
+                        format: int64
+                        description: Dimensione totale file di output in bytes
+                      totalDriverMemoryUsedBytes:
+                        type: integer
+                        format: int64
+                        description: Memoria totale utilizzata dal driver in bytes
+                      totalExecutorMemoryUsedBytes:
+                        type: integer
+                        format: int64
+                        description: Memoria totale utilizzata dagli executor in bytes
+                      totalCpuTimeSeconds:
+                        type: integer
+                        format: int64
+                        description: Tempo totale CPU utilizzato in secondi
+                      totalErrorCount:
+                        type: integer
+                        format: int64
+                        description: Totale errori
+                      totalWarningCount:
+                        type: integer
+                        format: int64
+                        description: Totale warning
+                      completedCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni completate con successo
+                      failedCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni fallite
+                      runningCount:
+                        type: integer
+                        format: int64
+                        description: Numero di esecuzioni in corso
+                  jobs:
+                    type: array
+                    description: Metriche aggregate per ogni job del progetto
+                    items:
+                      type: object
+                      properties:
+                        jobId:
+                          type: integer
+                          format: int64
+                          description: ID del job
+                        executionCount:
+                          type: integer
+                          format: int64
+                          description: Numero di esecuzioni del job
+                        totalDurationSeconds:
+                          type: integer
+                          format: int64
+                          description: Durata totale del job in secondi
+                        totalRecordsProcessed:
+                          type: integer
+                          format: int64
+                          description: Totale record processati dal job
+        '404':
+          description: Progetto non trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorizzato - scope `projects:read` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /webrobot/api/projects/admin/tasks/mark-zombies:
+    post:
+      tags:
+        - Projects
+        - Admin
+        - Tasks
+      summary: Marca i task zombie come FAILED
+      description: |
+        Rileva e marca automaticamente come FAILED i task che risultano RUNNING ma sono in esecuzione
+        da più tempo del timeout specificato (task "zombie").
+        
+        Un task è considerato "zombie" se:
+        - Ha status RUNNING
+        - È in esecuzione da più tempo del timeout specificato (default: 24 ore)
+        - Il timestamp di `startedAt` (o `scheduledTime` come fallback) supera il timeout
+        
+        Quando un task viene marcato come zombie:
+        - Lo status viene aggiornato a FAILED
+        - L'executionLog viene aggiornato con status FAILED, completedAt e un messaggio di errore
+        - Viene calcolata la durata totale dell'esecuzione
+        
+        **Nota:** Questo endpoint richiede privilegi di amministratore (scope `admin`).
+      operationId: markZombieTasks
+      parameters:
+      - name: timeoutHours
+        in: query
+        required: false
+        description: |
+          Timeout in ore per considerare un task come "zombie" (default: 24).
+          I task RUNNING da più tempo di questo valore verranno marcati come FAILED.
+        schema:
+          type: integer
+          format: int64
+          default: 24
+          example: 24
+      responses:
+        '200':
+          description: Task zombie marcati con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  markedCount:
+                    type: integer
+                    format: int64
+                    description: Numero di task marcati come FAILED
+                  markedTaskIds:
+                    type: array
+                    description: Lista degli ID dei task marcati come FAILED
+                    items:
+                      type: integer
+                      format: int64
+                  timeoutHours:
+                    type: integer
+                    format: int64
+                    description: Timeout utilizzato (in ore)
+                  message:
+                    type: string
+                    description: Messaggio di conferma
+                    example: "Marked 5 zombie task(s) as FAILED"
+        '401':
+          description: Non autorizzato - scope `admin` richiesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Errore interno del server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /webrobot/api/projects/test:
     get:
       tags:

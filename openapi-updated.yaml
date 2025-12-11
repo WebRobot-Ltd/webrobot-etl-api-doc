@@ -1,0 +1,3342 @@
+openapi: 3.0.1
+paths:
+  /webrobot/cloud/scheduler/cronjobs:
+    get:
+      operationId: listCronJobs
+      parameters:
+      - name: namespace
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createCronJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CronJobRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/scheduler/cronjobs/{name}:
+    get:
+      operationId: getCronJob
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteCronJob
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: namespace
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/spark/capabilities:
+    get:
+      operationId: getCapabilities
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/spark/info:
+    get:
+      operationId: getInfo
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/spark/health:
+    get:
+      operationId: healthCheck
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/training/info:
+    get:
+      operationId: getInfo_1
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/cloud/training/health:
+    get:
+      operationId: healthCheck_1
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/execute:
+    post:
+      operationId: executeJob
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/bootstrap/status:
+    get:
+      operationId: getBootstrapStatus
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/images:
+    post:
+      operationId: getImagesSimplified
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/info:
+    get:
+      operationId: getPluginInfo
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/status:
+    get:
+      operationId: getStatus
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/query:
+    post:
+      operationId: queryImages
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/schedule:
+    post:
+      operationId: scheduleJob
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ean-image-sourcing/{country}/upload:
+    post:
+      operationId: uploadCsv
+      parameters:
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FormDataMultiPart'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/training/{jobId}:
+    delete:
+      operationId: cancelTraining
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/download:
+    get:
+      operationId: downloadModel
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: outputPath
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/cost-estimate:
+    post:
+      operationId: estimateCost
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingRequestBean'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/models:
+    get:
+      operationId: getSupportedModels
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers:
+    get:
+      operationId: getSupportedProviders
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/logs:
+    get:
+      operationId: getTrainingLogs
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/status:
+    get:
+      operationId: getTrainingStatus
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/huggingface/models/publish:
+    post:
+      operationId: publishModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelPublishRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/training:
+    post:
+      operationId: startTraining
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingRequestBean'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/ai-providers/providers/{provider}/datasets:
+    post:
+      operationId: uploadDataset
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetUploadRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/agents:
+    post:
+      operationId: createAgent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/agents/{agentId}:
+    delete:
+      operationId: deleteAgent
+      parameters:
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/agents/{categoryId}/{agentId}:
+    get:
+      operationId: getAgent
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateAgent
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/agents/{categoryId}/name/{agentName}:
+    get:
+      operationId: getAgentFromName
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: agentName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/agents/{categoryId}:
+    get:
+      operationId: getAllAgents
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/categories:
+    get:
+      operationId: getAllCategories
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCategoryDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/categories/id/{categoryId}:
+    get:
+      operationId: getCategory
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateCategory
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCategoryDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteCategory
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/categories/{categoryName}:
+    get:
+      operationId: getCategoryFromName
+      parameters:
+      - name: categoryName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/categories/test:
+    get:
+      operationId: test
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/cloud-credentials:
+    get:
+      operationId: getAllCloudCredentials
+      parameters:
+      - name: provider
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 50
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createCloudCredential
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloudCredential'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/cloud-credentials/id/{credentialId}:
+    get:
+      operationId: getCloudCredentialById
+      parameters:
+      - name: credentialId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateCloudCredential
+      parameters:
+      - name: credentialId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloudCredential'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteCloudCredential
+      parameters:
+      - name: credentialId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/cloud-credentials/provider/{provider}:
+    get:
+      operationId: getCloudCredentialsByProvider
+      parameters:
+      - name: provider
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}:
+    get:
+      operationId: getDataset
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteDataset
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/version/id/{versionsetId}:
+    get:
+      operationId: getVersionset
+      parameters:
+      - name: versionsetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteDatasetVersion
+      parameters:
+      - name: versionsetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{projectId}/{botId}/versions:
+    get:
+      operationId: getAllDatasetVersions
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/datasets:
+    get:
+      operationId: getAllDatasets
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{datasetId}/versions:
+    get:
+      operationId: getAllVersionsets
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}/input/url:
+    get:
+      operationId: getDatasetInputFile
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{projectId}/{botId}/{datasetId}/input/{offset}/{limit}:
+    get:
+      operationId: getDatasetInputFilePagination
+      parameters:
+      - name: offset
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{datasetId}/input/size:
+    get:
+      operationId: getDatasetInputFileSize
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/datasets/{datasetId}/status:
+    get:
+      operationId: getDatasetStatus
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{categoryId}/{jobId}/{datasetId}/versions/{versionsetId}/input/url:
+    get:
+      operationId: getDatasetVersionInputFile
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: versionsetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{datasetId}/versions/{versionsetId}/input/{offset}/{limit}:
+    get:
+      operationId: getDatasetVersionInputFilePagination
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: botId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: versionsetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{categoryId}/{jobId}/upload/{attachmentName}:
+    get:
+      operationId: getUploadFileUrl
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: botId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: attachmentName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{datasetId}/versions/version/{version}:
+    post:
+      operationId: getVersionsetFromVersion
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimePeriod'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{datasetId}/versions/version/{version}/base:
+    get:
+      operationId: getVersionsetFromVersionBase
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets-legacy/{projectId}/{botId}:
+    post:
+      operationId: uploadDataset_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetUploadApiDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets:
+    get:
+      operationId: getAllDatasets_1
+      parameters:
+      - name: type
+        in: query
+        schema:
+          type: string
+      - name: indexed
+        in: query
+        schema:
+          type: string
+      - name: format
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createDataset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/{datasetId}:
+    get:
+      operationId: getDataset_1
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateDataset
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteDataset_1
+      parameters:
+      - name: datasetId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/query:
+    post:
+      operationId: executeQuery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrestoQueryRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/query/task/{taskId}/info:
+    get:
+      operationId: getDatasetInfoByTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/query/columns:
+    get:
+      operationId: getTableColumns
+      parameters:
+      - name: catalog
+        in: query
+        schema:
+          type: string
+          default: minio
+      - name: schema
+        in: query
+        schema:
+          type: string
+          default: default
+      - name: table
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/query/tables:
+    get:
+      operationId: listTables
+      parameters:
+      - name: catalog
+        in: query
+        schema:
+          type: string
+          default: minio
+      - name: schema
+        in: query
+        schema:
+          type: string
+          default: default
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/datasets/query/task/{taskId}:
+    post:
+      operationId: queryDatasetByTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrestoQueryRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/etl-library-versions:
+    get:
+      operationId: getAllVersions
+      parameters:
+      - name: buildType
+        in: query
+        schema:
+          type: string
+      - name: activeOnly
+        in: query
+        schema:
+          type: boolean
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createOrUpdateVersion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/etl-library-versions/id/{id}:
+    get:
+      operationId: getVersionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateVersion
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EtlLibraryVersionApiDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteVersion
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/etl-library-versions/build-type/{buildType}/build-number/{buildNumber}:
+    get:
+      operationId: getVersionByBuildTypeAndBuildNumber
+      parameters:
+      - name: buildType
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: buildNumber
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/download:
+    get:
+      operationId: getUrlDownload
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/upload:
+    get:
+      operationId: getUrlUpload
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/export/all:
+    get:
+      operationId: start_export_All
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/export/id/{projectId}:
+    get:
+      operationId: start_export_project
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/import/all:
+    get:
+      operationId: start_import_All
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/package/import/id/{projectId}:
+    get:
+      operationId: start_import_project
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugins/{pluginId}/disable:
+    post:
+      operationId: disablePlugin
+      parameters:
+      - name: pluginId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: buildType
+        in: query
+        schema:
+          type: string
+          default: development
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugins/{pluginId}/enable:
+    post:
+      operationId: enablePlugin
+      parameters:
+      - name: pluginId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: buildType
+        in: query
+        schema:
+          type: string
+          default: development
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugins:
+    get:
+      operationId: listPlugins
+      parameters:
+      - name: buildType
+        in: query
+        schema:
+          type: string
+          default: development
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugins/upload:
+    post:
+      operationId: uploadPlugin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  $ref: '#/components/schemas/FormDataContentDisposition'
+                pluginId:
+                  type: string
+                buildType:
+                  type: string
+                  default: development
+                buildNumber:
+                  type: integer
+                  format: int32
+                organizationIds:
+                  type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugin-installations/{id}:
+    get:
+      operationId: getInstallationById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateInstallation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PluginInstallation'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteInstallation
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugin-installations/{id}/disable:
+    post:
+      operationId: disablePlugin_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugin-installations/{id}/enable:
+    post:
+      operationId: enablePlugin_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugin-installations:
+    get:
+      operationId: getAllInstallations
+      parameters:
+      - name: organizationId
+        in: query
+        schema:
+          type: string
+      - name: enabledOnly
+        in: query
+        schema:
+          type: boolean
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: registerPlugin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PluginInstallation'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/admin/plugin-installations/reload:
+    post:
+      operationId: reloadPlugins
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs:
+    get:
+      operationId: getProjectJobs
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: addJobToProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects:
+    get:
+      operationId: getAllProjects
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobProjectDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks:
+    get:
+      operationId: getAllTasks
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: createTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}:
+    get:
+      operationId: getProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobProjectDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}:
+    get:
+      operationId: getTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deleteTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/execute:
+    post:
+      operationId: executeJob_1
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/logs:
+    get:
+      operationId: getExecutionLogs
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: executionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: podType
+        in: query
+        schema:
+          type: string
+      - name: executorIndex
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: podName
+        in: query
+        schema:
+          type: string
+      - name: tail
+        in: query
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/status:
+    get:
+      operationId: getExecutionStatus
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: executionId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}:
+    get:
+      operationId: getJob
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: updateJob
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobDto'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: removeJobFromProject
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/logs:
+    get:
+      operationId: getJobLogs
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: query
+        schema:
+          type: integer
+          format: int64
+      - name: podType
+        in: query
+        schema:
+          type: string
+      - name: executorIndex
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: podName
+        in: query
+        schema:
+          type: string
+      - name: tail
+        in: query
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/metrics:
+    get:
+      operationId: getJobMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/{projectName}:
+    get:
+      operationId: getProjectFromName
+      parameters:
+      - name: projectName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/metrics:
+    get:
+      operationId: getProjectMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: startTime
+        in: query
+        schema:
+          type: string
+      - name: endTime
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/schedule:
+    get:
+      operationId: getProjectSchedule
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: setProjectSchedule
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectScheduleRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/metrics:
+    get:
+      operationId: getTaskMetrics
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/status:
+    get:
+      operationId: getTaskStatus
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/completion:
+    post:
+      operationId: jobCompletionWebhook
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCompletionWebhookRequest'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/admin/tasks/mark-zombies:
+    post:
+      operationId: markZombieTasks
+      parameters:
+      - name: timeoutHours
+        in: query
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/start:
+    post:
+      operationId: startTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/stop:
+    post:
+      operationId: stopTask
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/projects/test:
+    get:
+      operationId: test_1
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/html/{url}/{protocol}:
+    get:
+      operationId: getHtml
+      parameters:
+      - name: protocol
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: url
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            text/html: {}
+  /api/strapi-tables/{table}/{id}:
+    get:
+      operationId: getById
+      parameters:
+      - name: table
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    put:
+      operationId: update
+      parameters:
+      - name: table
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: delete
+      parameters:
+      - name: table
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /api/strapi-tables/{table}:
+    get:
+      operationId: findAll
+      parameters:
+      - name: table
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 50
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: insert
+      parameters:
+      - name: table
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /health:
+    get:
+      operationId: getHealth
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/python-extensions/{extensionId}:
+    put:
+      operationId: updatePythonExtension
+      parameters:
+      - name: extensionId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    delete:
+      operationId: deletePythonExtension
+      parameters:
+      - name: extensionId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/python-extensions/{extensionId}/generate-pyspark:
+    post:
+      operationId: generatePysparkCode
+      parameters:
+      - name: extensionId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/agents/{agentId}/extensions:
+    get:
+      operationId: getAgentExtensions
+      parameters:
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/agents/{agentId}/python-extensions:
+    get:
+      operationId: getAgentPythonExtensions
+      parameters:
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: updateAgentPythonExtensions
+      parameters:
+      - name: agentId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/info:
+    get:
+      operationId: getPluginInfo_1
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/supported-types:
+    get:
+      operationId: getSupportedExtensionTypes
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/process-yaml:
+    post:
+      operationId: processYamlExtensions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/python-extensions/register:
+    post:
+      operationId: registerPythonExtension
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webrobot/api/python-extensions/validate:
+    post:
+      operationId: validatePythonExtension
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: object
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+components:
+  schemas:
+    CronJobRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace:
+          type: string
+        schedule:
+          type: string
+        webhookUrl:
+          type: string
+        jobId:
+          type: string
+        projectId:
+          type: string
+        clusterProvider:
+          type: string
+        clusterConfigId:
+          type: string
+        secretName:
+          type: string
+        secretKey:
+          type: string
+        image:
+          type: string
+    BodyPart:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        entity:
+          type: object
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        mediaType:
+          type: object
+          properties:
+            type:
+              type: string
+            subtype:
+              type: string
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            wildcardType:
+              type: boolean
+            wildcardSubtype:
+              type: boolean
+        messageBodyWorkers:
+          $ref: '#/components/schemas/MessageBodyWorkers'
+        parent:
+          $ref: '#/components/schemas/MultiPart'
+        providers:
+          type: object
+        parameterizedHeaders:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ParameterizedHeader'
+    ContentDisposition:
+      type: object
+      properties:
+        type:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        fileName:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        readDate:
+          type: string
+          format: date-time
+        size:
+          type: integer
+          format: int64
+    FormDataBodyPart:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        entity:
+          type: object
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        mediaType:
+          type: object
+          properties:
+            type:
+              type: string
+            subtype:
+              type: string
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            wildcardType:
+              type: boolean
+            wildcardSubtype:
+              type: boolean
+        messageBodyWorkers:
+          $ref: '#/components/schemas/MessageBodyWorkers'
+        parent:
+          $ref: '#/components/schemas/MultiPart'
+        providers:
+          type: object
+        name:
+          type: string
+        value:
+          type: string
+        formDataContentDisposition:
+          $ref: '#/components/schemas/FormDataContentDisposition'
+        simple:
+          type: boolean
+        parameterizedHeaders:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ParameterizedHeader'
+    FormDataContentDisposition:
+      type: object
+      properties:
+        type:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        fileName:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        readDate:
+          type: string
+          format: date-time
+        size:
+          type: integer
+          format: int64
+        name:
+          type: string
+    FormDataMultiPart:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        entity:
+          type: object
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        mediaType:
+          type: object
+          properties:
+            type:
+              type: string
+            subtype:
+              type: string
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            wildcardType:
+              type: boolean
+            wildcardSubtype:
+              type: boolean
+        messageBodyWorkers:
+          $ref: '#/components/schemas/MessageBodyWorkers'
+        parent:
+          $ref: '#/components/schemas/MultiPart'
+        providers:
+          type: object
+        bodyParts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BodyPart'
+        fields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/FormDataBodyPart'
+        parameterizedHeaders:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ParameterizedHeader'
+    MessageBodyWorkers:
+      type: object
+    MultiPart:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        entity:
+          type: object
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        mediaType:
+          type: object
+          properties:
+            type:
+              type: string
+            subtype:
+              type: string
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            wildcardType:
+              type: boolean
+            wildcardSubtype:
+              type: boolean
+        messageBodyWorkers:
+          $ref: '#/components/schemas/MessageBodyWorkers'
+        parent:
+          $ref: '#/components/schemas/MultiPart'
+        providers:
+          type: object
+        bodyParts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BodyPart'
+        parameterizedHeaders:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/ParameterizedHeader'
+    ParameterizedHeader:
+      type: object
+      properties:
+        value:
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+    TrainingRequestBean:
+      type: object
+      properties:
+        model:
+          type: string
+        trainingFile:
+          type: string
+        validationFile:
+          type: string
+        datasetId:
+          type: string
+        hyperparameters:
+          type: object
+          additionalProperties:
+            type: object
+    ModelPublishRequest:
+      type: object
+      properties:
+        localModelPath:
+          type: string
+        modelName:
+          type: string
+        description:
+          type: string
+    DatasetUploadRequest:
+      type: object
+      properties:
+        localPath:
+          type: string
+        format:
+          type: string
+        description:
+          type: string
+    AgentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        enabled:
+          type: boolean
+        apiEndpoint:
+          type: string
+        executionMode:
+          type: string
+          enum:
+          - MANUAL
+          - SCHEDULED
+          - EVENT_DRIVEN
+        categoryId:
+          type: string
+        type:
+          type: string
+          enum:
+          - SCRAPING_AGENT
+          - LEADGEN_AGENT
+          - TRADING_AGENT
+          - DATA_ANALYTICS_AGENT
+          - REPORTING_AGENT
+          - ML_AGENT
+        role:
+          type: string
+        backstory:
+          type: string
+        defaultPrompt:
+          type: string
+        prompts:
+          type: string
+        config:
+          type: string
+        code:
+          type: string
+        codeTypeId:
+          type: string
+        pysparkCode:
+          type: string
+        pythonExtensions:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        toolIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    JobCategoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        visibility:
+          type: string
+          enum:
+          - PUBLIC
+          - PRIVATE
+        enabled:
+          type: boolean
+        agentIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CloudCredential:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        description:
+          type: string
+        provider:
+          type: string
+          enum:
+          - OPENAI
+          - ANTHROPIC
+          - HUGGING_FACE
+          - COHERE
+          - AZURE_AI_STUDIO
+          - MOSAICML
+          - REPLIC
+          - STEEL_DEV
+          - TOGETHERAI
+          - AWS
+          - AZURE
+          - GCP
+          - AWS_BEDROCK
+          - GOOGLE_VERTEX
+          - DATABRICKS
+          - TWITTER
+          - REDDIT
+          - FACEBOOK
+          - INSTAGRAM
+          - LINKEDIN
+          - TIKTOK
+          - YOUTUBE
+          - ALPHAVANTAGE
+          - POLYGON
+          - TWELVEDATA
+          - MARKETSTACK
+          - FMP
+          - IEXCLOUD
+          - CBOND
+          - GOOGLE_SEARCH
+          - BING_SEARCH
+        apiKey:
+          type: string
+        apiSecret:
+          type: string
+        organizationId:
+          type: string
+        projectId:
+          type: string
+        region:
+          type: string
+        endpoint:
+          type: string
+        accessKeyId:
+          type: string
+        secretAccessKey:
+          type: string
+        sessionToken:
+          type: string
+        accountId:
+          type: string
+        subscriptionId:
+          type: string
+        resourceGroup:
+          type: string
+        workspaceName:
+          type: string
+        huggingFaceToken:
+          type: string
+        cohereApiKey:
+          type: string
+        azureAiStudioEndpoint:
+          type: string
+        mosaicmlApiKey:
+          type: string
+        replicateApiToken:
+          type: string
+        twitterBearerToken:
+          type: string
+        twitterApiKey:
+          type: string
+        twitterApiSecret:
+          type: string
+        redditClientId:
+          type: string
+        redditClientSecret:
+          type: string
+        redditUserAgent:
+          type: string
+        facebookAccessToken:
+          type: string
+        facebookAppId:
+          type: string
+        facebookAppSecret:
+          type: string
+        instagramAccessToken:
+          type: string
+        linkedinAccessToken:
+          type: string
+        linkedinClientId:
+          type: string
+        linkedinClientSecret:
+          type: string
+        tiktokClientKey:
+          type: string
+        tiktokClientSecret:
+          type: string
+        youtubeApiKey:
+          type: string
+        databricksWorkspaceUrl:
+          type: string
+        databricksAccessToken:
+          type: string
+        databricksClusterId:
+          type: string
+        oauthAccessToken:
+          type: string
+        oauthRefreshToken:
+          type: string
+        oauthTokenExpiresAt:
+          type: string
+          format: date-time
+        oauthTokenType:
+          type: string
+        alphavantageApiKey:
+          type: string
+        polygonApiKey:
+          type: string
+        twelvedataApiKey:
+          type: string
+        marketstackAccessKey:
+          type: string
+        fmpApiKey:
+          type: string
+        iexcloudToken:
+          type: string
+        cbondApiKey:
+          type: string
+        cbondClientId:
+          type: string
+        cbondClientSecret:
+          type: string
+        googleSearchApiKey:
+          type: string
+        googleSearchEngineId:
+          type: string
+        bingSearchApiKey:
+          type: string
+        enabled:
+          type: boolean
+    TimePeriod:
+      type: object
+      properties:
+        startTimePeriod:
+          type: string
+        endTimePeriod:
+          type: string
+    DatasetUploadApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        comments:
+          type: string
+        attachmentName:
+          type: string
+        headerline:
+          type: string
+    DatasetDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        userId:
+          type: string
+        sourceUrl:
+          type: string
+        sourceType:
+          type: string
+        filePath:
+          type: string
+        fileFormat:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+        schema:
+          type: string
+        metadata:
+          type: string
+        enabled:
+          type: boolean
+        fieldIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        storagePath:
+          type: string
+        format:
+          type: string
+        datasetType:
+          type: string
+        trinoSchema:
+          type: string
+    PrestoQueryRequest:
+      type: object
+      properties:
+        sql:
+          type: string
+        catalog:
+          type: string
+        schema:
+          type: string
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    EtlLibraryVersionApiDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        buildType:
+          type: string
+        buildNumber:
+          type: integer
+          format: int32
+        version:
+          type: string
+        jarPath:
+          type: string
+        jarPathObfuscated:
+          type: string
+        jarSizeBytes:
+          type: integer
+          format: int64
+        uploadedAt:
+          type: string
+          format: date-time
+        active:
+          type: boolean
+        description:
+          type: string
+    PluginInstallation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pluginId:
+          type: string
+        pluginType:
+          type: string
+        buildType:
+          type: string
+        buildNumber:
+          type: integer
+          format: int32
+        version:
+          type: string
+        jarPath:
+          type: string
+        manifestPath:
+          type: string
+        enabled:
+          type: boolean
+        organizationId:
+          type: string
+        organizationIdsJson:
+          type: string
+        mainClass:
+          type: string
+        description:
+          type: string
+        installedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        enabledAt:
+          type: string
+          format: date-time
+        enabledBy:
+          type: string
+        installedBy:
+          type: string
+    JobDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        projectId:
+          type: string
+        agentId:
+          type: string
+        inputDatasetId:
+          type: string
+        cloudCredentialId:
+          type: string
+        cloudCredentialIds:
+          type: array
+          items:
+            type: string
+        executionStatus:
+          type: string
+          enum:
+          - PENDING
+          - RUNNING
+          - COMPLETED
+          - FAILED
+        scheduledTime:
+          type: string
+          format: date-time
+        enabled:
+          type: boolean
+        taskIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    JobProjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cronSchedule:
+          type: string
+        enabled:
+          type: boolean
+        jobIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TaskDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        jobId:
+          type: string
+        botId:
+          type: string
+        outputDatasetId:
+          type: string
+        taskType:
+          type: string
+          enum:
+          - SPARK
+          - AUTONOMOUS_AGENT
+          - BACKGROUND_TASK
+        executionReferenceId:
+          type: string
+        executionStatus:
+          type: string
+          enum:
+          - PENDING
+          - RUNNING
+          - COMPLETED
+          - FAILED
+        executionLog:
+          type: string
+        scheduledTime:
+          type: string
+          format: date-time
+        executionMode:
+          type: string
+          enum:
+          - MANUAL
+          - SCHEDULED
+          - EVENT_DRIVEN
+        enabled:
+          type: boolean
+        apiKey:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    JobCompletionWebhookRequest:
+      type: object
+      properties:
+        jobId:
+          type: string
+        executionId:
+          type: string
+        sparkApplicationName:
+          type: string
+        status:
+          type: string
+        outputDatasetPath:
+          type: string
+        outputDatasetFormat:
+          type: string
+        outputDatasetSchema:
+          type: string
+        durationSeconds:
+          type: integer
+          format: int64
+        recordsProcessed:
+          type: integer
+          format: int64
+        recordsOutput:
+          type: integer
+          format: int64
+        outputFileSizeBytes:
+          type: integer
+          format: int64
+        partitionsCount:
+          type: integer
+          format: int32
+        driverMemoryUsedBytes:
+          type: integer
+          format: int64
+        executorMemoryUsedBytes:
+          type: integer
+          format: int64
+        executorCount:
+          type: integer
+          format: int32
+        totalCpuTimeSeconds:
+          type: integer
+          format: int64
+        errorCount:
+          type: integer
+          format: int32
+        warningCount:
+          type: integer
+          format: int32
+        errorMessage:
+          type: string
+        additionalMetrics:
+          type: object
+          additionalProperties:
+            type: object
+          writeOnly: true
+        startedAt:
+          type: string
+        completedAt:
+          type: string
+        sparkUiUrl:
+          type: string
+        metrics:
+          type: object
+          additionalProperties:
+            type: object
+          writeOnly: true
+    ProjectScheduleRequest:
+      type: object
+      properties:
+        cronSchedule:
+          type: string
+        enabled:
+          type: boolean
+        timezone:
+          type: string
+
