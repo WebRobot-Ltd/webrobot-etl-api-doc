@@ -356,7 +356,7 @@ paths:
         
         **Note:**
         - Images are searched in the most recent available dataset
-        - Results are sorted by descending schours
+        - Results are sorted by descending score
         - The `includeBase64` field in the request controls whether to include base64 data
       operationId: getImagesSimplified
       parameters:
@@ -1237,7 +1237,7 @@ paths:
         - Agents
       summary: Get a specific agent
       description: |
-        Returns the details di un agente PySpark specifico, including the source code.
+        Returns the details of a specific PySpark agent, including the source code.
       operationId: getAgent
       parameters:
       - name: categoryId
@@ -1811,7 +1811,7 @@ paths:
         - Cloud Credentials
       summary: Get a specific cloud credential
       description: |
-        Returns the details di una credenziale cloud specifica.
+        Returns the details of a specific cloud credential.
         
         **Nota:** Le credenziali sensibili vengono restituite in forma criptata.
       operationId: getCloudCredentialById
@@ -2313,7 +2313,7 @@ paths:
       tags:
         - Datasets
         - Query
-      summary: Get le colonne di una tabella
+      summary: Get columns of a table
       description: |
         Returns the list of columns and their types of a table in the Trino catalog.
       operationId: getTableColumns
@@ -2422,11 +2422,11 @@ paths:
         - Datasets
         - Query
         - Tasks
-      summary: Executes a query SQL sul dataset di output di un task
+      summary: Executes an SQL query on the output dataset of a task
       description: |
-        Executes a query SQL sul dataset di output associated with a task specifico.
+        Executes a SQL query on the output dataset associated with a specific task.
         
-        Utile per analizzare i risultati di un task dopo la sua esecuzione.
+        Useful for analyzing the results of a task after its execution.
       operationId: queryDatasetByTask
       parameters:
       - name: taskId
@@ -2578,7 +2578,7 @@ paths:
         - ETL Library
       summary: Get una versione ETL specifica
       description: |
-        Returns the details of a version of the library ETL identified byll'ID.
+        Returns the details of a version of the library ETL identified by the ID.
       operationId: getVersionById
       parameters:
       - name: id
@@ -2946,7 +2946,7 @@ paths:
         - Package
       summary: Start import of a specific project
       description: |
-        Starts the process di import of a project specifico and its configurations da un package compresso.
+        Starts the import process of a specific project and its configurations from a package compresso.
         
         **Attenzione:** Questa operazione può sovrascrivere il progetto esistente se presente.
       operationId: start_import_project
@@ -3202,7 +3202,7 @@ paths:
         - Plugins
       summary: Get un'installazione plugin specifica
       description: |
-        Returns the details di un'installazione plugin identified byll'ID.
+        Returns the details of a plugin installation identified by the ID.
       operationId: getInstallationById
       parameters:
       - name: id
@@ -3244,7 +3244,7 @@ paths:
         - Plugins
       summary: Update un'installazione plugin
       description: |
-        Aggiorna the data di un'installazione plugin esistente, including configurations and metadata.
+        Aggiorna the data of an existing plugin installation, including configurations and metadata.
       operationId: updateInstallation
       parameters:
       - name: id
@@ -3983,7 +3983,7 @@ paths:
         - Tasks
       summary: Get un task specifico
       description: |
-        Returns the details di un task specifico, including configurations and status di esecuzione.
+        Returns the details of a specific task, including configurations and execution status.
       operationId: getTask
       parameters:
       - name: projectId
@@ -4039,7 +4039,7 @@ paths:
         - Tasks
       summary: Update un task
       description: |
-        Aggiorna the data di un task esistente, including configurations and metadata.
+        Aggiorna the data of an existing task, including configurations and metadata.
       operationId: updateTask
       parameters:
       - name: projectId
@@ -4293,7 +4293,7 @@ paths:
         - Projects
         - Jobs
         - Execution
-      summary: Get i log di un'esecuzione job
+      summary: Get logs of a job execution
       description: |
         Returns the logs di esecuzione of a job Spark specifico, con supporto per filtri
         by pod type (driver/executor) e limitation of the number of rows.
@@ -4370,9 +4370,9 @@ paths:
         - Projects
         - Jobs
         - Execution
-      summary: Get lo status di un'esecuzione job
+      summary: Get status of a job execution
       description: |
-        Returns lo status dettagliato di un'esecuzione job Spark, incluse informazioni su
+        Returns lo status dettagliato of an execution job Spark, incluse informazioni su
         progresso, durata, metriche e eventuali errori.
         
         Lo status viene recuperato dal database e include dettagli come:
@@ -4466,7 +4466,7 @@ paths:
         - Jobs
       summary: Get un job specifico
       description: |
-        Returns the details of a job ETL specifico, including configurations and status di esecuzione.
+        Returns the details of a job ETL specifico, including configurations and execution status.
       operationId: getJob
       parameters:
       - name: projectId
@@ -4765,9 +4765,9 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Get lo status di un task
+      summary: Get lo status of a task
       description: |
-        Returns lo status attuale di un task, incluse informazioni su esecuzione e progresso.
+        Returns lo status attuale of a task, incluse informazioni su esecuzione e progresso.
       operationId: getTaskStatus
       parameters:
       - name: projectId
@@ -4833,7 +4833,7 @@ paths:
       summary: Webhook to notify job completion
       description: |
         Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
-        di un'esecuzione job.
+        of an execution job.
         
         This endpoint is called automatically by the Spark system when a job terminates
         (con status RUNNING, COMPLETED o FAILED).
@@ -4893,7 +4893,7 @@ paths:
         - Tasks
       summary: Start a task
       description: |
-        Avvia l'esecuzione di un task specifico.
+        Avvia l'esecuzione of a task specifico.
         
         Il task must be of type SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: startTask
@@ -4958,7 +4958,7 @@ paths:
         - Tasks
       summary: Stop a task
       description: |
-        Ferma l'esecuzione di un task in progress.
+        Ferma l'esecuzione of a task in progress.
         
         **Attenzione:** Questa operazione può interrompere un task running, causando
         potenziali perdite dthe data o inconsistenza.
@@ -5023,9 +5023,9 @@ paths:
         - Jobs
         - Tasks
         - Metrics
-      summary: Get le metriche di un task
+      summary: Get le metriche of a task
       description: |
-        Returns le metriche dettagliate di un task specifico, incluse durata, record processati,
+        Returns le metriche dettagliate of a task specifico, incluse durata, record processati,
         utilizzo memoria, CPU e altre metriche di performance.
         
         Le metriche vengono estratte dall'executionLog del task e includono informazioni su:
@@ -5703,7 +5703,7 @@ paths:
         - Python Extensions
       summary: Update un'estensione Python
       description: |
-        Aggiorna the data di un'estensione Python esistente, including configurations and metadata.
+        Aggiorna the data of un'estensione Python esistente, including configurations and metadata.
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
