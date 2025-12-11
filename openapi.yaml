@@ -918,7 +918,7 @@ paths:
         - Training
       summary: Get logs of a training job
       description: |
-        Returns i log di esecuzione of a job di training AI.
+        Returns the logs di esecuzione of a job di training AI.
         
         The logs include informazioni su progresso, errori e metriche of training.
       operationId: getTrainingLogs
@@ -1237,7 +1237,7 @@ paths:
         - Agents
       summary: Get a specific agent
       description: |
-        Returns i dettagli di un agente PySpark specifico, including the source code.
+        Returns the details di un agente PySpark specifico, including the source code.
       operationId: getAgent
       parameters:
       - name: categoryId
@@ -1354,7 +1354,7 @@ paths:
         - Agents
       summary: Get an agent by name
       description: |
-        Returns i dettagli di un agente PySpark cercandolo per nome all'interno of a category.
+        Returns the details of a PySpark agent searching by name within of a category.
       operationId: getAgentFromName
       parameters:
       - name: categoryId
@@ -1515,7 +1515,7 @@ paths:
         - Categories
       summary: Get a specific category
       description: |
-        Returns i dettagli of a category specifica, incluso l'elenco dethe projects associati.
+        Returns the details of a category specifica, including l'elenco dethe projects associati.
       operationId: getCategory
       parameters:
       - name: categoryId
@@ -1651,7 +1651,7 @@ paths:
         - Categories
       summary: Get a category by name
       description: |
-        Returns i dettagli of a category cercandola per nome.
+        Returns the details of a category searching by name.
       operationId: getCategoryFromName
       parameters:
       - name: categoryName
@@ -1723,7 +1723,7 @@ paths:
       parameters:
       - name: provider
         in: query
-        description: Filtra per provider cloud (es. "aws", "azure", "gcp")
+        description: Filter by provider cloud (es. "aws", "azure", "gcp")
         schema:
           type: string
           example: "aws"
@@ -1811,7 +1811,7 @@ paths:
         - Cloud Credentials
       summary: Get a specific cloud credential
       description: |
-        Returns i dettagli di una credenziale cloud specifica.
+        Returns the details di una credenziale cloud specifica.
         
         **Nota:** Le credenziali sensibili vengono restituite in forma criptata.
       operationId: getCloudCredentialById
@@ -1997,24 +1997,24 @@ paths:
       description: |
         Returns the list of all datasets available in the system, with support for filters.
         
-        I dataset can be filtrati per tipo, formato e status di indicizzazione.
+        Datasets can be filtered by type, format and status di indicizzazione.
       operationId: getAllDatasets_1
       parameters:
       - name: type
         in: query
-        description: Filtra per tipo di dataset
+        description: Filter by dataset type
         schema:
           type: string
           example: "parquet"
       - name: indexed
         in: query
-        description: Filtra per status di indicizzazione (true/false)
+        description: Filter by status di indicizzazione (true/false)
         schema:
           type: string
           example: "true"
       - name: format
         in: query
-        description: Filtra per formato (parquet, csv, json, ecc.)
+        description: Filter by format (parquet, csv, json, ecc.)
         schema:
           type: string
           example: "parquet"
@@ -2320,14 +2320,14 @@ paths:
       parameters:
       - name: catalog
         in: query
-        description: "Nome del catalogo (default: minio)"
+        description: "Catalog name (default: minio)"
         schema:
           type: string
           default: minio
           example: "minio"
       - name: schema
         in: query
-        description: "Nome dello schema (default: default)"
+        description: "Schema name (default: default)"
         schema:
           type: string
           default: default
@@ -2335,7 +2335,7 @@ paths:
       - name: table
         in: query
         required: true
-        description: Nome della tabella
+        description: Table name
         schema:
           type: string
           example: "my_table"
@@ -2383,14 +2383,14 @@ paths:
       parameters:
       - name: catalog
         in: query
-        description: "Nome del catalogo (default: minio)"
+        description: "Catalog name (default: minio)"
         schema:
           type: string
           default: minio
           example: "minio"
       - name: schema
         in: query
-        description: "Nome dello schema (default: default)"
+        description: "Schema name (default: default)"
         schema:
           type: string
           default: default
@@ -2487,12 +2487,12 @@ paths:
       summary: Get all ETL library versions
       description: |
         Returns the list of all ETL library versions available in the system,
-        con supporto per filtri per tipo di build e status attivo.
+        con supporto per filtri by build type and status attivo.
       operationId: getAllVersions
       parameters:
       - name: buildType
         in: query
-        description: Filtra per tipo di build (es. "development", "production")
+        description: Filter by build type (es. "development", "production")
         schema:
           type: string
           example: "development"
@@ -2578,7 +2578,7 @@ paths:
         - ETL Library
       summary: Get una versione ETL specifica
       description: |
-        Returns i dettagli di una versione of the libreria ETL identificata dall'ID.
+        Returns the details of a version of the library ETL identified byll'ID.
       operationId: getVersionById
       parameters:
       - name: id
@@ -2620,7 +2620,7 @@ paths:
         - ETL Library
       summary: Update una versione ETL
       description: |
-        Aggiorna the data di una versione of the libreria ETL esistente.
+        Aggiorna the data of a version of the library ETL esistente.
       operationId: updateVersion
       parameters:
       - name: id
@@ -2721,7 +2721,7 @@ paths:
         - ETL Library
       summary: Get una versione ETL per tipo e numero di build
       description: |
-        Returns i dettagli di una versione of the libreria ETL identificata da tipo di build
+        Returns the details of a version of the library ETL identified by build type
         e numero di build.
       operationId: getVersionByBuildTypeAndBuildNumber
       parameters:
@@ -2994,7 +2994,7 @@ paths:
         - Plugins
       summary: Disable a plugin
       description: |
-        Disable a plugin in the system per un tipo di build specifico.
+        Disable a plugin in the system for a specific build type.
         
         I plugin disabilitati non will be available for l'uso nethe jobs.
       operationId: disablePlugin
@@ -3045,7 +3045,7 @@ paths:
         - Plugins
       summary: Enable a plugin
       description: |
-        Enable a plugin in the system per un tipo di build specifico.
+        Enable a plugin in the system for a specific build type.
         
         I plugin abilitati will be available for l'uso nethe jobs.
       operationId: enablePlugin
@@ -3136,7 +3136,7 @@ paths:
       description: |
         Uploads a new plugin to the system as a JAR file.
         
-        Il plugin can be associated with una o più organizzazioni e a un tipo di build specifico.
+        Il plugin can be associated with one or more organizations e to a specific build type.
       operationId: uploadPlugin
       requestBody:
         required: true
@@ -3202,7 +3202,7 @@ paths:
         - Plugins
       summary: Get un'installazione plugin specifica
       description: |
-        Returns i dettagli di un'installazione plugin identificata dall'ID.
+        Returns the details di un'installazione plugin identified byll'ID.
       operationId: getInstallationById
       parameters:
       - name: id
@@ -3436,12 +3436,12 @@ paths:
       summary: Get all plugin installations
       description: |
         Returns the list of all plugin installations available in the system,
-        con supporto per filtri per organizzazione e status abilitato.
+        with support for filters by organizzazione e status abilitato.
       operationId: getAllInstallations
       parameters:
       - name: organizationId
         in: query
-        description: Filtra per ID organizzazione
+        description: Filter by ID organizzazione
         schema:
           type: string
           example: "1"
@@ -3480,7 +3480,7 @@ paths:
       description: |
         Register a new plugin in the system come installazione.
         
-        Il plugin can be associated with una o più organizzazioni.
+        Il plugin can be associated with one or more organizations.
       operationId: registerPlugin
       requestBody:
         required: true
@@ -3783,7 +3783,7 @@ paths:
       description: |
         Creates a new task e lo associa a un job esistente.
         
-        Un task can be di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        Un task can be of type SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: createTask
       parameters:
       - name: projectId
@@ -3844,7 +3844,7 @@ paths:
         - Projects
       summary: Get un progetto specifico
       description: |
-        Returns i dettagli of a project specifico, incluso l'elenco dethe jobs associati.
+        Returns the details of a project specifico, including l'elenco dethe jobs associati.
       operationId: getProject
       parameters:
       - name: projectId
@@ -3983,7 +3983,7 @@ paths:
         - Tasks
       summary: Get un task specifico
       description: |
-        Returns i dettagli di un task specifico, incluse configurazioni e status di esecuzione.
+        Returns the details di un task specifico, including configurations and status di esecuzione.
       operationId: getTask
       parameters:
       - name: projectId
@@ -4237,11 +4237,11 @@ paths:
                     example: "spark-2d53940045a6-95379617"
                   status:
                     type: string
-                    description: Stato dell'esecuzione
+                    description: Execution status
                     example: "SUBMITTED"
                   message:
                     type: string
-                    description: Messaggio descrittivo
+                    description: Descriptive message
                     example: "Job execution submitted successfully"
                   clusterId:
                     type: string
@@ -4295,8 +4295,8 @@ paths:
         - Execution
       summary: Get i log di un'esecuzione job
       description: |
-        Returns i log di esecuzione of a job Spark specifico, con supporto per filtri
-        per tipo di pod (driver/executor) e limitazione of the numero di righe.
+        Returns the logs di esecuzione of a job Spark specifico, con supporto per filtri
+        by pod type (driver/executor) e limitation of the number of rows.
       operationId: getExecutionLogs
       parameters:
       - name: projectId
@@ -4376,7 +4376,7 @@ paths:
         progresso, durata, metriche e eventuali errori.
         
         Lo status viene recuperato dal database e include dettagli come:
-        - Stato dell'esecuzione (PENDING, RUNNING, COMPLETED, FAILED)
+        - Execution status (PENDING, RUNNING, COMPLETED, FAILED)
         - Timestamp di inizio e fine
         - Tempo di esecuzione
         - URL Spark UI
@@ -4466,7 +4466,7 @@ paths:
         - Jobs
       summary: Get un job specifico
       description: |
-        Returns i dettagli of a job ETL specifico, incluse configurazioni e status di esecuzione.
+        Returns the details of a job ETL specifico, including configurations and status di esecuzione.
       operationId: getJob
       parameters:
       - name: projectId
@@ -4625,13 +4625,13 @@ paths:
         - Projects
       summary: Get un progetto per nome
       description: |
-        Returns i dettagli of a project cercandolo per nome.
+        Returns the details of a project searching by name.
       operationId: getProjectFromName
       parameters:
       - name: projectName
         in: path
         required: true
-        description: Nome del progetto
+        description: Name of the progetto
         schema:
           type: string
           example: "my-project"
@@ -4895,7 +4895,7 @@ paths:
       description: |
         Avvia l'esecuzione di un task specifico.
         
-        Il task must be di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        Il task must be of type SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: startTask
       parameters:
       - name: projectId
