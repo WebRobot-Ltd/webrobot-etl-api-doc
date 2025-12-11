@@ -2,20 +2,20 @@ openapi: 3.0.1
 info:
   title: WebRobot ETL API
   description: |
-    API per la gestione di progetti, job, dataset e pipeline ETL su WebRobot.
+    API for managing projects, jobs, datasets, and ETL pipelines on WebRobot.
     
-    ## Autenticazione
+    ## Authentication
     
-    L'API utilizza API Key per l'autenticazione. Includere l'header `X-API-Key` in tutte le richieste.
+    The API uses API Keys for authentication. Include the `X-API-Key` header in all requests.
     
     ## Base URL
     
-    - Produzione: `https://api.webrobot.eu/api`
-    - Sviluppo: `http://localhost:8020/api`
+    - Production: `https://api.webrobot.eu/api`
+    - Development: `http://localhost:8020/api`
     
     ## Rate Limiting
     
-    Le richieste sono limitate a 1000 richieste per minuto per API key.
+    Requests are limited to 1000 requests per minute per API key.
   version: 1.0.0
   contact:
     name: WebRobot Support
@@ -26,9 +26,9 @@ info:
 
 servers:
   - url: https://api.webrobot.eu/api
-    description: Produzione
+    description: Production
   - url: http://localhost:8020/api
-    description: Sviluppo locale
+    description: Local development
 
 security:
   - ApiKeyAuth: []
@@ -39,22 +39,22 @@ paths:
       tags:
         - Cloud
         - Scheduler
-      summary: Lista tutti i CronJob Kubernetes
+      summary: List all Kubernetes CronJobs
       description: |
-        Restituisce la lista di tutti i CronJob configurati nel cluster Kubernetes.
+        Returns the list of all CronJobs configured in the Kubernetes cluster.
         
-        I CronJob vengono utilizzati per schedulare l'esecuzione periodica di job Spark.
+        CronJobs are used to schedule periodic execution of Spark jobs.
       operationId: listCronJobs
       parameters:
       - name: namespace
         in: query
-        description: Namespace Kubernetes da filtrare (opzionale)
+        description: Kubernetes namespace to filter (optional)
         schema:
           type: string
           example: "webrobot"
       responses:
         '200':
-          description: Lista di CronJob recuperata con successo
+          description: List of CronJobs retrieved successfully
           content:
             application/json:
               schema:
@@ -62,7 +62,7 @@ paths:
                 items:
                   type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -71,34 +71,34 @@ paths:
       tags:
         - Cloud
         - Scheduler
-      summary: Crea un nuovo CronJob Kubernetes
+      summary: Create a new Kubernetes CronJob
       description: |
-        Crea un nuovo CronJob Kubernetes per schedulare l'esecuzione periodica di un job Spark.
+        Creates a new Kubernetes CronJob to schedule periodic execution of a Spark job.
         
-        Il CronJob eseguirà il job secondo la schedule specificata (formato cron).
+        The CronJob will execute the job according to the specified schedule (cron format).
       operationId: createCronJob
       requestBody:
         required: true
-        description: Configurazione del CronJob da creare
+        description: Configuration of the CronJob to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CronJobRequest'
       responses:
         '201':
-          description: CronJob creato con successo
+          description: CronJob created successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: Richiesta non valida
+          description: Invalid request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -108,9 +108,9 @@ paths:
       tags:
         - Cloud
         - Scheduler
-      summary: Ottiene un CronJob specifico
+      summary: Get a specific CronJob
       description: |
-        Restituisce i dettagli di un CronJob Kubernetes specifico.
+        Returns the details of a specific Kubernetes CronJob.
       operationId: getCronJob
       parameters:
       - name: name
@@ -122,25 +122,25 @@ paths:
           example: "daily-etl-job"
       - name: namespace
         in: query
-        description: Namespace Kubernetes (opzionale)
+        description: Kubernetes namespace (optional)
         schema:
           type: string
           example: "webrobot"
       responses:
         '200':
-          description: Dettagli del CronJob
+          description: CronJob details
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: CronJob non trovato
+          description: CronJob not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -149,41 +149,41 @@ paths:
       tags:
         - Cloud
         - Scheduler
-      summary: Elimina un CronJob Kubernetes
+      summary: Delete a Kubernetes CronJob
       description: |
-        Elimina un CronJob Kubernetes e tutte le sue esecuzioni programmate.
+        Deletes a Kubernetes CronJob and all its scheduled executions.
         
-        **Attenzione:** Questa operazione è irreversibile.
+        **Warning:** This operation is irreversible.
       operationId: deleteCronJob
       parameters:
       - name: name
         in: path
         required: true
-        description: Nome del CronJob da eliminare
+        description: Name of the CronJob to delete
         schema:
           type: string
           example: "daily-etl-job"
       - name: namespace
         in: query
-        description: Namespace Kubernetes (opzionale)
+        description: Kubernetes namespace (optional)
         schema:
           type: string
           example: "webrobot"
       responses:
         '200':
-          description: CronJob eliminato con successo
+          description: CronJob deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: CronJob non trovato
+          description: CronJob not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -193,10 +193,10 @@ paths:
       tags:
         - Cloud
         - Spark
-      summary: Ottiene le capacità del cluster Spark
+      summary: Get Spark cluster capabilities
       description: |
-        Restituisce informazioni sulle capacità e configurazioni disponibili del cluster Spark,
-        incluse versioni supportate, risorse disponibili e configurazioni.
+        Returns information about available capabilities and configurations of the Spark cluster,
+        including supported versions, available resources, and configurations.
       operationId: getCapabilities
       responses:
         '200':
@@ -206,7 +206,7 @@ paths:
               schema:
                 type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -216,10 +216,10 @@ paths:
       tags:
         - Cloud
         - Spark
-      summary: Ottiene informazioni sul cluster Spark
+      summary: Get Spark cluster information
       description: |
-        Restituisce informazioni generali sul cluster Spark, incluse versioni, configurazioni
-        e stato del cluster.
+        Returns general information about the Spark cluster, including versions, configurations
+        e stato of the cluster.
       operationId: getInfo
       responses:
         '200':
@@ -229,7 +229,7 @@ paths:
               schema:
                 type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -242,7 +242,7 @@ paths:
         - Health
       summary: Health check del servizio Spark
       description: |
-        Verifica lo stato di salute del servizio Spark e del cluster.
+        Verifica lo stato di salute of the servizio Spark e of the cluster.
       operationId: healthCheck
       responses:
         '200':
@@ -266,9 +266,9 @@ paths:
       tags:
         - Cloud
         - Training
-      summary: Ottiene informazioni sul servizio di training
+      summary: Get informazioni sul servizio di training
       description: |
-        Restituisce informazioni sul servizio di training AI/ML, incluse versioni e configurazioni.
+        Returns informazioni sul servizio di training AI/ML, incluse versioni e configurazioni.
       operationId: getInfo_1
       responses:
         '200':
@@ -278,7 +278,7 @@ paths:
               schema:
                 type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -291,7 +291,7 @@ paths:
         - Health
       summary: Health check del servizio di training
       description: |
-        Verifica lo stato di salute del servizio di training AI/ML.
+        Verifica lo stato di salute of the servizio di training AI/ML.
       operationId: healthCheck_1
       responses:
         '200':
@@ -344,35 +344,35 @@ paths:
       tags:
         - EAN Plugin
         - Images
-      summary: Cerca e recupera immagini per prodotti EAN
+      summary: Search and retrieve images for EAN products
       description: |
-        Cerca immagini per prodotti identificati da codici EAN nel dataset del paese specificato.
+        Searches for images of products identified by EAN codes in the dataset of the specified country.
         
-        Restituisce immagini con:
-        - URL completo dell'immagine
-        - Dati base64 (se richiesto)
-        - Score di similarità (0.0 - 1.0)
-        - Metadati aggiuntivi
+        Returns images with:
+        - Full image URL
+        - Base64 data (if requested)
+        - Similarity score (0.0 - 1.0)
+        - Additional metadata
         
         **Note:**
-        - Le immagini vengono cercate nel dataset più recente disponibile
-        - I risultati sono ordinati per score decrescente
-        - Il campo `includeBase64` nella richiesta controlla se includere i dati base64
+        - Images are searched in the most recent available dataset
+        - Results are sorted by descending score
+        - The `includeBase64` field in the request controls whether to include base64 data
       operationId: getImagesSimplified
       parameters:
       - name: country
         in: path
         required: true
-        description: Codice paese ISO (es. "denmark", "italy", "france")
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
           example: "denmark"
       requestBody:
         required: true
         description: |
-          Richiesta di ricerca immagini per prodotti EAN.
+          Image search request for EAN products.
           
-          Specifica i codici EAN dei prodotti per cui cercare immagini.
+          Specifies the EAN codes of products to search images for.
         content:
           application/json:
             schema:
@@ -384,32 +384,32 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Lista di codici EAN da cercare
+                  description: List of EAN codes to search
                   example: ["5901234123457", "5901234123458"]
                 includeBase64:
                   type: boolean
-                  description: Se true, include i dati base64 delle immagini
+                  description: If true, includes base64 data of images
                   default: false
                   example: true
                 limit:
                   type: integer
-                  description: Numero massimo di immagini per prodotto
+                  description: Maximum number of images per product
                   default: 5
                   example: 10
             examples:
               basic:
-                summary: Ricerca base senza base64
+                summary: Basic search without base64
                 value:
                   eans: ["5901234123457"]
               withBase64:
-                summary: Ricerca con dati base64
+                summary: Search with base64 data
                 value:
                   eans: ["5901234123457", "5901234123458"]
                   includeBase64: true
                   limit: 10
       responses:
         '200':
-          description: Immagini trovate con successo
+          description: Images found successfully
           content:
             application/json:
               schema:
@@ -422,7 +422,7 @@ paths:
                       properties:
                         ean:
                           type: string
-                          description: Codice EAN del prodotto
+                          description: Product EAN code
                           example: "5901234123457"
                         images:
                           type: array
@@ -431,29 +431,29 @@ paths:
                             properties:
                               url:
                                 type: string
-                                description: URL completo dell'immagine
+                                description: Full image URL
                                 example: "https://example.com/image.jpg"
                               base64:
                                 type: string
                                 nullable: true
-                                description: Dati base64 dell'immagine (se richiesto)
+                                description: Base64 data of the image (if requested)
                               score:
                                 type: number
                                 format: float
-                                description: Score di similarità (0.0 - 1.0)
+                                description: Similarity score (0.0 - 1.0)
                                 example: 0.85
                               source:
                                 type: string
-                                description: Fonte dell'immagine
+                                description: Image source
                                 example: "google_images"
         '400':
-          description: Richiesta non valida - lista EAN vuota o formato non valido
+          description: Invalid request - empty EAN list or invalid format
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Dataset non trovato per il paese specificato
+          description: Dataset not found for the specified country
           content:
             application/json:
               schema:
@@ -463,7 +463,7 @@ paths:
       operationId: getPluginInfo
       responses:
         default:
-          description: default response
+          -description: default response
           content:
             application/json: {}
   /webrobot/api/ean-image-sourcing/{country}/status:
@@ -471,29 +471,29 @@ paths:
       tags:
         - EAN Plugin
         - Jobs
-      summary: Ottiene lo status dell'ultimo job EAN eseguito per un paese
+      summary: Get status of the last EAN job executed for a country
       description: |
-        Restituisce informazioni sull'ultimo job EAN Image Sourcing eseguito per il paese specificato.
+        Returns information about the last EAN Image Sourcing job executed for the specified country.
         
-        Include dettagli sull'esecuzione come:
-        - Status del job (PENDING, RUNNING, COMPLETED, FAILED)
-        - Timestamp di inizio e fine
-        - Tempo di esecuzione
-        - URL Spark UI (se disponibile)
-        - Numero di executor pod
-        - Messaggi di errore (se fallito)
+        Includes execution details such as:
+        - Job status (PENDING, RUNNING, COMPLETED, FAILED)
+        - Start and end timestamps
+        - Execution time
+        - Spark UI URL (if available)
+        - Number of executor pods
+        - Error messages (if failed)
       operationId: getStatus
       parameters:
       - name: country
         in: path
         required: true
-        description: Codice paese ISO (es. "denmark", "italy", "france")
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
           example: "denmark"
       responses:
         '200':
-          description: Status del job recuperato con successo
+          description: Job status retrieved successfully
           content:
             application/json:
               schema:
@@ -504,7 +504,7 @@ paths:
                     example: "denmark"
                   hasJobs:
                     type: boolean
-                    description: Indica se ci sono job per questo paese
+                    description: Indicates if there are jobs for this country
                   latestJobStatus:
                     type: string
                     enum: [PENDING, RUNNING, COMPLETED, FAILED]
@@ -534,22 +534,22 @@ paths:
                         example: "2025-12-10T19:58:04.825877"
                       executionTimeSeconds:
                         type: integer
-                        description: Tempo di esecuzione in secondi
+                        description: Execution time in seconds
                         example: 1277
                       errorMessage:
                         type: string
                         nullable: true
-                        description: Messaggio di errore se il job è fallito
+                        description: Error message if the job failed
                       sparkUiUrl:
                         type: string
                         nullable: true
-                        description: URL della Spark UI per monitorare l'esecuzione
+                        description: Spark UI URL to monitor the execution
                       executorPodCount:
                         type: integer
-                        description: Numero di pod executor utilizzati
+                        description: Number of executor pods used
                         example: 2
         '404':
-          description: Nessun job trovato per il paese specificato
+          description: No job found for the specified country
           content:
             application/json:
               schema:
@@ -559,17 +559,17 @@ paths:
       tags:
         - EAN Plugin
         - Query
-      summary: Esegue una query sul dataset EAN
+      summary: Execute a query on the EAN dataset
       description: |
-        Esegue una query personalizzata sul dataset EAN del paese specificato.
+        Executes a custom query on the EAN dataset of the specified country.
         
-        Permette di interrogare il dataset con filtri e condizioni personalizzate.
+        Allows querying the dataset with custom filters and conditions.
       operationId: queryImages
       parameters:
       - name: country
         in: path
         required: true
-        description: Codice paese ISO (es. "denmark", "italy", "france")
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
           example: "denmark"
@@ -596,13 +596,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Dataset non trovato per il paese specificato
+          description: Dataset not found for the specified country
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -616,13 +616,13 @@ paths:
       description: |
         Crea o aggiorna la schedulazione di un job EAN Image Sourcing ricorrente per un paese.
         
-        Il job verrà eseguito automaticamente secondo la schedule specificata (formato cron).
+        The job verrà eseguito automaticamente secondo la schedule specificata (formato cron).
       operationId: scheduleJob
       parameters:
       - name: country
         in: path
         required: true
-        description: Codice paese ISO (es. "denmark", "italy", "france")
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
           example: "denmark"
@@ -637,7 +637,7 @@ paths:
                 type: object
       responses:
         '200':
-          description: Schedulazione creata/aggiornata con successo
+          description: Schedule created/updated successfully
           content:
             application/json:
               schema:
@@ -649,7 +649,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -659,42 +659,42 @@ paths:
       tags:
         - EAN Plugin
         - Upload
-      summary: Carica un dataset EAN
+      summary: Upload an EAN dataset
       description: |
-        Carica un nuovo dataset EAN per il paese specificato.
+        Uploads a new EAN dataset for the specified country.
         
-        Il file deve essere in formato CSV con i codici EAN e i relativi dati.
+        The file must be in CSV format with EAN codes and related data.
       operationId: uploadCsv
       parameters:
       - name: country
         in: path
         required: true
-        description: Codice paese ISO (es. "denmark", "italy", "france")
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
           example: "denmark"
       requestBody:
         required: true
-        description: File CSV da caricare
+        description: CSV file to upload
         content:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/FormDataMultiPart'
       responses:
         '200':
-          description: Dataset caricato con successo
+          description: Dataset uploaded successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: File non valido o formato errato
+          description: Invalid file or wrong format
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -704,42 +704,42 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Cancella un job di training AI
+      summary: Cancel an AI training job
       description: |
-        Cancella un job di training AI in esecuzione o in coda per il provider specificato.
+        Cancels an AI training job that is running or queued for the specified provider.
         
-        **Attenzione:** Questa operazione è irreversibile e interrompe il training se in corso.
+        **Warning:** This operation is irreversible and interrupts training if in progress.
       operationId: cancelTraining
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI (es. "huggingface", "openai", "cohere")
+        description: AI provider name (e.g. "huggingface", "openai", "cohere")
         schema:
           type: string
           example: "huggingface"
       - name: jobId
         in: path
         required: true
-        description: ID del job di training da cancellare
+        description: ID of the training job to cancel
         schema:
           type: string
           example: "job-12345"
       responses:
         '200':
-          description: Job cancellato con successo
+          description: Job cancelled successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Job non trovato
+          description: Job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -749,48 +749,48 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Scarica un modello addestrato
+      summary: Download a trained model
       description: |
-        Scarica un modello AI addestrato dal provider specificato.
+        Downloads a trained AI model from the specified provider.
         
-        Il modello viene scaricato nel percorso specificato o nel percorso di default.
+        The model is downloaded to the specified path or the default path.
       operationId: downloadModel
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
       - name: jobId
         in: path
         required: true
-        description: ID del job di training
+        description: Training job ID
         schema:
           type: string
           example: "job-12345"
       - name: outputPath
         in: query
-        description: Percorso di destinazione per il download (opzionale)
+        description: Destination path for download (optional)
         schema:
           type: string
           example: "/path/to/models"
       responses:
         '200':
-          description: Modello scaricato con successo
+          description: Model downloaded successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Modello o job non trovato
+          description: Model or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -802,7 +802,7 @@ paths:
         - Training
       summary: Stima il costo di un job di training
       description: |
-        Calcola una stima del costo per un job di training AI basato sui parametri specificati.
+        Calcola una stima of the costo per un job di training AI basato sui parametri specificati.
         
         La stima include costi di compute, storage e altri servizi necessari.
       operationId: estimateCost
@@ -810,7 +810,7 @@ paths:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
@@ -843,7 +843,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -853,16 +853,16 @@ paths:
       tags:
         - AI Providers
         - Models
-      summary: Ottiene i modelli supportati da un provider
+      summary: Get i modelli supportati da un provider
       description: |
-        Restituisce la lista di tutti i modelli AI supportati dal provider specificato,
+        Returns la lista di tutti i modelli AI supportati dal provider specified,
         incluse informazioni su versioni, capacità e requisiti.
       operationId: getSupportedModels
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
@@ -882,7 +882,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -891,9 +891,9 @@ paths:
     get:
       tags:
         - AI Providers
-      summary: Ottiene la lista di provider AI supportati
+      summary: Get list of supported AI providers
       description: |
-        Restituisce la lista di tutti i provider AI supportati dalla piattaforma,
+        Returns la lista di tutti i provider AI supportati dalla piattaforma,
         incluse informazioni su capacità e configurazioni disponibili.
       operationId: getSupportedProviders
       responses:
@@ -906,7 +906,7 @@ paths:
                 items:
                   type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -916,9 +916,9 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Ottiene i log di un job di training
+      summary: Get i log di un job di training
       description: |
-        Restituisce i log di esecuzione di un job di training AI.
+        Returns i log di esecuzione di un job di training AI.
         
         I log includono informazioni su progresso, errori e metriche del training.
       operationId: getTrainingLogs
@@ -926,14 +926,14 @@ paths:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
       - name: jobId
         in: path
         required: true
-        description: ID del job di training
+        description: Training job ID
         schema:
           type: string
           example: "job-12345"
@@ -950,13 +950,13 @@ paths:
                     items:
                       type: string
         '404':
-          description: Job non trovato
+          description: Job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -966,23 +966,23 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Ottiene lo status di un job di training
+      summary: Get lo status di un job di training
       description: |
-        Restituisce lo stato attuale di un job di training AI, incluse informazioni su
+        Returns lo stato attuale di un job di training AI, incluse informazioni su
         progresso, durata e eventuali errori.
       operationId: getTrainingStatus
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
       - name: jobId
         in: path
         required: true
-        description: ID del job di training
+        description: Training job ID
         schema:
           type: string
           example: "job-12345"
@@ -1002,13 +1002,13 @@ paths:
                     format: float
                     description: Percentuale di completamento (0-100)
         '404':
-          description: Job non trovato
+          description: Job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1022,7 +1022,7 @@ paths:
       description: |
         Pubblica un modello addestrato sulla piattaforma Hugging Face Model Hub.
         
-        Il modello deve essere stato addestrato e deve essere disponibile per la pubblicazione.
+        The model deve essere stato addestrato e deve essere disponibile per la pubblicazione.
       operationId: publishModel
       requestBody:
         required: true
@@ -1039,13 +1039,13 @@ paths:
               schema:
                 type: object
         '400':
-          description: Richiesta non valida
+          description: Invalid request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1055,17 +1055,17 @@ paths:
       tags:
         - AI Providers
         - Training
-      summary: Avvia un nuovo job di training AI
+      summary: Start a new AI training job
       description: |
-        Avvia un nuovo job di training per un modello AI utilizzando il provider specificato.
+        Starts a new job di training for a model AI utilizzando il provider specified.
         
-        Il job viene eseguito in background e può essere monitorato tramite gli endpoint di status e logs.
+        The job viene eseguito in background e può essere monitorato tramite gli endpoint di status e logs.
       operationId: startTraining
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
@@ -1078,7 +1078,7 @@ paths:
               $ref: '#/components/schemas/TrainingRequestBean'
       responses:
         '201':
-          description: Job di training avviato con successo
+          description: Training job started successfully
           content:
             application/json:
               schema:
@@ -1086,7 +1086,7 @@ paths:
                 properties:
                   jobId:
                     type: string
-                    description: ID del job di training creato
+                    description: Created training job ID
         '400':
           description: Configurazione non valida
           content:
@@ -1094,7 +1094,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1104,17 +1104,17 @@ paths:
       tags:
         - AI Providers
         - Datasets
-      summary: Carica un dataset per il training AI
+      summary: Upload a dataset for AI training
       description: |
-        Carica un dataset da utilizzare per il training di modelli AI sul provider specificato.
+        Carica un dataset da utilizzare for the training di modelli AI on the provider specified.
         
-        Il dataset deve essere in un formato supportato dal provider.
+        The dataset deve essere in un formato supportato dal provider.
       operationId: uploadDataset
       parameters:
       - name: provider
         in: path
         required: true
-        description: Nome del provider AI
+        description: AI provider name
         schema:
           type: string
           example: "huggingface"
@@ -1127,7 +1127,7 @@ paths:
               $ref: '#/components/schemas/DatasetUploadRequest'
       responses:
         '201':
-          description: Dataset caricato con successo
+          description: Dataset uploaded successfully
           content:
             application/json:
               schema:
@@ -1139,7 +1139,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1148,23 +1148,23 @@ paths:
     post:
       tags:
         - Agents
-      summary: Crea un nuovo agente PySpark
+      summary: Create a new PySpark agent
       description: |
-        Crea un nuovo agente PySpark che può essere utilizzato per eseguire job ETL.
+        Creates a new agente PySpark che può essere used per eseguire job ETL.
         
         Un agente contiene il codice PySpark che viene eseguito quando un job viene avviato.
-        L'agente deve essere associato a una categoria.
+        L'agente must be associated a una categoria.
       operationId: createAgent
       requestBody:
         required: true
-        description: Dati dell'agente da creare
+        description: Agent data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AgentDto'
       responses:
         '201':
-          description: Agente creato con successo
+          description: Agent created successfully
           content:
             application/json:
               schema:
@@ -1182,7 +1182,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1191,7 +1191,7 @@ paths:
     delete:
       tags:
         - Agents
-      summary: Elimina un agente
+      summary: Delete un agente
       description: |
         Elimina un agente PySpark dal sistema.
         
@@ -1202,7 +1202,7 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agente da eliminare
+        description: Unique ID dell'agente to delete
         schema:
           type: string
           example: "123"
@@ -1226,7 +1226,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1235,9 +1235,9 @@ paths:
     get:
       tags:
         - Agents
-      summary: Ottiene un agente specifico
+      summary: Get un agente specifico
       description: |
-        Restituisce i dettagli di un agente PySpark specifico, incluso il codice sorgente.
+        Returns i dettagli di un agente PySpark specifico, incluso il codice sorgente.
       operationId: getAgent
       parameters:
       - name: categoryId
@@ -1250,7 +1250,7 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agente
+        description: Unique ID dell'agente
         schema:
           type: string
           example: "123"
@@ -1274,7 +1274,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1282,7 +1282,7 @@ paths:
     put:
       tags:
         - Agents
-      summary: Aggiorna un agente
+      summary: Update un agente
       description: |
         Aggiorna i dati di un agente PySpark esistente, incluso il codice sorgente.
         
@@ -1300,20 +1300,20 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agente da aggiornare
+        description: Unique ID dell'agente to update
         schema:
           type: string
           example: "123"
       requestBody:
         required: true
-        description: Dati aggiornati dell'agente
+        description: Updated agent data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AgentDto'
       responses:
         '200':
-          description: Agente aggiornato con successo
+          description: Agent updated successfully
           content:
             application/json:
               schema:
@@ -1343,7 +1343,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1352,9 +1352,9 @@ paths:
     get:
       tags:
         - Agents
-      summary: Ottiene un agente per nome
+      summary: Get un agente per nome
       description: |
-        Restituisce i dettagli di un agente PySpark cercandolo per nome all'interno di una categoria.
+        Returns i dettagli di un agente PySpark cercandolo per nome all'interno di una categoria.
       operationId: getAgentFromName
       parameters:
       - name: categoryId
@@ -1391,7 +1391,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1400,9 +1400,9 @@ paths:
     get:
       tags:
         - Agents
-      summary: Ottiene tutti gli agenti di una categoria
+      summary: Get tutti gli agenti di una categoria
       description: |
-        Restituisce la lista di tutti gli agenti PySpark appartenenti a una categoria specifica.
+        Returns la lista di tutti gli agenti PySpark appartenenti a una categoria specifica.
       operationId: getAllAgents
       parameters:
       - name: categoryId
@@ -1434,7 +1434,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1443,9 +1443,9 @@ paths:
     get:
       tags:
         - Categories
-      summary: Ottiene tutte le categorie
+      summary: Get tutte le categorie
       description: |
-        Restituisce la lista di tutte le categorie disponibili nel sistema.
+        Returns la lista di tutte le categorie disponibili in the sistema.
         
         Le categorie sono utilizzate per organizzare progetti, agenti e job.
       operationId: getAllCategories
@@ -1465,7 +1465,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1473,20 +1473,20 @@ paths:
     post:
       tags:
         - Categories
-      summary: Crea una nuova categoria
+      summary: Create a new category
       description: |
-        Crea una nuova categoria per organizzare progetti, agenti e job.
+        Creates a new categoria per organizzare progetti, agenti e job.
       operationId: createCategory
       requestBody:
         required: true
-        description: Dati della categoria da creare
+        description: Category data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobCategoryDto'
       responses:
         '201':
-          description: Categoria creata con successo
+          description: Category created successfully
           content:
             application/json:
               schema:
@@ -1504,7 +1504,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1513,15 +1513,15 @@ paths:
     get:
       tags:
         - Categories
-      summary: Ottiene una categoria specifica
+      summary: Get una categoria specifica
       description: |
-        Restituisce i dettagli di una categoria specifica, incluso l'elenco dei progetti associati.
+        Returns i dettagli di una categoria specifica, incluso l'elenco dei progetti associati.
       operationId: getCategory
       parameters:
       - name: categoryId
         in: path
         required: true
-        description: ID univoco della categoria
+        description: Unique ID della categoria
         schema:
           type: string
           example: "1"
@@ -1545,7 +1545,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1553,7 +1553,7 @@ paths:
     put:
       tags:
         - Categories
-      summary: Aggiorna una categoria
+      summary: Update una categoria
       description: |
         Aggiorna i dati di una categoria esistente.
       operationId: updateCategory
@@ -1561,7 +1561,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID univoco della categoria da aggiornare
+        description: Unique ID della categoria to update
         schema:
           type: string
           example: "1"
@@ -1574,7 +1574,7 @@ paths:
               $ref: '#/components/schemas/JobCategoryDto'
       responses:
         '200':
-          description: Categoria aggiornata con successo
+          description: Category updated successfully
           content:
             application/json:
               schema:
@@ -1598,7 +1598,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1606,7 +1606,7 @@ paths:
     delete:
       tags:
         - Categories
-      summary: Elimina una categoria
+      summary: Delete una categoria
       description: |
         Elimina una categoria dal sistema.
         
@@ -1616,7 +1616,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID univoco della categoria da eliminare
+        description: Unique ID della categoria to delete
         schema:
           type: string
           example: "1"
@@ -1640,7 +1640,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1649,9 +1649,9 @@ paths:
     get:
       tags:
         - Categories
-      summary: Ottiene una categoria per nome
+      summary: Get una categoria per nome
       description: |
-        Restituisce i dettagli di una categoria cercandola per nome.
+        Returns i dettagli di una categoria cercandola per nome.
       operationId: getCategoryFromName
       parameters:
       - name: categoryName
@@ -1681,7 +1681,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1693,7 +1693,7 @@ paths:
         - Test
       summary: Endpoint di test per categorie
       description: |
-        Endpoint di test per verificare la funzionalità delle categorie.
+        Endpoint di test per verificare la funzionalità of the categorie.
       operationId: test
       responses:
         '200':
@@ -1703,7 +1703,7 @@ paths:
               schema:
                 type: object
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1712,9 +1712,9 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Ottiene tutte le credenziali cloud
+      summary: Get tutte le credenziali cloud
       description: |
-        Restituisce la lista di tutte le credenziali cloud configurate nel sistema,
+        Returns la lista di tutte le credenziali cloud configurate in the sistema,
         con supporto per paginazione e filtri per provider.
         
         Le credenziali cloud vengono utilizzate per accedere a servizi esterni come
@@ -1759,7 +1759,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1767,22 +1767,22 @@ paths:
     post:
       tags:
         - Cloud Credentials
-      summary: Crea una nuova credenziale cloud
+      summary: Create a new cloud credential
       description: |
-        Crea una nuova credenziale cloud per accedere a servizi cloud esterni.
+        Creates a new credenziale cloud per accedere a servizi cloud esterni.
         
         Le credenziali vengono criptate e memorizzate in modo sicuro nel database.
       operationId: createCloudCredential
       requestBody:
         required: true
-        description: Dati della credenziale cloud da creare
+        description: Cloud credential data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CloudCredential'
       responses:
         '201':
-          description: Credenziale creata con successo
+          description: Credential created successfully
           content:
             application/json:
               schema:
@@ -1800,7 +1800,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1809,9 +1809,9 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Ottiene una credenziale cloud specifica
+      summary: Get una credenziale cloud specifica
       description: |
-        Restituisce i dettagli di una credenziale cloud specifica.
+        Returns i dettagli di una credenziale cloud specifica.
         
         **Nota:** Le credenziali sensibili vengono restituite in forma criptata.
       operationId: getCloudCredentialById
@@ -1819,7 +1819,7 @@ paths:
       - name: credentialId
         in: path
         required: true
-        description: ID univoco della credenziale
+        description: Unique ID della credenziale
         schema:
           type: string
           example: "550e8400-e29b-41d4-a716-446655440000"
@@ -1843,7 +1843,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1851,7 +1851,7 @@ paths:
     put:
       tags:
         - Cloud Credentials
-      summary: Aggiorna una credenziale cloud
+      summary: Update una credenziale cloud
       description: |
         Aggiorna i dati di una credenziale cloud esistente.
         
@@ -1861,7 +1861,7 @@ paths:
       - name: credentialId
         in: path
         required: true
-        description: ID univoco della credenziale da aggiornare
+        description: Unique ID della credenziale to update
         schema:
           type: string
           example: "550e8400-e29b-41d4-a716-446655440000"
@@ -1874,7 +1874,7 @@ paths:
               $ref: '#/components/schemas/CloudCredential'
       responses:
         '200':
-          description: Credenziale aggiornata con successo
+          description: Credential updated successfully
           content:
             application/json:
               schema:
@@ -1898,7 +1898,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1906,7 +1906,7 @@ paths:
     delete:
       tags:
         - Cloud Credentials
-      summary: Elimina una credenziale cloud
+      summary: Delete una credenziale cloud
       description: |
         Elimina una credenziale cloud dal sistema.
         
@@ -1917,7 +1917,7 @@ paths:
       - name: credentialId
         in: path
         required: true
-        description: ID univoco della credenziale da eliminare
+        description: Unique ID della credenziale to delete
         schema:
           type: string
           example: "550e8400-e29b-41d4-a716-446655440000"
@@ -1941,7 +1941,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1950,9 +1950,9 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Ottiene le credenziali cloud per provider
+      summary: Get le credenziali cloud per provider
       description: |
-        Restituisce la lista di tutte le credenziali cloud configurate per un provider specifico.
+        Returns la lista di tutte le credenziali cloud configurate per un provider specifico.
       operationId: getCloudCredentialsByProvider
       parameters:
       - name: provider
@@ -1964,7 +1964,7 @@ paths:
           example: "aws"
       responses:
         '200':
-          description: Lista delle credenziali per il provider
+          description: Lista delle credenziali for the provider
           content:
             application/json:
               schema:
@@ -1984,7 +1984,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -1993,9 +1993,9 @@ paths:
     get:
       tags:
         - Datasets
-      summary: Ottiene tutti i dataset
+      summary: Get tutti i dataset
       description: |
-        Restituisce la lista di tutti i dataset disponibili nel sistema, con supporto per filtri.
+        Returns la lista di tutti i dataset disponibili in the sistema, con supporto per filtri.
         
         I dataset possono essere filtrati per tipo, formato e stato di indicizzazione.
       operationId: getAllDatasets_1
@@ -2034,7 +2034,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2042,22 +2042,22 @@ paths:
     post:
       tags:
         - Datasets
-      summary: Crea un nuovo dataset
+      summary: Create a new dataset
       description: |
-        Crea un nuovo dataset nel sistema con le configurazioni specificate.
+        Creates a new dataset in the sistema con le configurazioni specificate.
         
-        Il dataset può essere associato a un progetto e utilizzato come input o output per job ETL.
+        The dataset può essere associato a un progetto e utilizzato come input o output per job ETL.
       operationId: createDataset
       requestBody:
         required: true
-        description: Dati del dataset da creare
+        description: Dataset data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DatasetDto'
       responses:
         '201':
-          description: Dataset creato con successo
+          description: Dataset created successfully
           content:
             application/json:
               schema:
@@ -2075,7 +2075,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2084,15 +2084,15 @@ paths:
     get:
       tags:
         - Datasets
-      summary: Ottiene un dataset specifico
+      summary: Get un dataset specifico
       description: |
-        Restituisce i dettagli di un dataset specifico, incluse informazioni su schema, formato e percorso.
+        Returns i dettagli di un dataset specifico, incluse informazioni su schema, formato e percorso.
       operationId: getDataset_1
       parameters:
       - name: datasetId
         in: path
         required: true
-        description: ID univoco del dataset
+        description: Unique ID del dataset
         schema:
           type: string
           example: "123"
@@ -2116,7 +2116,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2124,7 +2124,7 @@ paths:
     put:
       tags:
         - Datasets
-      summary: Aggiorna un dataset
+      summary: Update un dataset
       description: |
         Aggiorna i dati di un dataset esistente, incluse configurazioni e metadati.
       operationId: updateDataset
@@ -2132,7 +2132,7 @@ paths:
       - name: datasetId
         in: path
         required: true
-        description: ID univoco del dataset da aggiornare
+        description: Unique ID del dataset to update
         schema:
           type: string
           example: "123"
@@ -2145,7 +2145,7 @@ paths:
               $ref: '#/components/schemas/DatasetDto'
       responses:
         '200':
-          description: Dataset aggiornato con successo
+          description: Dataset updated successfully
           content:
             application/json:
               schema:
@@ -2169,7 +2169,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2177,7 +2177,7 @@ paths:
     delete:
       tags:
         - Datasets
-      summary: Elimina un dataset
+      summary: Delete un dataset
       description: |
         Elimina un dataset dal sistema.
         
@@ -2188,7 +2188,7 @@ paths:
       - name: datasetId
         in: path
         required: true
-        description: ID univoco del dataset da eliminare
+        description: Unique ID del dataset to delete
         schema:
           type: string
           example: "123"
@@ -2212,7 +2212,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2222,9 +2222,9 @@ paths:
       tags:
         - Datasets
         - Query
-      summary: Esegue una query SQL su un dataset
+      summary: Executes a query SQL su un dataset
       description: |
-        Esegue una query SQL (Presto/Trino) su un dataset per recuperare o analizzare i dati.
+        Executes a query SQL (Presto/Trino) su un dataset per recuperare o analizzare i dati.
         
         La query viene eseguita sul catalogo MinIO e può utilizzare tutte le funzionalità SQL supportate da Trino.
       operationId: executeQuery
@@ -2260,7 +2260,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2271,15 +2271,15 @@ paths:
         - Datasets
         - Query
         - Tasks
-      summary: Ottiene informazioni sul dataset associato a un task
+      summary: Get informazioni sul dataset associato a un task
       description: |
-        Restituisce informazioni sul dataset di output associato a un task specifico.
+        Returns informazioni sul dataset di output associated a un task specifico.
       operationId: getDatasetInfoByTask
       parameters:
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task
+        description: Unique ID del task
         schema:
           type: string
           example: "123"
@@ -2303,7 +2303,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2313,9 +2313,9 @@ paths:
       tags:
         - Datasets
         - Query
-      summary: Ottiene le colonne di una tabella
+      summary: Get le colonne di una tabella
       description: |
-        Restituisce la lista delle colonne e i relativi tipi di una tabella nel catalogo Trino.
+        Returns la lista of the colonne e i relativi tipi di una tabella in the catalogo Trino.
       operationId: getTableColumns
       parameters:
       - name: catalog
@@ -2366,7 +2366,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2376,9 +2376,9 @@ paths:
       tags:
         - Datasets
         - Query
-      summary: Lista tutte le tabelle disponibili
+      summary: List tutte le tabelle disponibili
       description: |
-        Restituisce la lista di tutte le tabelle disponibili in un catalogo e schema specifici.
+        Returns la lista di tutte le tabelle disponibili in un catalogo e schema specifici.
       operationId: listTables
       parameters:
       - name: catalog
@@ -2411,7 +2411,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2422,9 +2422,9 @@ paths:
         - Datasets
         - Query
         - Tasks
-      summary: Esegue una query SQL sul dataset di output di un task
+      summary: Executes a query SQL sul dataset di output di un task
       description: |
-        Esegue una query SQL sul dataset di output associato a un task specifico.
+        Executes a query SQL sul dataset di output associated a un task specifico.
         
         Utile per analizzare i risultati di un task dopo la sua esecuzione.
       operationId: queryDatasetByTask
@@ -2432,7 +2432,7 @@ paths:
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task
+        description: Unique ID del task
         schema:
           type: string
           example: "123"
@@ -2474,7 +2474,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2484,9 +2484,9 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Ottiene tutte le versioni della libreria ETL
+      summary: Get tutte le versioni della libreria ETL
       description: |
-        Restituisce la lista di tutte le versioni della libreria ETL disponibili nel sistema,
+        Returns la lista di tutte le versioni of the libreria ETL disponibili in the sistema,
         con supporto per filtri per tipo di build e stato attivo.
       operationId: getAllVersions
       parameters:
@@ -2518,7 +2518,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2527,28 +2527,28 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Crea o aggiorna una versione della libreria ETL
+      summary: Create or update an ETL library version
       description: |
-        Crea una nuova versione della libreria ETL o aggiorna una versione esistente.
+        Creates a new versione of the libreria ETL o aggiorna una versione esistente.
         
         Le versioni ETL vengono utilizzate per eseguire job Spark con versioni specifiche della libreria.
       operationId: createOrUpdateVersion
       requestBody:
         required: true
-        description: Dati della versione ETL
+        description: ETL version data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EtlLibraryVersionApiDto'
       responses:
         '200':
-          description: Versione creata o aggiornata con successo
+          description: Version created or updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '201':
-          description: Versione creata con successo
+          description: Version created successfully
           content:
             application/json:
               schema:
@@ -2566,7 +2566,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2576,15 +2576,15 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Ottiene una versione ETL specifica
+      summary: Get una versione ETL specifica
       description: |
-        Restituisce i dettagli di una versione della libreria ETL identificata dall'ID.
+        Returns i dettagli di una versione of the libreria ETL identificata dall'ID.
       operationId: getVersionById
       parameters:
       - name: id
         in: path
         required: true
-        description: ID univoco della versione
+        description: Unique ID della versione
         schema:
           type: integer
           format: int64
@@ -2609,7 +2609,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2618,15 +2618,15 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Aggiorna una versione ETL
+      summary: Update una versione ETL
       description: |
-        Aggiorna i dati di una versione della libreria ETL esistente.
+        Aggiorna i dati di una versione of the libreria ETL esistente.
       operationId: updateVersion
       parameters:
       - name: id
         in: path
         required: true
-        description: ID univoco della versione da aggiornare
+        description: Unique ID della versione to update
         schema:
           type: integer
           format: int64
@@ -2664,7 +2664,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2673,9 +2673,9 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Elimina una versione ETL
+      summary: Delete una versione ETL
       description: |
-        Elimina una versione della libreria ETL dal sistema.
+        Elimina una versione of the libreria ETL dal sistema.
         
         **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa versione
         potrebbero non funzionare correttamente.
@@ -2684,7 +2684,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: ID univoco della versione da eliminare
+        description: Unique ID della versione to delete
         schema:
           type: integer
           format: int64
@@ -2709,7 +2709,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2719,9 +2719,9 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Ottiene una versione ETL per tipo e numero di build
+      summary: Get una versione ETL per tipo e numero di build
       description: |
-        Restituisce i dettagli di una versione della libreria ETL identificata da tipo di build
+        Returns i dettagli di una versione of the libreria ETL identificata da tipo di build
         e numero di build.
       operationId: getVersionByBuildTypeAndBuildNumber
       parameters:
@@ -2760,7 +2760,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2769,9 +2769,9 @@ paths:
     get:
       tags:
         - Package
-      summary: Ottiene l'URL per il download di un package
+      summary: Get l'URL per il download di un package
       description: |
-        Restituisce un URL temporaneo per scaricare un package di progetti e configurazioni.
+        Returns un URL temporaneo per scaricare un package di progetti e configurazioni.
       operationId: getUrlDownload
       responses:
         '200':
@@ -2792,7 +2792,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2801,9 +2801,9 @@ paths:
     get:
       tags:
         - Package
-      summary: Ottiene l'URL per il caricamento di un package
+      summary: Get URL for package upload
       description: |
-        Restituisce un URL temporaneo per caricare un package di progetti e configurazioni.
+        Returns un URL temporaneo per caricare un package di progetti e configurazioni.
       operationId: getUrlUpload
       responses:
         '200':
@@ -2824,7 +2824,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2833,14 +2833,14 @@ paths:
     get:
       tags:
         - Package
-      summary: Avvia l'export di tutti i progetti
+      summary: Start export of all projects
       description: |
-        Avvia il processo di export di tutti i progetti e le configurazioni del sistema
-        in un package compresso.
+        Starts the export process for all projects and system configurations
+        in a compressed package.
       operationId: start_export_All
       responses:
         '200':
-          description: Export avviato con successo
+          description: Export started successfully
           content:
             application/json:
               schema:
@@ -2856,7 +2856,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2865,22 +2865,22 @@ paths:
     get:
       tags:
         - Package
-      summary: Avvia l'export di un progetto specifico
+      summary: Start export of a specific project
       description: |
-        Avvia il processo di export di un progetto specifico e le sue configurazioni
-        in un package compresso.
+        Starts the export process for a specific project and its configurations
+        in a compressed package.
       operationId: start_export_project
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto da esportare
+        description: Unique ID del progetto da esportare
         schema:
           type: string
           example: "98"
       responses:
         '200':
-          description: Export avviato con successo
+          description: Export started successfully
           content:
             application/json:
               schema:
@@ -2902,7 +2902,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2911,15 +2911,15 @@ paths:
     get:
       tags:
         - Package
-      summary: Avvia l'import di tutti i progetti
+      summary: Start import of all projects
       description: |
-        Avvia il processo di import di tutti i progetti e le configurazioni da un package compresso.
+        Starts the process di import di tutti i progetti and configurations da un package compresso.
         
         **Attenzione:** Questa operazione può sovrascrivere progetti esistenti.
       operationId: start_import_All
       responses:
         '200':
-          description: Import avviato con successo
+          description: Import started successfully
           content:
             application/json:
               schema:
@@ -2935,7 +2935,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2944,9 +2944,9 @@ paths:
     get:
       tags:
         - Package
-      summary: Avvia l'import di un progetto specifico
+      summary: Start import of a specific project
       description: |
-        Avvia il processo di import di un progetto specifico e le sue configurazioni da un package compresso.
+        Starts the process di import di un progetto specifico and its configurations da un package compresso.
         
         **Attenzione:** Questa operazione può sovrascrivere il progetto esistente se presente.
       operationId: start_import_project
@@ -2954,13 +2954,13 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto da importare
+        description: Unique ID del progetto da importare
         schema:
           type: string
           example: "98"
       responses:
         '200':
-          description: Import avviato con successo
+          description: Import started successfully
           content:
             application/json:
               schema:
@@ -2982,7 +2982,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -2994,7 +2994,7 @@ paths:
         - Plugins
       summary: Disabilita un plugin
       description: |
-        Disabilita un plugin nel sistema per un tipo di build specifico.
+        Disabilita un plugin in the sistema per un tipo di build specifico.
         
         I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin
@@ -3002,7 +3002,7 @@ paths:
       - name: pluginId
         in: path
         required: true
-        description: ID univoco del plugin
+        description: Unique ID del plugin
         schema:
           type: string
           example: "ean-image-sourcing"
@@ -3033,7 +3033,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3045,7 +3045,7 @@ paths:
         - Plugins
       summary: Abilita un plugin
       description: |
-        Abilita un plugin nel sistema per un tipo di build specifico.
+        Abilita un plugin in the sistema per un tipo di build specifico.
         
         I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin
@@ -3053,7 +3053,7 @@ paths:
       - name: pluginId
         in: path
         required: true
-        description: ID univoco del plugin
+        description: Unique ID del plugin
         schema:
           type: string
           example: "ean-image-sourcing"
@@ -3084,7 +3084,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3094,9 +3094,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Lista tutti i plugin
+      summary: List tutti i plugin
       description: |
-        Restituisce la lista di tutti i plugin disponibili nel sistema, filtrati per tipo di build.
+        Returns la lista di tutti i plugin disponibili in the sistema, filtrati per tipo di build.
       operationId: listPlugins
       parameters:
       - name: buildType
@@ -3122,7 +3122,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3132,9 +3132,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Carica un nuovo plugin
+      summary: Upload a new plugin
       description: |
-        Carica un nuovo plugin nel sistema come file JAR.
+        Carica un nuovo plugin in the sistema come file JAR.
         
         Il plugin può essere associato a una o più organizzazioni e a un tipo di build specifico.
       operationId: uploadPlugin
@@ -3154,7 +3154,7 @@ paths:
                   description: File JAR del plugin
                 pluginId:
                   type: string
-                  description: ID univoco del plugin
+                  description: Unique ID del plugin
                   example: "my-plugin"
                 buildType:
                   type: string
@@ -3190,7 +3190,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3200,15 +3200,15 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Ottiene un'installazione plugin specifica
+      summary: Get un'installazione plugin specifica
       description: |
-        Restituisce i dettagli di un'installazione plugin identificata dall'ID.
+        Returns i dettagli di un'installazione plugin identificata dall'ID.
       operationId: getInstallationById
       parameters:
       - name: id
         in: path
         required: true
-        description: ID univoco dell'installazione
+        description: Unique ID dell'installazione
         schema:
           type: integer
           format: int64
@@ -3233,7 +3233,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3242,7 +3242,7 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Aggiorna un'installazione plugin
+      summary: Update un'installazione plugin
       description: |
         Aggiorna i dati di un'installazione plugin esistente, incluse configurazioni e metadati.
       operationId: updateInstallation
@@ -3250,7 +3250,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: ID univoco dell'installazione da aggiornare
+        description: Unique ID dell'installazione to update
         schema:
           type: integer
           format: int64
@@ -3288,7 +3288,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3297,7 +3297,7 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Elimina un'installazione plugin
+      summary: Delete un'installazione plugin
       description: |
         Elimina un'installazione plugin dal sistema.
         
@@ -3308,7 +3308,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: ID univoco dell'installazione da eliminare
+        description: Unique ID dell'installazione to delete
         schema:
           type: integer
           format: int64
@@ -3333,7 +3333,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3345,7 +3345,7 @@ paths:
         - Plugins
       summary: Disabilita un'installazione plugin
       description: |
-        Disabilita un'installazione plugin nel sistema.
+        Disabilita un'installazione plugin in the sistema.
         
         I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin_1
@@ -3353,7 +3353,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: ID univoco dell'installazione
+        description: Unique ID dell'installazione
         schema:
           type: integer
           format: int64
@@ -3378,7 +3378,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3390,7 +3390,7 @@ paths:
         - Plugins
       summary: Abilita un'installazione plugin
       description: |
-        Abilita un'installazione plugin nel sistema.
+        Abilita un'installazione plugin in the sistema.
         
         I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin_1
@@ -3398,7 +3398,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: ID univoco dell'installazione
+        description: Unique ID dell'installazione
         schema:
           type: integer
           format: int64
@@ -3423,7 +3423,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3433,9 +3433,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Ottiene tutte le installazioni plugin
+      summary: Get tutte le installazioni plugin
       description: |
-        Restituisce la lista di tutte le installazioni plugin disponibili nel sistema,
+        Returns la lista di tutte le installazioni plugin disponibili in the sistema,
         con supporto per filtri per organizzazione e stato abilitato.
       operationId: getAllInstallations
       parameters:
@@ -3467,7 +3467,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3478,13 +3478,13 @@ paths:
         - Plugins
       summary: Registra un nuovo plugin
       description: |
-        Registra un nuovo plugin nel sistema come installazione.
+        Registra un nuovo plugin in the sistema come installazione.
         
         Il plugin può essere associato a una o più organizzazioni.
       operationId: registerPlugin
       requestBody:
         required: true
-        description: Dati dell'installazione plugin
+        description: Plugin installation data
         content:
           application/json:
             schema:
@@ -3509,7 +3509,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3519,9 +3519,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Ricarica tutti i plugin
+      summary: Reload all plugins
       description: |
-        Ricarica tutti i plugin nel sistema, aggiornando le configurazioni e le installazioni.
+        Ricarica tutti i plugin in the sistema, aggiornando le configurazioni e le installazioni.
         
         Utile dopo aver caricato o modificato plugin per applicare le modifiche senza riavviare il sistema.
       operationId: reloadPlugins
@@ -3543,7 +3543,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3553,15 +3553,15 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Ottiene tutti i job di un progetto
+      summary: Get tutti i job di un progetto
       description: |
-        Restituisce la lista di tutti i job ETL associati a un progetto specifico.
+        Returns la lista di tutti i job ETL associati a un progetto specifico.
       operationId: getProjectJobs
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
@@ -3587,7 +3587,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3598,28 +3598,28 @@ paths:
         - Jobs
       summary: Aggiunge un job a un progetto
       description: |
-        Crea un nuovo job ETL e lo associa a un progetto esistente.
+        Creates a new job ETL e lo associa a un progetto esistente.
         
-        Il job deve essere associato a un Agent con codice PySpark valido.
+        The job must be associated a un Agent con codice PySpark valido.
       operationId: addJobToProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       requestBody:
         required: true
-        description: Dati del job da creare
+        description: Job data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobDto'
       responses:
         '201':
-          description: Job creato e aggiunto al progetto con successo
+          description: Job created and added to project successfully
           content:
             application/json:
               schema:
@@ -3643,7 +3643,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3652,9 +3652,9 @@ paths:
     get:
       tags:
         - Projects
-      summary: Ottiene tutti i progetti
+      summary: Get tutti i progetti
       description: |
-        Restituisce la lista di tutti i progetti disponibili nel sistema.
+        Returns la lista di tutti i progetti disponibili in the sistema.
         
         I progetti sono utilizzati per organizzare job, task e dataset correlati.
       operationId: getAllProjects
@@ -3674,7 +3674,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3682,22 +3682,22 @@ paths:
     post:
       tags:
         - Projects
-      summary: Crea un nuovo progetto
+      summary: Create a new project
       description: |
-        Crea un nuovo progetto nel sistema.
+        Creates a new progetto in the sistema.
         
         Un progetto può contenere più job ETL e può essere schedulato per esecuzione automatica.
       operationId: createProject
       requestBody:
         required: true
-        description: Dati del progetto da creare
+        description: Project data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobProjectDto'
       responses:
         '201':
-          description: Progetto creato con successo
+          description: Project created successfully
           content:
             application/json:
               schema:
@@ -3715,7 +3715,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3726,9 +3726,9 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Ottiene tutti i task di un job
+      summary: Get tutti i task di un job
       description: |
-        Restituisce la lista di tutti i task associati a un job specifico.
+        Returns la lista di tutti i task associati a un job specifico.
         
         I task rappresentano le singole operazioni che compongono un job ETL.
       operationId: getAllTasks
@@ -3736,14 +3736,14 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
@@ -3769,7 +3769,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3779,9 +3779,9 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Crea un nuovo task in un job
+      summary: Create a new task in a job
       description: |
-        Crea un nuovo task e lo associa a un job esistente.
+        Creates a new task e lo associa a un job esistente.
         
         Un task può essere di tipo SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
       operationId: createTask
@@ -3789,27 +3789,27 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       requestBody:
         required: true
-        description: Dati del task da creare
+        description: Task data to create
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TaskDto'
       responses:
         '201':
-          description: Task creato con successo
+          description: Task created successfully
           content:
             application/json:
               schema:
@@ -3833,7 +3833,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3842,15 +3842,15 @@ paths:
     get:
       tags:
         - Projects
-      summary: Ottiene un progetto specifico
+      summary: Get un progetto specifico
       description: |
-        Restituisce i dettagli di un progetto specifico, incluso l'elenco dei job associati.
+        Returns i dettagli di un progetto specifico, incluso l'elenco dei job associati.
       operationId: getProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
@@ -3874,7 +3874,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3882,7 +3882,7 @@ paths:
     put:
       tags:
         - Projects
-      summary: Aggiorna un progetto
+      summary: Update un progetto
       description: |
         Aggiorna i dati di un progetto esistente, incluse configurazioni e schedulazione.
       operationId: updateProject
@@ -3890,7 +3890,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto da aggiornare
+        description: Unique ID del progetto to update
         schema:
           type: string
           example: "98"
@@ -3903,7 +3903,7 @@ paths:
               $ref: '#/components/schemas/JobProjectDto'
       responses:
         '200':
-          description: Progetto aggiornato con successo
+          description: Project updated successfully
           content:
             application/json:
               schema:
@@ -3927,7 +3927,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3935,7 +3935,7 @@ paths:
     delete:
       tags:
         - Projects
-      summary: Elimina un progetto
+      summary: Delete un progetto
       description: |
         Elimina un progetto dal sistema.
         
@@ -3946,7 +3946,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto da eliminare
+        description: Unique ID del progetto to delete
         schema:
           type: string
           example: "98"
@@ -3970,7 +3970,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -3981,29 +3981,29 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Ottiene un task specifico
+      summary: Get un task specifico
       description: |
-        Restituisce i dettagli di un task specifico, incluse configurazioni e stato di esecuzione.
+        Returns i dettagli di un task specifico, incluse configurazioni e stato di esecuzione.
       operationId: getTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task
+        description: Unique ID del task
         schema:
           type: string
           example: "1"
@@ -4027,7 +4027,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4037,7 +4037,7 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Aggiorna un task
+      summary: Update un task
       description: |
         Aggiorna i dati di un task esistente, incluse configurazioni e metadati.
       operationId: updateTask
@@ -4045,21 +4045,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task da aggiornare
+        description: Unique ID del task to update
         schema:
           type: string
           example: "1"
@@ -4096,7 +4096,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4106,7 +4106,7 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Elimina un task
+      summary: Delete un task
       description: |
         Elimina un task da un job.
         
@@ -4116,21 +4116,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task da eliminare
+        description: Unique ID del task to delete
         schema:
           type: string
           example: "1"
@@ -4154,7 +4154,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4166,15 +4166,15 @@ paths:
         - ETL Execution
       summary: Esegue un job Spark immediatamente
       description: |
-        Esegue un job Spark in modalità immediata, allocando risorse nel cluster Kubernetes.
+        Esegue un job Spark in modalità immediata, allocando risorse in the cluster Kubernetes.
         
-        Il job viene eseguito con le configurazioni specificate nel job stesso o tramite
+        The job viene eseguito con le configurazioni specificate nel job stesso o tramite
         parametri opzionali nella richiesta.
         
         **Note importanti:**
-        - Il job deve essere associato a un Agent con codice PySpark valido
+        - The job must be associated a un Agent con codice PySpark valido
         - Le credenziali cloud vengono iniettate automaticamente se configurate
-        - Il webhook viene chiamato automaticamente all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
+        - Il webhook is called automaticamente all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
         
         **Rate Limiting:** Max 10 esecuzioni simultanee per progetto
       operationId: executeJob_1
@@ -4182,21 +4182,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job da eseguire
+        description: Unique ID del job da eseguire
         schema:
           type: string
           example: "210"
       requestBody:
         required: false
         description: |
-          Parametri opzionali per l'esecuzione del job.
+          Parametri opzionali per l'esecuzione of the job.
           
           Se non specificati, vengono usati i valori di default del job.
         content:
@@ -4233,7 +4233,7 @@ paths:
                 properties:
                   executionId:
                     type: string
-                    description: ID univoco dell'esecuzione Spark
+                    description: Unique ID dell'esecuzione Spark
                     example: "spark-2d53940045a6-95379617"
                   status:
                     type: string
@@ -4252,7 +4252,7 @@ paths:
                     description: Indica se la submission è avvenuta con successo
                     example: true
         '400':
-          description: Richiesta non valida
+          description: Invalid request
           content:
             application/json:
               schema:
@@ -4282,7 +4282,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4293,30 +4293,30 @@ paths:
         - Projects
         - Jobs
         - Execution
-      summary: Ottiene i log di un'esecuzione job
+      summary: Get i log di un'esecuzione job
       description: |
-        Restituisce i log di esecuzione di un job Spark specifico, con supporto per filtri
-        per tipo di pod (driver/executor) e limitazione del numero di righe.
+        Returns i log di esecuzione di un job Spark specifico, con supporto per filtri
+        per tipo di pod (driver/executor) e limitazione of the numero di righe.
       operationId: getExecutionLogs
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: executionId
         in: path
         required: true
-        description: ID univoco dell'esecuzione Spark
+        description: Unique ID dell'esecuzione Spark
         schema:
           type: string
           example: "spark-2d53940045a6-95379617"
@@ -4359,7 +4359,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4370,9 +4370,9 @@ paths:
         - Projects
         - Jobs
         - Execution
-      summary: Ottiene lo status di un'esecuzione job
+      summary: Get lo status di un'esecuzione job
       description: |
-        Restituisce lo stato dettagliato di un'esecuzione job Spark, incluse informazioni su
+        Returns lo stato dettagliato di un'esecuzione job Spark, incluse informazioni su
         progresso, durata, metriche e eventuali errori.
         
         Lo status viene recuperato dal database e include dettagli come:
@@ -4387,21 +4387,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: executionId
         in: path
         required: true
-        description: ID univoco dell'esecuzione Spark
+        description: Unique ID dell'esecuzione Spark
         schema:
           type: string
           example: "spark-2d53940045a6-95379617"
@@ -4454,7 +4454,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4464,22 +4464,22 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Ottiene un job specifico
+      summary: Get un job specifico
       description: |
-        Restituisce i dettagli di un job ETL specifico, incluse configurazioni e stato di esecuzione.
+        Returns i dettagli di un job ETL specifico, incluse configurazioni e stato di esecuzione.
       operationId: getJob
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
@@ -4503,7 +4503,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4512,7 +4512,7 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Aggiorna un job
+      summary: Update un job
       description: |
         Aggiorna i dati di un job esistente, incluse configurazioni e metadati.
       operationId: updateJob
@@ -4520,14 +4520,14 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job da aggiornare
+        description: Unique ID del job to update
         schema:
           type: string
           example: "210"
@@ -4564,7 +4564,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4577,20 +4577,20 @@ paths:
       description: |
         Rimuove un job da un progetto, eliminando l'associazione.
         
-        **Attenzione:** Il job stesso non viene eliminato, solo l'associazione al progetto.
+        **Attenzione:** The job stesso non viene eliminato, solo l'associazione al progetto.
       operationId: removeJobFromProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job da rimuovere
+        description: Unique ID del job da rimuovere
         schema:
           type: string
           example: "210"
@@ -4614,7 +4614,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4623,9 +4623,9 @@ paths:
     get:
       tags:
         - Projects
-      summary: Ottiene un progetto per nome
+      summary: Get un progetto per nome
       description: |
-        Restituisce i dettagli di un progetto cercandolo per nome.
+        Returns i dettagli di un progetto cercandolo per nome.
       operationId: getProjectFromName
       parameters:
       - name: projectName
@@ -4655,7 +4655,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4665,16 +4665,16 @@ paths:
       tags:
         - Projects
         - Scheduler
-      summary: Ottiene la schedulazione di un progetto
+      summary: Get la schedulazione di un progetto
       description: |
-        Restituisce la configurazione di schedulazione di un progetto, incluse informazioni
+        Returns la configurazione di schedulazione di un progetto, incluse informazioni
         su quando e come viene eseguito automaticamente.
       operationId: getProjectSchedule
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
@@ -4698,7 +4698,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4717,7 +4717,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
@@ -4754,7 +4754,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4765,29 +4765,29 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Ottiene lo status di un task
+      summary: Get lo status di un task
       description: |
-        Restituisce lo stato attuale di un task, incluse informazioni su esecuzione e progresso.
+        Returns lo stato attuale di un task, incluse informazioni su esecuzione e progresso.
       operationId: getTaskStatus
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task
+        description: Unique ID del task
         schema:
           type: string
           example: "1"
@@ -4819,7 +4819,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4835,21 +4835,21 @@ paths:
         Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
         di un'esecuzione job.
         
-        Questo endpoint viene chiamato automaticamente dal sistema Spark quando un job termina
+        Questo endpoint is called automaticamente dal sistema Spark quando un job termina
         (con status RUNNING, COMPLETED o FAILED).
       operationId: jobCompletionWebhook
       parameters:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
@@ -4880,7 +4880,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4891,7 +4891,7 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Avvia un task
+      summary: Start a task
       description: |
         Avvia l'esecuzione di un task specifico.
         
@@ -4901,27 +4901,27 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task da avviare
+        description: Unique ID of the task to start
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Task avviato con successo
+          description: Task started successfully
           content:
             application/json:
               schema:
@@ -4945,7 +4945,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -4967,21 +4967,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task da fermare
+        description: Unique ID del task da fermare
         schema:
           type: string
           example: "1"
@@ -5011,7 +5011,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5023,9 +5023,9 @@ paths:
         - Jobs
         - Tasks
         - Metrics
-      summary: Ottiene le metriche di un task
+      summary: Get le metriche di un task
       description: |
-        Restituisce le metriche dettagliate di un task specifico, incluse durata, record processati,
+        Returns le metriche dettagliate di un task specifico, incluse durata, record processati,
         utilizzo memoria, CPU e altre metriche di performance.
         
         Le metriche vengono estratte dall'executionLog del task e includono informazioni su:
@@ -5040,21 +5040,21 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "220"
       - name: taskId
         in: path
         required: true
-        description: ID univoco del task
+        description: Unique ID del task
         schema:
           type: string
           example: "229"
@@ -5134,7 +5134,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5145,9 +5145,9 @@ paths:
         - Projects
         - Jobs
         - Metrics
-      summary: Ottiene le metriche aggregate di un job
+      summary: Get le metriche aggregate di un job
       description: |
-        Restituisce le metriche aggregate di tutte le esecuzioni di un job, incluse somme, medie
+        Returns le metriche aggregate di tutte le esecuzioni di un job, incluse somme, medie
         e conteggi per status.
         
         Le metriche vengono calcolate a livello database per performance ottimali e includono:
@@ -5163,14 +5163,14 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: ID univoco del job
+        description: Unique ID del job
         schema:
           type: string
           example: "220"
@@ -5286,7 +5286,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5296,9 +5296,9 @@ paths:
       tags:
         - Projects
         - Metrics
-      summary: Ottiene le metriche aggregate di un progetto
+      summary: Get le metriche aggregate di un progetto
       description: |
-        Restituisce le metriche aggregate di tutte le esecuzioni di tutti i job di un progetto,
+        Returns le metriche aggregate di tutte le esecuzioni di tutti i job di un progetto,
         incluse somme, medie e conteggi per status.
         
         Le metriche vengono calcolate a livello database per performance ottimali e includono:
@@ -5315,7 +5315,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: ID univoco del progetto
+        description: Unique ID del progetto
         schema:
           type: string
           example: "98"
@@ -5453,7 +5453,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5467,7 +5467,7 @@ paths:
       summary: Marca i task zombie come FAILED
       description: |
         Rileva e marca automaticamente come FAILED i task che risultano RUNNING ma sono in esecuzione
-        da più tempo del timeout specificato (task "zombie").
+        da più tempo of the timeout specified (task "zombie").
         
         Un task è considerato "zombie" se:
         - Ha status RUNNING
@@ -5526,7 +5526,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5557,7 +5557,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5701,7 +5701,7 @@ paths:
     put:
       tags:
         - Python Extensions
-      summary: Aggiorna un'estensione Python
+      summary: Update un'estensione Python
       description: |
         Aggiorna i dati di un'estensione Python esistente, incluse configurazioni e metadati.
       operationId: updatePythonExtension
@@ -5709,7 +5709,7 @@ paths:
       - name: extensionId
         in: path
         required: true
-        description: ID univoco dell'estensione
+        description: Unique ID dell'estensione
         schema:
           type: string
           example: "my-extension"
@@ -5748,7 +5748,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5756,7 +5756,7 @@ paths:
     delete:
       tags:
         - Python Extensions
-      summary: Elimina un'estensione Python
+      summary: Delete un'estensione Python
       description: |
         Elimina un'estensione Python dal sistema.
         
@@ -5767,7 +5767,7 @@ paths:
       - name: extensionId
         in: path
         required: true
-        description: ID univoco dell'estensione da eliminare
+        description: Unique ID dell'estensione to delete
         schema:
           type: string
           example: "my-extension"
@@ -5791,7 +5791,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5802,7 +5802,7 @@ paths:
         - Python Extensions
       summary: Genera codice PySpark da un'estensione
       description: |
-        Genera codice PySpark da un'estensione Python registrata nel sistema.
+        Genera codice PySpark da un'estensione Python registrata in the sistema.
         
         Utile per convertire estensioni Python in codice PySpark utilizzabile nei job Spark.
       operationId: generatePysparkCode
@@ -5810,7 +5810,7 @@ paths:
       - name: extensionId
         in: path
         required: true
-        description: ID univoco dell'estensione
+        description: Unique ID dell'estensione
         schema:
           type: string
           example: "my-extension"
@@ -5838,7 +5838,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5848,15 +5848,15 @@ paths:
       tags:
         - Python Extensions
         - Agents
-      summary: Ottiene le estensioni di un agent
+      summary: Get le estensioni di un agent
       description: |
-        Restituisce la lista di tutte le estensioni Python associate a un agent specifico.
+        Returns la lista di tutte le estensioni Python associate a un agent specifico.
       operationId: getAgentExtensions
       parameters:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agent
+        description: Unique ID dell'agent
         schema:
           type: string
           example: "123"
@@ -5882,7 +5882,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5892,15 +5892,15 @@ paths:
       tags:
         - Python Extensions
         - Agents
-      summary: Ottiene le estensioni Python di un agent
+      summary: Get le estensioni Python di un agent
       description: |
-        Restituisce la lista di tutte le estensioni Python associate a un agent specifico.
+        Returns la lista di tutte le estensioni Python associate a un agent specifico.
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agent
+        description: Unique ID dell'agent
         schema:
           type: string
           example: "123"
@@ -5926,7 +5926,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5935,7 +5935,7 @@ paths:
       tags:
         - Python Extensions
         - Agents
-      summary: Aggiorna le estensioni Python di un agent
+      summary: Update le estensioni Python di un agent
       description: |
         Aggiorna la lista di estensioni Python associate a un agent specifico.
       operationId: updateAgentPythonExtensions
@@ -5943,7 +5943,7 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: ID univoco dell'agent
+        description: Unique ID dell'agent
         schema:
           type: string
           example: "123"
@@ -5982,7 +5982,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -5991,9 +5991,9 @@ paths:
     get:
       tags:
         - Python Extensions
-      summary: Ottiene informazioni sul plugin Python Extensions
+      summary: Get informazioni sul plugin Python Extensions
       description: |
-        Restituisce informazioni generali sul plugin Python Extensions, incluse versioni e
+        Returns informazioni generali sul plugin Python Extensions, incluse versioni e
         configurazioni.
       operationId: getPluginInfo_1
       responses:
@@ -6010,7 +6010,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -6019,9 +6019,9 @@ paths:
     get:
       tags:
         - Python Extensions
-      summary: Ottiene i tipi di estensione supportati
+      summary: Get i tipi di estensione supportati
       description: |
-        Restituisce la lista di tutti i tipi di estensione Python supportati dal sistema.
+        Returns la lista di tutti i tipi di estensione Python supportati dal sistema.
       operationId: getSupportedExtensionTypes
       responses:
         '200':
@@ -6039,7 +6039,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -6083,7 +6083,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -6094,7 +6094,7 @@ paths:
         - Python Extensions
       summary: Registra una nuova estensione Python
       description: |
-        Registra una nuova estensione Python nel sistema.
+        Registra una nuova estensione Python in the sistema.
         
         L'estensione può essere utilizzata dagli agent per estendere le funzionalità dei job Spark.
       operationId: registerPythonExtension
@@ -6127,7 +6127,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -6138,7 +6138,7 @@ paths:
         - Python Extensions
       summary: Valida un'estensione Python
       description: |
-        Valida la struttura e la sintassi di un'estensione Python senza registrarla nel sistema.
+        Valida la struttura e la sintassi di un'estensione Python senza registrarla in the sistema.
         
         Utile per verificare la correttezza di un'estensione prima della registrazione.
       operationId: validatePythonExtension
@@ -6180,7 +6180,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '500':
-          description: Errore interno del server
+          description: Internal server error
           content:
             application/json:
               schema:
