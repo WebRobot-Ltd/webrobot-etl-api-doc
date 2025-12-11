@@ -116,7 +116,7 @@ paths:
       - name: name
         in: path
         required: true
-        description: Nome del CronJob
+        description: CronJob name
         schema:
           type: string
           example: "daily-etl-job"
@@ -200,7 +200,7 @@ paths:
       operationId: getCapabilities
       responses:
         '200':
-          description: Capacità del cluster Spark
+          description: Cluster capabilities Spark
           content:
             application/json:
               schema:
@@ -223,7 +223,7 @@ paths:
       operationId: getInfo
       responses:
         '200':
-          description: Informazioni sul cluster Spark
+          description: Cluster information Spark
           content:
             application/json:
               schema:
@@ -240,9 +240,9 @@ paths:
         - Cloud
         - Spark
         - Health
-      summary: Health check del servizio Spark
+      summary: Service health check Spark
       description: |
-        Verifica lo stato di salute of the servizio Spark e of the cluster.
+        Checks the health status of the service Spark e of the cluster.
       operationId: healthCheck
       responses:
         '200':
@@ -268,11 +268,11 @@ paths:
         - Training
       summary: Get informazioni sul servizio di training
       description: |
-        Returns informazioni sul servizio di training AI/ML, incluse versioni e configurazioni.
+        Returns informazioni sul servizio di training AI/ML, including versions and configurations.
       operationId: getInfo_1
       responses:
         '200':
-          description: Informazioni sul servizio di training
+          description: Service information di training
           content:
             application/json:
               schema:
@@ -289,9 +289,9 @@ paths:
         - Cloud
         - Training
         - Health
-      summary: Health check del servizio di training
+      summary: Service health check di training
       description: |
-        Verifica lo stato di salute of the servizio di training AI/ML.
+        Checks the health status of the service di training AI/ML.
       operationId: healthCheck_1
       responses:
         '200':
@@ -575,7 +575,7 @@ paths:
           example: "denmark"
       requestBody:
         required: true
-        description: Query da eseguire sul dataset
+        description: Query to execute sul dataset
         content:
           application/json:
             schema:
@@ -584,7 +584,7 @@ paths:
                 type: object
       responses:
         '200':
-          description: Risultati della query
+          description: Query results
           content:
             application/json:
               schema:
@@ -614,9 +614,9 @@ paths:
         - Scheduler
       summary: Schedula un job EAN ricorrente
       description: |
-        Crea o aggiorna la schedulazione di un job EAN Image Sourcing ricorrente per un paese.
+        Creates or updates the schedule di un job EAN Image Sourcing ricorrente per un paese.
         
-        The job verrà eseguito automaticamente secondo la schedule specificata (formato cron).
+        The job will be executed automaticamente according to the specified schedule (formato cron).
       operationId: scheduleJob
       parameters:
       - name: country
@@ -628,7 +628,7 @@ paths:
           example: "denmark"
       requestBody:
         required: true
-        description: Configurazione della schedulazione (formato cron)
+        description: Schedule configuration (formato cron)
         content:
           application/json:
             schema:
@@ -1088,7 +1088,7 @@ paths:
                     type: string
                     description: Created training job ID
         '400':
-          description: Configurazione non valida
+          description: Invalid configuration
           content:
             application/json:
               schema:
@@ -1202,7 +1202,7 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agente to delete
+        description: Unique ID of the agent to delete
         schema:
           type: string
           example: "123"
@@ -1300,7 +1300,7 @@ paths:
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agente to update
+        description: Unique ID of the agent to update
         schema:
           type: string
           example: "123"
@@ -1367,7 +1367,7 @@ paths:
       - name: agentName
         in: path
         required: true
-        description: Nome dell'agente
+        description: Agent name
         schema:
           type: string
           example: "my-agent"
@@ -1561,7 +1561,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: Unique ID della categoria to update
+        description: Unique ID of the category to update
         schema:
           type: string
           example: "1"
@@ -1616,7 +1616,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: Unique ID della categoria to delete
+        description: Unique ID of the category to delete
         schema:
           type: string
           example: "1"
@@ -1657,7 +1657,7 @@ paths:
       - name: categoryName
         in: path
         required: true
-        description: Nome della categoria
+        description: Category name
         schema:
           type: string
           example: "my-category"
@@ -1861,7 +1861,7 @@ paths:
       - name: credentialId
         in: path
         required: true
-        description: Unique ID della credenziale to update
+        description: Unique ID of the credential to update
         schema:
           type: string
           example: "550e8400-e29b-41d4-a716-446655440000"
@@ -1917,7 +1917,7 @@ paths:
       - name: credentialId
         in: path
         required: true
-        description: Unique ID della credenziale to delete
+        description: Unique ID of the credential to delete
         schema:
           type: string
           example: "550e8400-e29b-41d4-a716-446655440000"
@@ -1958,7 +1958,7 @@ paths:
       - name: provider
         in: path
         required: true
-        description: Nome del provider cloud (es. "aws", "azure", "gcp")
+        description: Provider name cloud (es. "aws", "azure", "gcp")
         schema:
           type: string
           example: "aws"
@@ -2132,7 +2132,7 @@ paths:
       - name: datasetId
         in: path
         required: true
-        description: Unique ID del dataset to update
+        description: Unique ID of the dataset to update
         schema:
           type: string
           example: "123"
@@ -2188,7 +2188,7 @@ paths:
       - name: datasetId
         in: path
         required: true
-        description: Unique ID del dataset to delete
+        description: Unique ID of the dataset to delete
         schema:
           type: string
           example: "123"
@@ -2237,7 +2237,7 @@ paths:
               $ref: '#/components/schemas/PrestoQueryRequest'
       responses:
         '200':
-          description: Risultati della query
+          description: Query results
           content:
             application/json:
               schema:
@@ -2445,7 +2445,7 @@ paths:
               $ref: '#/components/schemas/PrestoQueryRequest'
       responses:
         '200':
-          description: Risultati della query
+          description: Query results
           content:
             application/json:
               schema:
@@ -2626,7 +2626,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID della versione to update
+        description: Unique ID of the version to update
         schema:
           type: integer
           format: int64
@@ -2684,7 +2684,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID della versione to delete
+        description: Unique ID of the version to delete
         schema:
           type: integer
           format: int64
@@ -3250,7 +3250,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID dell'installazione to update
+        description: Unique ID of the installation to update
         schema:
           type: integer
           format: int64
@@ -3308,7 +3308,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID dell'installazione to delete
+        description: Unique ID of the installation to delete
         schema:
           type: integer
           format: int64
@@ -3890,7 +3890,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto to update
+        description: Unique ID of the project to update
         schema:
           type: string
           example: "98"
@@ -3946,7 +3946,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto to delete
+        description: Unique ID of the project to delete
         schema:
           type: string
           example: "98"
@@ -4059,7 +4059,7 @@ paths:
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task to update
+        description: Unique ID of the task to update
         schema:
           type: string
           example: "1"
@@ -4130,7 +4130,7 @@ paths:
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task to delete
+        description: Unique ID of the task to delete
         schema:
           type: string
           example: "1"
@@ -4527,7 +4527,7 @@ paths:
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job to update
+        description: Unique ID of the job to update
         schema:
           type: string
           example: "210"
@@ -4736,7 +4736,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProjectScheduleRequest'
         '400':
-          description: Configurazione non valida
+          description: Invalid configuration
           content:
             application/json:
               schema:
@@ -5767,7 +5767,7 @@ paths:
       - name: extensionId
         in: path
         required: true
-        description: Unique ID dell'estensione to delete
+        description: Unique ID of the extension to delete
         schema:
           type: string
           example: "my-extension"
