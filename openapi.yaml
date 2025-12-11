@@ -246,7 +246,7 @@ paths:
       operationId: healthCheck
       responses:
         '200':
-          description: Servizio Spark operativo
+          description: Spark service operational
           content:
             application/json:
               schema:
@@ -256,7 +256,7 @@ paths:
                     type: string
                     example: "UP"
         '503':
-          description: Servizio Spark non disponibile
+          description: Spark service unavailable
           content:
             application/json:
               schema:
@@ -295,7 +295,7 @@ paths:
       operationId: healthCheck_1
       responses:
         '200':
-          description: Servizio di training operativo
+          description: Training service operational
           content:
             application/json:
               schema:
@@ -305,7 +305,7 @@ paths:
                     type: string
                     example: "UP"
         '503':
-          description: Servizio di training non disponibile
+          description: Training service unavailable
           content:
             application/json:
               schema:
@@ -856,7 +856,7 @@ paths:
       summary: Get i modelli supportati da un provider
       description: |
         Returns la lista di tutti i modelli AI supportati dal provider specified,
-        incluse informazioni su versioni, capacità e requisiti.
+        including information on versions, capabilities and requirements.
       operationId: getSupportedModels
       parameters:
       - name: provider
@@ -894,7 +894,7 @@ paths:
       summary: Get list of supported AI providers
       description: |
         Returns la lista di tutti i provider AI supportati dalla piattaforma,
-        incluse informazioni su capacità e configurazioni disponibili.
+        including information on available capabilities and configurations.
       operationId: getSupportedProviders
       responses:
         '200':
@@ -920,7 +920,7 @@ paths:
       description: |
         Returns i log di esecuzione di un job di training AI.
         
-        I log includono informazioni su progresso, errori e metriche del training.
+        The logs include informazioni su progresso, errori e metriche of training.
       operationId: getTrainingLogs
       parameters:
       - name: provider
@@ -968,7 +968,7 @@ paths:
         - Training
       summary: Get lo status di un job di training
       description: |
-        Returns lo stato attuale di un job di training AI, incluse informazioni su
+        Returns the current status of an AI training job, including information on
         progresso, durata e eventuali errori.
       operationId: getTrainingStatus
       parameters:
@@ -1026,7 +1026,7 @@ paths:
       operationId: publishModel
       requestBody:
         required: true
-        description: Informazioni per la pubblicazione del modello
+        description: Information for model publication
         content:
           application/json:
             schema:
@@ -1059,7 +1059,7 @@ paths:
       description: |
         Starts a new job di training for a model AI utilizzando il provider specified.
         
-        The job viene eseguito in background e può essere monitorato tramite gli endpoint di status e logs.
+        The job is executed in the background and can be monitored through the status and logs endpoints.
       operationId: startTraining
       parameters:
       - name: provider
@@ -1071,7 +1071,7 @@ paths:
           example: "huggingface"
       requestBody:
         required: true
-        description: Configurazione del job di training
+        description: Training job configuration
         content:
           application/json:
             schema:
@@ -1120,7 +1120,7 @@ paths:
           example: "huggingface"
       requestBody:
         required: true
-        description: Informazioni sul dataset da caricare
+        description: Information on the dataset to upload
         content:
           application/json:
             schema:
@@ -1152,8 +1152,8 @@ paths:
       description: |
         Creates a new agente PySpark che può essere used per eseguire job ETL.
         
-        Un agente contiene il codice PySpark che viene eseguito quando un job viene avviato.
-        L'agente must be associated a una categoria.
+        An agent contains the PySpark code that is executed when a job is started.
+        L'agente must be associated with aa categoria.
       operationId: createAgent
       requestBody:
         required: true
@@ -2086,7 +2086,7 @@ paths:
         - Datasets
       summary: Get un dataset specifico
       description: |
-        Returns i dettagli di un dataset specifico, incluse informazioni su schema, formato e percorso.
+        Returns the details of a specific dataset, including information on schema, format and path.
       operationId: getDataset_1
       parameters:
       - name: datasetId
@@ -2271,9 +2271,9 @@ paths:
         - Datasets
         - Query
         - Tasks
-      summary: Get informazioni sul dataset associato a un task
+      summary: Get information about the dataset associated with a task
       description: |
-        Returns informazioni sul dataset di output associated a un task specifico.
+        Returns information about the output dataset associated with a specific task.
       operationId: getDatasetInfoByTask
       parameters:
       - name: taskId
@@ -2285,7 +2285,7 @@ paths:
           example: "123"
       responses:
         '200':
-          description: Informazioni sul dataset
+          description: Dataset information
           content:
             application/json:
               schema:
@@ -2424,7 +2424,7 @@ paths:
         - Tasks
       summary: Executes a query SQL sul dataset di output di un task
       description: |
-        Executes a query SQL sul dataset di output associated a un task specifico.
+        Executes a query SQL sul dataset di output associated with a task specifico.
         
         Utile per analizzare i risultati di un task dopo la sua esecuzione.
       operationId: queryDatasetByTask
@@ -3600,7 +3600,7 @@ paths:
       description: |
         Creates a new job ETL e lo associa a un progetto esistente.
         
-        The job must be associated a un Agent con codice PySpark valido.
+        The job must be associated with a Agent con codice PySpark valido.
       operationId: addJobToProject
       parameters:
       - name: projectId
@@ -3884,7 +3884,7 @@ paths:
         - Projects
       summary: Update un progetto
       description: |
-        Aggiorna i dati di un progetto esistente, incluse configurazioni e schedulazione.
+        Aggiorna i dati di un progetto esistente, including configurations and scheduling.
       operationId: updateProject
       parameters:
       - name: projectId
@@ -4168,11 +4168,11 @@ paths:
       description: |
         Esegue un job Spark in modalità immediata, allocando risorse in the cluster Kubernetes.
         
-        The job viene eseguito con le configurazioni specificate nel job stesso o tramite
+        The job is executed with the configurations specified in the job itself or through
         parametri opzionali nella richiesta.
         
         **Note importanti:**
-        - The job must be associated a un Agent con codice PySpark valido
+        - The job must be associated with a Agent con codice PySpark valido
         - Le credenziali cloud vengono iniettate automatically se configurate
         - Il webhook is called automatically all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
         
