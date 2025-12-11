@@ -590,7 +590,7 @@ paths:
               schema:
                 type: object
         '400':
-          description: Query non valida
+          description: Invalid query
           content:
             application/json:
               schema:
@@ -643,7 +643,7 @@ paths:
               schema:
                 type: object
         '400':
-          description: Schedule non valida
+          description: Invalid schedule
           content:
             application/json:
               schema:
@@ -918,9 +918,9 @@ paths:
         - Training
       summary: Get logs of a training job
       description: |
-        Returns the logs di esecuzione of a job di training AI.
+        Returns the execution logs of an AI training job.
         
-        The logs include informazioni su progresso, errori e metriche of training.
+        The logs include information on progress, errors, and training metrics.
       operationId: getTrainingLogs
       parameters:
       - name: provider
@@ -1133,7 +1133,7 @@ paths:
               schema:
                 type: object
         '400':
-          description: Dataset non valido
+          description: Invalid dataset
           content:
             application/json:
               schema:
@@ -1170,13 +1170,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/AgentDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:write` richiesto
+          description: Unauthorized - scope `agents:write` required
           content:
             application/json:
               schema:
@@ -1208,19 +1208,19 @@ paths:
           example: "123"
       responses:
         '200':
-          description: Agente eliminato con successo
+          description: Agent deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Agente non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:delete` richiesto
+          description: Unauthorized - scope `agents:delete` required
           content:
             application/json:
               schema:
@@ -1243,32 +1243,32 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID delthe category a cui appartiene the agent
+        description: ID of the category the agent belongs to
         schema:
           type: string
           example: "1"
       - name: agentId
         in: path
         required: true
-        description: Unique ID delthe agent
+        description: Unique ID of the agent
         schema:
           type: string
           example: "123"
       responses:
         '200':
-          description: Dettagli delthe agent
+          description: Agent details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AgentDto'
         '404':
-          description: Agente non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:read` richiesto
+          description: Unauthorized - scope `agents:read` required
           content:
             application/json:
               schema:
@@ -1293,7 +1293,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID delthe category a cui appartiene the agent
+        description: ID of the category the agent belongs to
         schema:
           type: string
           example: "1"
@@ -1319,25 +1319,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/AgentDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Agente non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:write` richiesto
+          description: Unauthorized - scope `agents:write` required
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Agente in uso - impossibile aggiornare
+          description: Agent in use - cannot update
           content:
             application/json:
               schema:
@@ -1360,7 +1360,7 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID delthe category
+        description: Category ID
         schema:
           type: string
           example: "1"
@@ -1373,19 +1373,19 @@ paths:
           example: "my-agent"
       responses:
         '200':
-          description: Dettagli delthe agent
+          description: Agent details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AgentDto'
         '404':
-          description: Agente non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:read` richiesto
+          description: Unauthorized - scope `agents:read` required
           content:
             application/json:
               schema:
@@ -1408,13 +1408,13 @@ paths:
       - name: categoryId
         in: path
         required: true
-        description: ID delthe category
+        description: Category ID
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Lista dethe agents delthe category
+          description: List of agents in the category
           content:
             application/json:
               schema:
@@ -1422,13 +1422,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/AgentDto'
         '404':
-          description: Categoria non trovata
+          description: Category not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `agents:read` richiesto
+          description: Unauthorized - scope `agents:read` required
           content:
             application/json:
               schema:
@@ -1447,7 +1447,7 @@ paths:
       description: |
         Returns the list of all categories available in the system.
         
-        Categories are used to organize progetti, agenti e job.
+        Categories are used to organize projects, agents, and jobs.
       operationId: getAllCategories
       responses:
         '200':
@@ -1459,7 +1459,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/JobCategoryDto'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -1492,13 +1492,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobCategoryDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:write` richiesto
+          description: Unauthorized - scope `projects:write` required
           content:
             application/json:
               schema:
@@ -1515,31 +1515,31 @@ paths:
         - Categories
       summary: Get a specific category
       description: |
-        Returns the details of a category specifica, including l'elenco dethe projects associati.
+        Returns the details of a specific category, including the list of associated projects.
       operationId: getCategory
       parameters:
       - name: categoryId
         in: path
         required: true
-        description: Unique ID delthe category
+        description: Unique ID of the category
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Dettagli delthe category
+          description: Category details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobCategoryDto'
         '404':
-          description: Categoria non trovata
+          description: Category not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -1567,7 +1567,7 @@ paths:
           example: "1"
       requestBody:
         required: true
-        description: Dati aggiornati delthe category
+        description: Updated category data
         content:
           application/json:
             schema:
@@ -1580,19 +1580,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobCategoryDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Categoria non trovata
+          description: Category not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:write` richiesto
+          description: Unauthorized - scope `projects:write` required
           content:
             application/json:
               schema:
@@ -1610,7 +1610,7 @@ paths:
       description: |
         Deletes a category from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. I progetti associati non verranno eliminati.
+        **Warning:** This operation is irreversible. Associated projects will not be deleted.
       operationId: deleteCategory
       parameters:
       - name: categoryId
@@ -1622,19 +1622,19 @@ paths:
           example: "1"
       responses:
         '200':
-          description: Categoria eliminata con successo
+          description: Category deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Categoria non trovata
+          description: Category not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:delete` richiesto
+          description: Unauthorized - scope `projects:delete` required
           content:
             application/json:
               schema:
@@ -1663,19 +1663,19 @@ paths:
           example: "my-category"
       responses:
         '200':
-          description: Dettagli delthe category
+          description: Category details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobCategoryDto'
         '404':
-          description: Categoria non trovata
+          description: Category not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -1693,7 +1693,7 @@ paths:
         - Test
       summary: Test endpoint for categories
       description: |
-        Test endpoint to verify functionality of the categorie.
+        Test endpoint to verify categories functionality.
       operationId: test
       responses:
         '200':
@@ -1715,21 +1715,21 @@ paths:
       summary: Get all cloud credentials
       description: |
         Returns the list of all cloud credentials configured in the system,
-        con supporto per paginazione e filtri per provider.
+        with support for pagination and provider filtering.
         
-        Cloud credentials are used to access servizi esterni come
-        AWS, Azure, GCP, ecc. durante l'esecuzione dthe jobs Spark.
+        Cloud credentials are used to access external services such as
+        AWS, Azure, GCP, etc. during Spark job execution.
       operationId: getAllCloudCredentials
       parameters:
       - name: provider
         in: query
-        description: Filter by provider cloud (es. "aws", "azure", "gcp")
+        description: Filter by cloud provider (e.g. "aws", "azure", "gcp")
         schema:
           type: string
           example: "aws"
       - name: page
         in: query
-        description: Numero di pagina (0-based)
+        description: Page number (0-based)
         schema:
           type: integer
           format: int32
@@ -1745,7 +1745,7 @@ paths:
           example: 50
       responses:
         '200':
-          description: Lista delthe credentials cloud
+          description: List of cloud credentials
           content:
             application/json:
               schema:
@@ -1753,7 +1753,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/CloudCredential'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1788,13 +1788,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/CloudCredential'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1837,7 +1837,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1880,7 +1880,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CloudCredential'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
@@ -1892,7 +1892,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1910,8 +1910,8 @@ paths:
       description: |
         Deletes a cloud credential from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa
-        credenziale non potranno più accedere ai servizi cloud.
+        **Warning:** This operation is irreversible. Jobs using this credential
+        will no longer be able to access cloud services.
       operationId: deleteCloudCredential
       parameters:
       - name: credentialId
@@ -1923,7 +1923,7 @@ paths:
           example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '200':
-          description: Credenziale eliminata con successo
+          description: Credential deleted successfully
           content:
             application/json:
               schema:
@@ -1935,7 +1935,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1950,7 +1950,7 @@ paths:
     get:
       tags:
         - Cloud Credentials
-      summary: Get the credentials cloud per provider
+      summary: Get cloud credentials by provider
       description: |
         Returns the list of all cloud credentials configured for a specific provider.
       operationId: getCloudCredentialsByProvider
@@ -1958,13 +1958,13 @@ paths:
       - name: provider
         in: path
         required: true
-        description: Provider name cloud (es. "aws", "azure", "gcp")
+        description: Cloud provider name (e.g. "aws", "azure", "gcp")
         schema:
           type: string
           example: "aws"
       responses:
         '200':
-          description: Lista delthe credentials for the provider
+          description: List of credentials for the provider
           content:
             application/json:
               schema:
@@ -1978,7 +1978,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1997,7 +1997,7 @@ paths:
       description: |
         Returns the list of all datasets available in the system, with support for filters.
         
-        Datasets can be filtered by type, format and status di indicizzazione.
+        Datasets can be filtered by type, format, and indexing status.
       operationId: getAllDatasets_1
       parameters:
       - name: type
@@ -2008,19 +2008,19 @@ paths:
           example: "parquet"
       - name: indexed
         in: query
-        description: Filter by status di indicizzazione (true/false)
+        description: Filter by indexing status (true/false)
         schema:
           type: string
           example: "true"
       - name: format
         in: query
-        description: Filter by format (parquet, csv, json, ecc.)
+        description: Filter by format (parquet, csv, json, etc.)
         schema:
           type: string
           example: "parquet"
       responses:
         '200':
-          description: Lista dei dataset
+          description: List of datasets
           content:
             application/json:
               schema:
@@ -2028,7 +2028,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/DatasetDto'
         '401':
-          description: Non autorizzato - scope `datasets:read` richiesto
+          description: Unauthorized - scope `datasets:read` required
           content:
             application/json:
               schema:
@@ -2046,7 +2046,7 @@ paths:
       description: |
         Creates a new dataset in the system with the specified configurations.
         
-        The dataset can be associated with a project e used as input or output for jobs ETL.
+        The dataset can be associated with a project and used as input or output for ETL jobs.
       operationId: createDataset
       requestBody:
         required: true
@@ -2063,13 +2063,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/DatasetDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `datasets:write` richiesto
+          description: Unauthorized - scope `datasets:write` required
           content:
             application/json:
               schema:
@@ -2084,7 +2084,7 @@ paths:
     get:
       tags:
         - Datasets
-      summary: Get un dataset specifico
+      summary: Get a specific dataset
       description: |
         Returns the details of a specific dataset, including information on schema, format and path.
       operationId: getDataset_1
@@ -2092,25 +2092,25 @@ paths:
       - name: datasetId
         in: path
         required: true
-        description: Unique ID del dataset
+        description: Dataset ID
         schema:
           type: string
           example: "123"
       responses:
         '200':
-          description: Dettagli del dataset
+          description: Dataset details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DatasetDto'
         '404':
-          description: Dataset non trovato
+          description: Dataset not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `datasets:read` richiesto
+          description: Unauthorized - scope `datasets:read` required
           content:
             application/json:
               schema:
@@ -2124,7 +2124,7 @@ paths:
     put:
       tags:
         - Datasets
-      summary: Update un dataset
+      summary: Update a dataset
       description: |
         Updates the data of an existing dataset, including configurations and metadata.
       operationId: updateDataset
@@ -2138,7 +2138,7 @@ paths:
           example: "123"
       requestBody:
         required: true
-        description: Dati aggiornati del dataset
+        description: Updated dataset data
         content:
           application/json:
             schema:
@@ -2151,19 +2151,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/DatasetDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Dataset non trovato
+          description: Dataset not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `datasets:write` richiesto
+          description: Unauthorized - scope `datasets:write` required
           content:
             application/json:
               schema:
@@ -2177,12 +2177,12 @@ paths:
     delete:
       tags:
         - Datasets
-      summary: Delete un dataset
+      summary: Delete a dataset
       description: |
         Deletes a dataset from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questo dataset
-        come input o output potrebbero non funzionare correttamente.
+        **Warning:** This operation is irreversible. Jobs that use this dataset
+        as input or output may not work correctly.
       operationId: deleteDataset_1
       parameters:
       - name: datasetId
@@ -2194,19 +2194,19 @@ paths:
           example: "123"
       responses:
         '200':
-          description: Dataset eliminato con successo
+          description: Dataset deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Dataset non trovato
+          description: Dataset not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `datasets:delete` richiesto
+          description: Unauthorized - scope `datasets:delete` required
           content:
             application/json:
               schema:
@@ -2248,13 +2248,13 @@ paths:
                     items:
                       type: object
         '400':
-          description: Query non valida
+          description: Invalid query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2279,7 +2279,7 @@ paths:
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task
+        description: Task ID
         schema:
           type: string
           example: "123"
@@ -2291,13 +2291,13 @@ paths:
               schema:
                 type: object
         '404':
-          description: Task o dataset non trovato
+          description: Task or dataset not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2341,7 +2341,7 @@ paths:
           example: "my_table"
       responses:
         '200':
-          description: Lista delle colonne
+          description: List of columns
           content:
             application/json:
               schema:
@@ -2354,13 +2354,13 @@ paths:
                     type:
                       type: string
         '404':
-          description: Tabella non trovata
+          description: Table not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2397,7 +2397,7 @@ paths:
           example: "default"
       responses:
         '200':
-          description: Lista delle tabelle
+          description: List of tables
           content:
             application/json:
               schema:
@@ -2405,7 +2405,7 @@ paths:
                 items:
                   type: string
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2432,13 +2432,13 @@ paths:
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task
+        description: Task ID
         schema:
           type: string
           example: "123"
       requestBody:
         required: true
-        description: Query SQL da eseguire
+        description: SQL query to execute
         content:
           application/json:
             schema:
@@ -2456,19 +2456,19 @@ paths:
                     items:
                       type: object
         '400':
-          description: Query non valida
+          description: Invalid query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Task o dataset non trovato
+          description: Task or dataset not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2487,24 +2487,24 @@ paths:
       summary: Get all ETL library versions
       description: |
         Returns the list of all ETL library versions available in the system,
-        con supporto per filtri by build type and status attivo.
+        with support for filtering by build type and active status.
       operationId: getAllVersions
       parameters:
       - name: buildType
         in: query
-        description: Filter by build type (es. "development", "production")
+        description: Filter by build type (e.g. "development", "production")
         schema:
           type: string
           example: "development"
       - name: activeOnly
         in: query
-        description: Restituisce solo le versioni attive
+        description: Return only active versions
         schema:
           type: boolean
           default: false
       responses:
         '200':
-          description: Lista delle versioni ETL
+          description: List of ETL versions
           content:
             application/json:
               schema:
@@ -2512,7 +2512,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -2529,9 +2529,9 @@ paths:
         - ETL Library
       summary: Create or update an ETL library version
       description: |
-        Creates a new versione of the libreria ETL o aggiorna una versione esistente.
+        Creates a new ETL library version or updates an existing one.
         
-        Le versioni ETL vengono utilizzate per eseguire job Spark con versioni specifiche della libreria.
+        ETL versions are used to execute Spark jobs with specific library versions.
       operationId: createOrUpdateVersion
       requestBody:
         required: true
@@ -2554,13 +2554,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -2576,7 +2576,7 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Get una versione ETL specifica
+      summary: Get a specific ETL version
       description: |
         Returns the details of a version of the library ETL identified by the ID.
       operationId: getVersionById
@@ -2584,26 +2584,26 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID della versione
+        description: Unique ID of the version
         schema:
           type: integer
           format: int64
           example: 1
       responses:
         '200':
-          description: Dettagli della versione ETL
+          description: ETL version details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '404':
-          description: Versione non trovata
+          description: Version not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -2618,9 +2618,9 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Update una versione ETL
+      summary: Update an ETL version
       description: |
-        Aggiorna the data of a version of the library ETL esistente.
+        Updates the data of an existing ETL library version.
       operationId: updateVersion
       parameters:
       - name: id
@@ -2633,32 +2633,32 @@ paths:
           example: 1
       requestBody:
         required: true
-        description: Dati aggiornati della versione
+        description: Updated version data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EtlLibraryVersionApiDto'
       responses:
         '200':
-          description: Versione aggiornata con successo
+          description: Version updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Versione non trovata
+          description: Version not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -2673,12 +2673,12 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Delete una versione ETL
+      summary: Delete an ETL version
       description: |
         Deletes an ETL library version from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa versione
-        potrebbero non funzionare correttamente.
+        **Warning:** This operation is irreversible. Jobs using this version
+        may not work correctly.
       operationId: deleteVersion
       parameters:
       - name: id
@@ -2691,19 +2691,19 @@ paths:
           example: 1
       responses:
         '200':
-          description: Versione eliminata con successo
+          description: Version deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Versione non trovata
+          description: Version not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:delete` richiesto
+          description: Unauthorized - scope `admin:delete` required
           content:
             application/json:
               schema:
@@ -2719,42 +2719,42 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Get una versione ETL per tipo e numero di build
+      summary: Get an ETL version by build type and build number
       description: |
         Returns the details of a version of the library ETL identified by build type
-        e numero di build.
+        and build number.
       operationId: getVersionByBuildTypeAndBuildNumber
       parameters:
       - name: buildType
         in: path
         required: true
-        description: Tipo di build (es. "development", "production")
+        description: Build type (e.g. "development", "production")
         schema:
           type: string
           example: "development"
       - name: buildNumber
         in: path
         required: true
-        description: Numero di build
+        description: Build number
         schema:
           type: integer
           format: int32
           example: 123
       responses:
         '200':
-          description: Dettagli della versione ETL
+          description: ETL version details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EtlLibraryVersionApiDto'
         '404':
-          description: Versione non trovata
+          description: Version not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -2771,11 +2771,11 @@ paths:
         - Package
       summary: Get URL for package download
       description: |
-        Returns un URL temporaneo per scaricare un package dthe projects e configurazioni.
+        Returns a temporary URL to download a package of projects and configurations.
       operationId: getUrlDownload
       responses:
         '200':
-          description: URL di download
+          description: Download URL
           content:
             application/json:
               schema:
@@ -2786,7 +2786,7 @@ paths:
                     format: uri
                     description: Temporary URL for download
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2803,7 +2803,7 @@ paths:
         - Package
       summary: Get URL for package upload
       description: |
-        Returns un URL temporaneo per caricare un package dthe projects e configurazioni.
+        Returns a temporary URL to upload a package of projects and configurations.
       operationId: getUrlUpload
       responses:
         '200':
@@ -2818,7 +2818,7 @@ paths:
                     format: uri
                     description: Temporary URL for upload
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -2848,9 +2848,9 @@ paths:
                 properties:
                   exportId:
                     type: string
-                    description: ID dell'operazione di export
+                    description: Export operation ID
         '401':
-          description: Non autorizzato - scope `package:export` richiesto
+          description: Unauthorized - scope `package:export` required
           content:
             application/json:
               schema:
@@ -2874,7 +2874,7 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto da esportare
+        description: Project ID to export
         schema:
           type: string
           example: "98"
@@ -2888,15 +2888,15 @@ paths:
                 properties:
                   exportId:
                     type: string
-                    description: ID dell'operazione di export
+                    description: Export operation ID
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `package:export` richiesto
+          description: Unauthorized - scope `package:export` required
           content:
             application/json:
               schema:
@@ -2915,7 +2915,7 @@ paths:
       description: |
         Starts the import process of all projects and configurations from a compressed package.
         
-        **Attenzione:** Questa operazione può sovrascrivere progetti esistenti.
+        **Warning:** This operation may overwrite existing projects.
       operationId: start_import_All
       responses:
         '200':
@@ -2927,9 +2927,9 @@ paths:
                 properties:
                   importId:
                     type: string
-                    description: ID dell'operazione di import
+                    description: Import operation ID
         '401':
-          description: Non autorizzato - scope `package:import` richiesto
+          description: Unauthorized - scope `package:import` required
           content:
             application/json:
               schema:
@@ -2946,15 +2946,15 @@ paths:
         - Package
       summary: Start import of a specific project
       description: |
-        Starts the import process of a specific project and its configurations from a package compresso.
+        Starts the import process of a specific project and its configurations from a compressed package.
         
-        **Attenzione:** Questa operazione può sovrascrivere il progetto esistente se presente.
+        **Warning:** This operation may overwrite the existing project if present.
       operationId: start_import_project
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto da importare
+        description: Project ID to import
         schema:
           type: string
           example: "98"
@@ -2968,7 +2968,7 @@ paths:
                 properties:
                   importId:
                     type: string
-                    description: ID dell'operazione di import
+                    description: Import operation ID
         '404':
           description: Project not found in the package
           content:
@@ -2976,7 +2976,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `package:import` richiesto
+          description: Unauthorized - scope `package:import` required
           content:
             application/json:
               schema:
@@ -2996,38 +2996,38 @@ paths:
       description: |
         Disable a plugin in the system for a specific build type.
         
-        I plugin disabilitati non will be available for l'uso nethe jobs.
+        Disabled plugins will not be available for use in jobs.
       operationId: disablePlugin
       parameters:
       - name: pluginId
         in: path
         required: true
-        description: Unique ID del plugin
+        description: Plugin ID
         schema:
           type: string
           example: "ean-image-sourcing"
       - name: buildType
         in: query
-        description: "Tipo di build (default: development)"
+        description: "Build type (default: development)"
         schema:
           type: string
           default: development
           example: "development"
       responses:
         '200':
-          description: Plugin disabilitato con successo
+          description: Plugin disabled successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Plugin non trovato
+          description: Plugin not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3047,38 +3047,38 @@ paths:
       description: |
         Enable a plugin in the system for a specific build type.
         
-        I plugin abilitati will be available for l'uso nethe jobs.
+        Enabled plugins will be available for use in jobs.
       operationId: enablePlugin
       parameters:
       - name: pluginId
         in: path
         required: true
-        description: Unique ID del plugin
+        description: Plugin ID
         schema:
           type: string
           example: "ean-image-sourcing"
       - name: buildType
         in: query
-        description: "Tipo di build (default: development)"
+        description: "Build type (default: development)"
         schema:
           type: string
           default: development
           example: "development"
       responses:
         '200':
-          description: Plugin abilitato con successo
+          description: Plugin enabled successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Plugin non trovato
+          description: Plugin not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3101,14 +3101,14 @@ paths:
       parameters:
       - name: buildType
         in: query
-        description: "Tipo di build (default: development)"
+        description: "Build type (default: development)"
         schema:
           type: string
           default: development
           example: "development"
       responses:
         '200':
-          description: Lista dethe plugins
+          description: List of plugins
           content:
             application/json:
               schema:
@@ -3116,7 +3116,7 @@ paths:
                 items:
                   type: object
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -3136,11 +3136,11 @@ paths:
       description: |
         Uploads a new plugin to the system as a JAR file.
         
-        Il plugin can be associated with one or more organizations e to a specific build type.
+        The plugin can be associated with one or more organizations and a specific build type.
       operationId: uploadPlugin
       requestBody:
         required: true
-        description: File del plugin e metadati
+        description: Plugin file and metadata
         content:
           multipart/form-data:
             schema:
@@ -3151,40 +3151,40 @@ paths:
               properties:
                 file:
                   $ref: '#/components/schemas/FormDataContentDisposition'
-                  description: File JAR del plugin
+                  description: Plugin JAR file
                 pluginId:
                   type: string
-                  description: Unique ID del plugin
+                  description: Plugin ID
                   example: "my-plugin"
                 buildType:
                   type: string
-                  description: "Tipo di build (default: development)"
+                  description: "Build type (default: development)"
                   default: development
                   example: "development"
                 buildNumber:
                   type: integer
                   format: int32
-                  description: Numero di build del plugin
+                  description: Plugin build number
                   example: 1
                 organizationIds:
                   type: string
-                  description: Lista di ID organizzazioni separate da virgola
+                  description: List of organization IDs separated by comma
                   example: "1,2,3"
       responses:
         '201':
-          description: Plugin caricato con successo
+          description: Plugin uploaded successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: File o dati non validi
+          description: Invalid file or data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3200,7 +3200,7 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Get un'installazione plugin specifica
+      summary: Get a specific plugin installation
       description: |
         Returns the details of a plugin installation identified by the ID.
       operationId: getInstallationById
@@ -3208,26 +3208,26 @@ paths:
       - name: id
         in: path
         required: true
-        description: Unique ID dell'installazione
+        description: Installation ID
         schema:
           type: integer
           format: int64
           example: 1
       responses:
         '200':
-          description: Dettagli dell'installazione plugin
+          description: Plugin installation details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PluginInstallation'
         '404':
-          description: Installazione non trovata
+          description: Installation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -3242,9 +3242,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Update un'installazione plugin
+      summary: Update a plugin installation
       description: |
-        Aggiorna the data of an existing plugin installation, including configurations and metadata.
+        Updates the data of an existing plugin installation, including configurations and metadata.
       operationId: updateInstallation
       parameters:
       - name: id
@@ -3257,32 +3257,32 @@ paths:
           example: 1
       requestBody:
         required: true
-        description: Dati aggiornati dell'installazione
+        description: Updated installation data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PluginInstallation'
       responses:
         '200':
-          description: Installazione aggiornata con successo
+          description: Installation updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PluginInstallation'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Installazione non trovata
+          description: Installation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3297,12 +3297,12 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Delete un'installazione plugin
+      summary: Delete a plugin installation
       description: |
         Deletes a plugin installation from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. Il plugin non will be più disponibile
-        per l'uso nethe jobs.
+        **Warning:** This operation is irreversible. The plugin will no longer be available
+        for use in jobs.
       operationId: deleteInstallation
       parameters:
       - name: id
@@ -3315,19 +3315,19 @@ paths:
           example: 1
       responses:
         '200':
-          description: Installazione eliminata con successo
+          description: Installation deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Installazione non trovata
+          description: Installation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:delete` richiesto
+          description: Unauthorized - scope `admin:delete` required
           content:
             application/json:
               schema:
@@ -3347,32 +3347,32 @@ paths:
       description: |
         Disable a plugin installation in the system.
         
-        I plugin disabilitati non will be available for l'uso nethe jobs.
+        Disabled plugins will not be available for use in jobs.
       operationId: disablePlugin_1
       parameters:
       - name: id
         in: path
         required: true
-        description: Unique ID dell'installazione
+        description: Installation ID
         schema:
           type: integer
           format: int64
           example: 1
       responses:
         '200':
-          description: Installazione disabilitata con successo
+          description: Installation disabled successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Installazione non trovata
+          description: Installation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3392,32 +3392,32 @@ paths:
       description: |
         Enable a plugin installation in the system.
         
-        I plugin abilitati will be available for l'uso nethe jobs.
+        Enabled plugins will be available for use in jobs.
       operationId: enablePlugin_1
       parameters:
       - name: id
         in: path
         required: true
-        description: Unique ID dell'installazione
+        description: Installation ID
         schema:
           type: integer
           format: int64
           example: 1
       responses:
         '200':
-          description: Installazione abilitata con successo
+          description: Installation enabled successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Installazione non trovata
+          description: Installation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3436,24 +3436,24 @@ paths:
       summary: Get all plugin installations
       description: |
         Returns the list of all plugin installations available in the system,
-        with support for filters by organizzazione e status abilitato.
+        with support for filtering by organization and enabled status.
       operationId: getAllInstallations
       parameters:
       - name: organizationId
         in: query
-        description: Filter by ID organizzazione
+        description: Filter by organization ID
         schema:
           type: string
           example: "1"
       - name: enabledOnly
         in: query
-        description: Restituisce solo the installations abilitate
+        description: Return only enabled installations
         schema:
           type: boolean
           default: false
       responses:
         '200':
-          description: Lista delle installazionthe plugins
+          description: List of plugin installations
           content:
             application/json:
               schema:
@@ -3461,7 +3461,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/PluginInstallation'
         '401':
-          description: Non autorizzato - scope `admin:read` richiesto
+          description: Unauthorized - scope `admin:read` required
           content:
             application/json:
               schema:
@@ -3478,9 +3478,9 @@ paths:
         - Plugins
       summary: Register a new plugin
       description: |
-        Register a new plugin in the system come installazione.
+        Registers a new plugin in the system as an installation.
         
-        Il plugin can be associated with one or more organizations.
+        The plugin can be associated with one or more organizations.
       operationId: registerPlugin
       requestBody:
         required: true
@@ -3491,19 +3491,19 @@ paths:
               $ref: '#/components/schemas/PluginInstallation'
       responses:
         '201':
-          description: Plugin registrato con successo
+          description: Plugin registered successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PluginInstallation'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3527,7 +3527,7 @@ paths:
       operationId: reloadPlugins
       responses:
         '200':
-          description: Plugin ricaricati con successo
+          description: Plugins reloaded successfully
           content:
             application/json:
               schema:
@@ -3537,7 +3537,7 @@ paths:
                     type: string
                     example: "Plugins reloaded successfully"
         '401':
-          description: Non autorizzato - scope `admin:write` richiesto
+          description: Unauthorized - scope `admin:write` required
           content:
             application/json:
               schema:
@@ -3561,13 +3561,13 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       responses:
         '200':
-          description: Lista dethe jobs del progetto
+          description: List of jobs for the project
           content:
             application/json:
               schema:
@@ -3575,13 +3575,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/JobDto'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -3598,15 +3598,15 @@ paths:
         - Jobs
       summary: Add a job to a project
       description: |
-        Creates a new job ETL e lo associa a un progetto esistente.
+        Creates a new ETL job and associates it with an existing project.
         
-        The job must be associated with a Agent con codice PySpark valido.
+        The job must be associated with an agent with valid PySpark code.
       operationId: addJobToProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
@@ -3625,19 +3625,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:write` richiesto
+          description: Unauthorized - scope `jobs:write` required
           content:
             application/json:
               schema:
@@ -3656,11 +3656,11 @@ paths:
       description: |
         Returns the list of all projects available in the system.
         
-        I progetti sono utilizzati to organize job, task e dataset correlati.
+        Projects are used to organize related jobs, tasks, and datasets.
       operationId: getAllProjects
       responses:
         '200':
-          description: Lista dethe projects
+          description: List of projects
           content:
             application/json:
               schema:
@@ -3668,7 +3668,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/JobProjectDto'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -3684,9 +3684,9 @@ paths:
         - Projects
       summary: Create a new project
       description: |
-        Creates a new progetto in the system.
+        Creates a new project in the system.
         
-        Un progetto può contenere più job ETL e can be schedulato per esecuzione automatica.
+        A project can contain multiple ETL jobs and can be scheduled for automatic execution.
       operationId: createProject
       requestBody:
         required: true
@@ -3703,13 +3703,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobProjectDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:write` richiesto
+          description: Unauthorized - scope `projects:write` required
           content:
             application/json:
               schema:
@@ -3730,26 +3730,26 @@ paths:
       description: |
         Returns the list of all tasks associated with a specific job.
         
-        I task rappresentano le singole operazioni che compongono un job ETL.
+        Tasks represent the individual operations that make up an ETL job.
       operationId: getAllTasks
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       responses:
         '200':
-          description: Lista dethe tasks del job
+          description: List of tasks for the job
           content:
             application/json:
               schema:
@@ -3757,13 +3757,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/TaskDto'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -3781,22 +3781,22 @@ paths:
         - Tasks
       summary: Create a new task in a job
       description: |
-        Creates a new task e lo associa a un job esistente.
+        Creates a new task and associates it with an existing job.
         
-        Un task can be of type SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        A task can be of type SPARK, AUTONOMOUS_AGENT, or BACKGROUND_TASK.
       operationId: createTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
@@ -3815,19 +3815,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:write` richiesto
+          description: Unauthorized - scope `jobs:write` required
           content:
             application/json:
               schema:
@@ -3842,33 +3842,33 @@ paths:
     get:
       tags:
         - Projects
-      summary: Get un progetto specifico
+      summary: Get a specific project
       description: |
-        Returns the details of a project specifico, including l'elenco dethe jobs associati.
+        Returns the details of a specific project, including the list of associated jobs.
       operationId: getProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       responses:
         '200':
-          description: Dettagli del progetto
+          description: Project details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobProjectDto'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -3882,9 +3882,9 @@ paths:
     put:
       tags:
         - Projects
-      summary: Update un progetto
+      summary: Update a project
       description: |
-        Aggiorna the data of a project esistente, including configurations and scheduling.
+        Updates the data of an existing project, including configurations and scheduling.
       operationId: updateProject
       parameters:
       - name: projectId
@@ -3896,7 +3896,7 @@ paths:
           example: "98"
       requestBody:
         required: true
-        description: Dati aggiornati del progetto
+        description: Updated project data
         content:
           application/json:
             schema:
@@ -3909,19 +3909,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobProjectDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:write` richiesto
+          description: Unauthorized - scope `projects:write` required
           content:
             application/json:
               schema:
@@ -3935,12 +3935,12 @@ paths:
     delete:
       tags:
         - Projects
-      summary: Delete un progetto
+      summary: Delete a project
       description: |
         Deletes a project from the system.
         
         **Warning:** This operation is irreversible. All associated jobs, tasks and data
-        al progetto verranno eliminati.
+        will be deleted.
       operationId: deleteProject
       parameters:
       - name: projectId
@@ -3952,19 +3952,19 @@ paths:
           example: "98"
       responses:
         '200':
-          description: Progetto eliminato con successo
+          description: Project deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:delete` richiesto
+          description: Unauthorized - scope `projects:delete` required
           content:
             application/json:
               schema:
@@ -3981,7 +3981,7 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Get un task specifico
+      summary: Get a specific task
       description: |
         Returns the details of a specific task, including configurations and execution status.
       operationId: getTask
@@ -3989,39 +3989,39 @@ paths:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task
+        description: Task ID
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Dettagli del task
+          description: Task details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskDto'
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -4037,22 +4037,22 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Update un task
+      summary: Update a task
       description: |
-        Aggiorna the data of an existing task, including configurations and metadata.
+        Updates the data of an existing task, including configurations and metadata.
       operationId: updateTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
@@ -4065,32 +4065,32 @@ paths:
           example: "1"
       requestBody:
         required: true
-        description: Dati aggiornati del task
+        description: Updated task data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TaskDto'
       responses:
         '200':
-          description: Task aggiornato con successo
+          description: Task updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:write` richiesto
+          description: Unauthorized - scope `jobs:write` required
           content:
             application/json:
               schema:
@@ -4106,24 +4106,24 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Delete un task
+      summary: Delete a task
       description: |
-        Elimina un task from a job.
+        Deletes a task from a job.
         
-        **Attenzione:** Questa operazione è irreversibile. The task will be removed from the job.
+        **Warning:** This operation is irreversible. The task will be removed from the job.
       operationId: deleteTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
@@ -4136,19 +4136,19 @@ paths:
           example: "1"
       responses:
         '200':
-          description: Task eliminato con successo
+          description: Task deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:delete` richiesto
+          description: Unauthorized - scope `jobs:delete` required
           content:
             application/json:
               schema:
@@ -4166,39 +4166,39 @@ paths:
         - ETL Execution
       summary: Execute a Spark job immediately
       description: |
-        Esegue un job Spark in modalità immediata, allocando risorse in the cluster Kubernetes.
+        Executes a Spark job immediately, allocating resources in the Kubernetes cluster.
         
         The job is executed with the configurations specified in the job itself or through
         optional parameters in the request.
         
-        **Note importanti:**
-        - The job must be associated with a Agent con codice PySpark valido
-        - Le credenziali cloud vengono iniettate automatically se configurate
-        - Il webhook is called automatically all'inizio (RUNNING) e alla fine (COMPLETED/FAILED)
+        **Important notes:**
+        - The job must be associated with an agent with valid PySpark code
+        - Cloud credentials are injected automatically if configured
+        - The webhook is called automatically at start (RUNNING) and at the end (COMPLETED/FAILED)
         
-        **Rate Limiting:** Max 10 esecuzioni simultanee per progetto
+        **Rate limiting:** Max 10 concurrent executions per project
       operationId: executeJob_1
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job da eseguire
+        description: Job ID to execute
         schema:
           type: string
           example: "210"
       requestBody:
         required: false
         description: |
-          Parametri opzionali per l'esecuzione of the job.
+          Optional parameters for job execution.
           
-          Se non specificati, vengono usati i valori di default del job.
+          If not provided, the job's default values are used.
         content:
           application/json:
             schema:
@@ -4208,12 +4208,12 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Lista di ID credenziali cloud da utilizzare
+                  description: List of cloud credential IDs to use
                 arguments:
                   type: array
                   items:
                     type: string
-                  description: Argomenti aggiuntivi da passare al job Spark
+                  description: Additional arguments to pass to the Spark job
             examples:
               default:
                 summary: Execution with default parameters
@@ -4225,7 +4225,7 @@ paths:
                     - "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '200':
-          description: Job eseguito con successo
+          description: Job executed successfully
           content:
             application/json:
               schema:
@@ -4233,7 +4233,7 @@ paths:
                 properties:
                   executionId:
                     type: string
-                    description: Unique ID dell'esecuzione Spark
+                    description: Spark execution ID
                     example: "spark-2d53940045a6-95379617"
                   status:
                     type: string
@@ -4245,11 +4245,11 @@ paths:
                     example: "Job execution submitted successfully"
                   clusterId:
                     type: string
-                    description: ID del cluster utilizzato
+                    description: Cluster ID used
                     example: "default-cluster"
                   success:
                     type: boolean
-                    description: Indica se la submission è avvenuta con successo
+                    description: Indicates whether the submission succeeded
                     example: true
         '400':
           description: Invalid request
@@ -4258,25 +4258,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - API key mancante o non valida
+          description: Unauthorized - missing or invalid API key
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '403':
-          description: Permessi insufficienti - scope `etl:execute` richiesto
+          description: Forbidden - scope `etl:execute` required
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Job già running
+          description: Job already running
           content:
             application/json:
               schema:
@@ -4295,48 +4295,48 @@ paths:
         - Execution
       summary: Get logs of a job execution
       description: |
-        Returns the logs di esecuzione of a job Spark specifico, con supporto per filtri
-        by pod type (driver/executor) e limitation of the number of rows.
+        Returns execution logs for a specific Spark job, with support for filtering
+        by pod type (driver/executor) and limiting the number of lines.
       operationId: getExecutionLogs
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       - name: executionId
         in: path
         required: true
-        description: Unique ID dell'esecuzione Spark
+        description: Spark execution ID
         schema:
           type: string
           example: "spark-2d53940045a6-95379617"
       - name: podType
         in: query
-        description: Tipo di pod da cui recuperare i log (driver, executor, o tutti se non specificato)
+        description: Pod type to fetch logs from (driver, executor; if omitted, returns all)
         schema:
           type: string
           enum: [driver, executor]
           example: "driver"
       - name: tail
         in: query
-        description: Numero di righe finali da recuperare (opzionale)
+        description: Number of trailing lines to return (optional)
         schema:
           type: integer
           format: int32
           example: 100
       responses:
         '200':
-          description: Log dell'esecuzione
+          description: Execution logs
           content:
             application/json:
               schema:
@@ -4347,13 +4347,13 @@ paths:
                     items:
                       type: string
         '404':
-          description: Esecuzione non trovata
+          description: Execution not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -4372,42 +4372,42 @@ paths:
         - Execution
       summary: Get status of a job execution
       description: |
-        Returns lo status dettagliato of an execution job Spark, incluse informazioni su
-        progresso, durata, metriche e eventuali errori.
+        Returns the detailed status of a Spark job execution, including information on
+        progress, duration, metrics, and any errors.
         
-        The status is retrieved from the database e include dettagli come:
+        The status is retrieved from the database and includes details such as:
         - Execution status (PENDING, RUNNING, COMPLETED, FAILED)
-        - Timestamp di inizio e fine
-        - Tempo di esecuzione
+        - Start and end timestamps
+        - Execution time
         - URL Spark UI
-        - Numero di executor pod
-        - Messaggi di error (se fallito)
+        - Number of executor pods
+        - Error messages (if failed)
       operationId: getExecutionStatus
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       - name: executionId
         in: path
         required: true
-        description: Unique ID dell'esecuzione Spark
+        description: Spark execution ID
         schema:
           type: string
           example: "spark-2d53940045a6-95379617"
       responses:
         '200':
-          description: Status dell'esecuzione
+          description: Execution status
           content:
             application/json:
               schema:
@@ -4431,7 +4431,7 @@ paths:
                   executionTimeSeconds:
                     type: integer
                     nullable: true
-                    description: Tempo di esecuzione in secondi
+                    description: Execution time in seconds
                   errorMessage:
                     type: string
                     nullable: true
@@ -4442,13 +4442,13 @@ paths:
                     type: integer
                     nullable: true
         '404':
-          description: Esecuzione non trovata
+          description: Execution not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -4464,40 +4464,40 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Get un job specifico
+      summary: Get a specific job
       description: |
-        Returns the details of a job ETL specifico, including configurations and execution status.
+        Returns the details of a specific ETL job, including configurations and execution status.
       operationId: getJob
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       responses:
         '200':
-          description: Dettagli del job
+          description: Job details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobDto'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -4512,15 +4512,15 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Update un job
+      summary: Update a job
       description: |
-        Aggiorna the data of a job esistente, including configurations and metadata.
+        Updates the data of an existing job, including configurations and metadata.
       operationId: updateJob
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
@@ -4533,32 +4533,32 @@ paths:
           example: "210"
       requestBody:
         required: true
-        description: Dati aggiornati del job
+        description: Updated job data
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobDto'
       responses:
         '200':
-          description: Job aggiornato con successo
+          description: Job updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobDto'
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:write` richiesto
+          description: Unauthorized - scope `jobs:write` required
           content:
             application/json:
               schema:
@@ -4575,22 +4575,22 @@ paths:
         - Jobs
       summary: Remove a job from a project
       description: |
-        Remove a job from a project, eliminando l'associazione.
+        Remove a job from a project by removing the association.
         
-        **Attenzione:** The job stesso non viene eliminato, solo l'associazione al progetto.
+        **Warning:** The job itself is not deleted, only the association to the project.
       operationId: removeJobFromProject
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job da rimuovere
+        description: Job ID to remove
         schema:
           type: string
           example: "210"
@@ -4602,13 +4602,13 @@ paths:
               schema:
                 type: object
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:delete` richiesto
+          description: Unauthorized - scope `jobs:delete` required
           content:
             application/json:
               schema:
@@ -4623,7 +4623,7 @@ paths:
     get:
       tags:
         - Projects
-      summary: Get un progetto per nome
+      summary: Get a project by name
       description: |
         Returns the details of a project searching by name.
       operationId: getProjectFromName
@@ -4631,25 +4631,25 @@ paths:
       - name: projectName
         in: path
         required: true
-        description: Name of the progetto
+        description: Project name
         schema:
           type: string
           example: "my-project"
       responses:
         '200':
-          description: Dettagli del progetto
+          description: Project details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobProjectDto'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -4665,34 +4665,34 @@ paths:
       tags:
         - Projects
         - Scheduler
-      summary: Get la schedulazione of a project
+      summary: Get project schedule
       description: |
-        Returns la configurazione di schedulazione of a project, incluse informazioni
-        su quando e come is executed automatically.
+        Returns the project's schedule configuration, including information about
+        when and how it is executed automatically.
       operationId: getProjectSchedule
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       responses:
         '200':
-          description: Configurazione di schedulazione
+          description: Schedule configuration
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectScheduleRequest'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -4709,28 +4709,28 @@ paths:
         - Scheduler
       summary: Set project schedule
       description: |
-        Imposta o aggiorna la schedulazione of a project per esecuzione automatica.
+        Sets or updates the schedule of a project for automatic execution.
         
-        La schedulazione utilizza cron expressions per definire quando eseguire il progetto.
+        The schedule uses cron expressions to define when to execute the project.
       operationId: setProjectSchedule
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       requestBody:
         required: true
-        description: Configurazione di schedulazione
+        description: Schedule configuration
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectScheduleRequest'
       responses:
         '200':
-          description: Schedulazione impostata con successo
+          description: Schedule set successfully
           content:
             application/json:
               schema:
@@ -4742,13 +4742,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:write` richiesto
+          description: Unauthorized - scope `projects:write` required
           content:
             application/json:
               schema:
@@ -4765,35 +4765,35 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Get lo status of a task
+      summary: Get status of a task
       description: |
-        Returns lo status attuale of a task, incluse informazioni su esecuzione e progresso.
+        Returns the current status of a task, including execution details and progress.
       operationId: getTaskStatus
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task
+        description: Task ID
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Status del task
+          description: Task status
           content:
             application/json:
               schema:
@@ -4805,15 +4805,15 @@ paths:
                   progress:
                     type: number
                     format: float
-                    description: Progresso in percentuale (0-100)
+                    description: Progress percentage (0-100)
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -4832,49 +4832,49 @@ paths:
         - Webhooks
       summary: Webhook to notify job completion
       description: |
-        Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
-        of an execution job.
+        Webhook endpoint called by Spark jobs to notify completion or failure
+        of a job execution.
         
         This endpoint is called automatically by the Spark system when a job terminates
-        (con status RUNNING, COMPLETED o FAILED).
+        (with status RUNNING, COMPLETED or FAILED).
       operationId: jobCompletionWebhook
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       requestBody:
         required: true
-        description: Dati del webhook di completamento
+        description: Job completion webhook payload
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/JobCompletionWebhookRequest'
       responses:
         '200':
-          description: Webhook processato con successo
+          description: Webhook processed successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: Dati del webhook non validi
+          description: Invalid webhook payload
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
@@ -4893,22 +4893,22 @@ paths:
         - Tasks
       summary: Start a task
       description: |
-        Avvia l'esecuzione of a task specifico.
+        Starts execution of a specific task.
         
-        Il task must be of type SPARK, AUTONOMOUS_AGENT o BACKGROUND_TASK.
+        The task must be of type SPARK, AUTONOMOUS_AGENT, or BACKGROUND_TASK.
       operationId: startTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
@@ -4927,19 +4927,19 @@ paths:
               schema:
                 type: object
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '409':
-          description: Task già running
+          description: Task already running
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:execute` richiesto
+          description: Unauthorized - scope `jobs:execute` required
           content:
             application/json:
               schema:
@@ -4958,42 +4958,42 @@ paths:
         - Tasks
       summary: Stop a task
       description: |
-        Ferma l'esecuzione of a task in progress.
+        Stops execution of a task in progress.
         
-        **Attenzione:** Questa operazione può interrompere un task running, causando
-        potenziali perdite dthe data o inconsistenza.
+        **Warning:** This operation may interrupt a running task, potentially causing
+        data loss or inconsistency.
       operationId: stopTask
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "210"
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task da fermare
+        description: Task ID to stop
         schema:
           type: string
           example: "1"
       responses:
         '200':
-          description: Task fermato con successo
+          description: Task stopped successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
@@ -5005,7 +5005,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:execute` richiesto
+          description: Unauthorized - scope `jobs:execute` required
           content:
             application/json:
               schema:
@@ -5023,44 +5023,44 @@ paths:
         - Jobs
         - Tasks
         - Metrics
-      summary: Get le metriche of a task
+      summary: Get metrics of a task
       description: |
-        Returns le metriche dettagliate of a task specifico, incluse durata, record processati,
-        utilizzo memoria, CPU e altre metriche di performance.
+        Returns detailed metrics for a specific task, including duration, processed records,
+        memory usage, CPU usage, and other performance metrics.
         
-        Le metriche vengono estratte dall'executionLog del task e includono informazioni su:
-        - Durata dell'esecuzione
-        - Record processati e output
-        - Utilizzo memoria (driver ed executor)
-        - Utilizzo CPU
-        - Conteggio errori e warning
-        - Dimensione file di output
+        Metrics are extracted from the task `executionLog` and include:
+        - Execution duration
+        - Processed and output records
+        - Memory usage (driver and executors)
+        - CPU usage
+        - Error and warning counts
+        - Output file size
       operationId: getTaskMetrics
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "220"
       - name: taskId
         in: path
         required: true
-        description: Unique ID del task
+        description: Task ID
         schema:
           type: string
           example: "229"
       responses:
         '200':
-          description: Metriche del task
+          description: Task metrics
           content:
             application/json:
               schema:
@@ -5069,23 +5069,23 @@ paths:
                   taskId:
                     type: integer
                     format: int64
-                    description: ID del task
+                    description: Task ID
                   durationSeconds:
                     type: integer
                     format: int64
-                    description: Durata dell'esecuzione in secondi
+                    description: Execution duration in seconds
                   recordsProcessed:
                     type: integer
                     format: int64
-                    description: Numero di record processati
+                    description: Number of processed records
                   recordsOutput:
                     type: integer
                     format: int64
-                    description: Numero di record in output
+                    description: Number of output records
                   outputFileSizeBytes:
                     type: integer
                     format: int64
-                    description: Dimensione del file di output in bytes
+                    description: Output file size in bytes
                   driverMemoryUsedBytes:
                     type: integer
                     format: int64
@@ -5093,42 +5093,42 @@ paths:
                   executorMemoryUsedBytes:
                     type: integer
                     format: int64
-                    description: Memoria utilizzata dagli executor in bytes
+                    description: Memory used by executors in bytes
                   executorCount:
                     type: integer
                     format: int32
-                    description: Numero di executor utilizzati
+                    description: Number of executors used
                   totalCpuTimeSeconds:
                     type: integer
                     format: int64
-                    description: Tempo totale CPU utilizzato in secondi
+                    description: Total CPU time used in seconds
                   errorCount:
                     type: integer
                     format: int32
-                    description: Numero di errori durante l'esecuzione
+                    description: Number of errors during execution
                   warningCount:
                     type: integer
                     format: int32
-                    description: Numero di warning durante l'esecuzione
+                    description: Number of warnings during execution
                   status:
                     type: string
-                    description: Status finale del task
+                    description: Final task status
                   startedAt:
                     type: string
                     format: date-time
-                    description: Timestamp di inizio esecuzione
+                    description: Execution start timestamp
                   completedAt:
                     type: string
                     format: date-time
-                    description: Timestamp di completamento esecuzione
+                    description: Execution completion timestamp
         '404':
-          description: Progetto, job o task non trovato
+          description: Project, job, or task not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -5145,32 +5145,32 @@ paths:
         - Projects
         - Jobs
         - Metrics
-      summary: Get le metriche aggregate of a job
+      summary: Get metrics aggregate of a job
       description: |
         Returns the aggregated metrics of all executions of a job, including sums, averages
-        e conteggi per status.
+        and counts by status.
         
-        Le metriche vengono calcolate a livello database per performance ottimali e includono:
-        - Numero totale di esecuzioni
-        - Durata totale e media
-        - Record processati e output totali
-        - Utilizzo memoria totale
-        - Conteggio esecuzioni per status (COMPLETED, FAILED, RUNNING)
+        Metrics are computed at the database level for optimal performance and include:
+        - Total number of executions
+        - Total and average duration
+        - Total processed and output records
+        - Total memory usage
+        - Execution counts by status (COMPLETED, FAILED, RUNNING)
         
-        È possibile filtrare le metriche per periodo utilizzando i parametri `startTime` e `endTime`.
+        Metrics can be filtered by time range using `startTime` and `endTime`.
       operationId: getJobMetrics
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
       - name: jobId
         in: path
         required: true
-        description: Unique ID del job
+        description: Job ID
         schema:
           type: string
           example: "220"
@@ -5178,8 +5178,8 @@ paths:
         in: query
         required: false
         description: |
-          Timestamp di inizio per filtrare le esecuzioni (formato ISO 8601).
-          Esempio: "2025-12-11T00:00:00Z"
+          Start timestamp for filtering executions (ISO 8601 format).
+          Example: "2025-12-11T00:00:00Z"
         schema:
           type: string
           format: date-time
@@ -5188,15 +5188,15 @@ paths:
         in: query
         required: false
         description: |
-          Timestamp di fine per filtrare le esecuzioni (formato ISO 8601).
-          Esempio: "2025-12-11T23:59:59Z"
+          End timestamp for filtering executions (ISO 8601 format).
+          Example: "2025-12-11T23:59:59Z"
         schema:
           type: string
           format: date-time
           example: "2025-12-11T23:59:59Z"
       responses:
         '200':
-          description: Metriche aggregate del job
+          description: Aggregated job metrics
           content:
             application/json:
               schema:
@@ -5205,42 +5205,42 @@ paths:
                   jobId:
                     type: integer
                     format: int64
-                    description: ID del job
+                    description: Job ID
                   startTime:
                     type: string
                     format: date-time
-                    description: Timestamp di inizio filtro (se specificato)
+                    description: Filter start timestamp (if specified)
                   endTime:
                     type: string
                     format: date-time
-                    description: Timestamp di fine filtro (se specificato)
+                    description: Filter end timestamp (if specified)
                   aggregated:
                     type: object
                     properties:
                       totalExecutions:
                         type: integer
                         format: int64
-                        description: Numero totale di esecuzioni
+                        description: Total number of executions
                       totalDurationSeconds:
                         type: integer
                         format: int64
-                        description: Durata totale in secondi
+                        description: Total duration in seconds
                       averageDurationSeconds:
                         type: number
                         format: double
-                        description: Durata media in secondi
+                        description: Average duration in seconds
                       totalRecordsProcessed:
                         type: integer
                         format: int64
-                        description: Totale record processati
+                        description: Total processed records
                       totalRecordsOutput:
                         type: integer
                         format: int64
-                        description: Totale record in output
+                        description: Total output records
                       totalOutputFileSizeBytes:
                         type: integer
                         format: int64
-                        description: Dimensione totale file di output in bytes
+                        description: Total output file size in bytes
                       totalDriverMemoryUsedBytes:
                         type: integer
                         format: int64
@@ -5248,39 +5248,39 @@ paths:
                       totalExecutorMemoryUsedBytes:
                         type: integer
                         format: int64
-                        description: Memoria totale utilizzata dagli executor in bytes
+                        description: Total memory used by executors in bytes
                       totalCpuTimeSeconds:
                         type: integer
                         format: int64
-                        description: Tempo totale CPU utilizzato in secondi
+                        description: Total CPU time used in seconds
                       totalErrorCount:
                         type: integer
                         format: int64
-                        description: Totale errori
+                        description: Total errors
                       totalWarningCount:
                         type: integer
                         format: int64
-                        description: Totale warning
+                        description: Total warnings
                       completedCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni completate con successo
+                        description: Number of successful executions
                       failedCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni fallite
+                        description: Number of failed executions
                       runningCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni in progress
+                        description: Number of executions in progress
         '404':
-          description: Progetto o job non trovato
+          description: Project or job not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `jobs:read` richiesto
+          description: Unauthorized - scope `jobs:read` required
           content:
             application/json:
               schema:
@@ -5296,26 +5296,26 @@ paths:
       tags:
         - Projects
         - Metrics
-      summary: Get le metriche aggregate of a project
+      summary: Get metrics aggregate of a project
       description: |
         Returns the aggregated metrics of all executions of all jobs of a project,
-        incluse somme, medie e conteggi per status.
+        including sums, averages, and counts by status.
         
-        Le metriche vengono calcolate a livello database per performance ottimali e includono:
-        - Numero totale di esecuzioni per progetto
-        - Durata totale e media
-        - Record processati e output totali
-        - Utilizzo memoria totale
-        - Conteggio esecuzioni per status (COMPLETED, FAILED, RUNNING)
-        - Raggruppamento per job con metriche per singolo job
+        Metrics are computed at the database level for optimal performance and include:
+        - Total number of executions for the project
+        - Total and average duration
+        - Total processed and output records
+        - Total memory usage
+        - Execution counts by status (COMPLETED, FAILED, RUNNING)
+        - Per-job breakdown with metrics for each job
         
-        È possibile filtrare le metriche per periodo utilizzando i parametri `startTime` e `endTime`.
+        Metrics can be filtered by time range using `startTime` and `endTime`.
       operationId: getProjectMetrics
       parameters:
       - name: projectId
         in: path
         required: true
-        description: Unique ID del progetto
+        description: Project ID
         schema:
           type: string
           example: "98"
@@ -5323,8 +5323,8 @@ paths:
         in: query
         required: false
         description: |
-          Timestamp di inizio per filtrare le esecuzioni (formato ISO 8601).
-          Esempio: "2025-12-11T00:00:00Z"
+          Start timestamp for filtering executions (ISO 8601 format).
+          Example: "2025-12-11T00:00:00Z"
         schema:
           type: string
           format: date-time
@@ -5333,15 +5333,15 @@ paths:
         in: query
         required: false
         description: |
-          Timestamp di fine per filtrare le esecuzioni (formato ISO 8601).
-          Esempio: "2025-12-11T23:59:59Z"
+          End timestamp for filtering executions (ISO 8601 format).
+          Example: "2025-12-11T23:59:59Z"
         schema:
           type: string
           format: date-time
           example: "2025-12-11T23:59:59Z"
       responses:
         '200':
-          description: Metriche aggregate del progetto
+          description: Aggregated project metrics
           content:
             application/json:
               schema:
@@ -5350,15 +5350,15 @@ paths:
                   projectId:
                     type: integer
                     format: int64
-                    description: ID del progetto
+                    description: Project ID
                   startTime:
                     type: string
                     format: date-time
-                    description: Timestamp di inizio filtro (se specificato)
+                    description: Filter start timestamp (if specified)
                   endTime:
                     type: string
                     format: date-time
-                    description: Timestamp di fine filtro (se specificato)
+                    description: Filter end timestamp (if specified)
                   aggregated:
                     type: object
                     properties:
@@ -5369,23 +5369,23 @@ paths:
                       totalDurationSeconds:
                         type: integer
                         format: int64
-                        description: Durata totale in secondi
+                        description: Total duration in seconds
                       averageDurationSeconds:
                         type: number
                         format: double
-                        description: Durata media in secondi
+                        description: Average duration in seconds
                       totalRecordsProcessed:
                         type: integer
                         format: int64
-                        description: Totale record processati
+                        description: Total processed records
                       totalRecordsOutput:
                         type: integer
                         format: int64
-                        description: Totale record in output
+                        description: Total output records
                       totalOutputFileSizeBytes:
                         type: integer
                         format: int64
-                        description: Dimensione totale file di output in bytes
+                        description: Total output file size in bytes
                       totalDriverMemoryUsedBytes:
                         type: integer
                         format: int64
@@ -5393,61 +5393,61 @@ paths:
                       totalExecutorMemoryUsedBytes:
                         type: integer
                         format: int64
-                        description: Memoria totale utilizzata dagli executor in bytes
+                        description: Total memory used by executors in bytes
                       totalCpuTimeSeconds:
                         type: integer
                         format: int64
-                        description: Tempo totale CPU utilizzato in secondi
+                        description: Total CPU time used in seconds
                       totalErrorCount:
                         type: integer
                         format: int64
-                        description: Totale errori
+                        description: Total errors
                       totalWarningCount:
                         type: integer
                         format: int64
-                        description: Totale warning
+                        description: Total warnings
                       completedCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni completate con successo
+                        description: Number of successful executions
                       failedCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni fallite
+                        description: Number of failed executions
                       runningCount:
                         type: integer
                         format: int64
-                        description: Numero di esecuzioni in progress
+                        description: Number of executions in progress
                   jobs:
                     type: array
-                    description: Metriche aggregate per ognthe jobs del progetto
+                    description: Aggregated metrics by job within the project
                     items:
                       type: object
                       properties:
                         jobId:
                           type: integer
                           format: int64
-                          description: ID del job
+                          description: Job ID
                         executionCount:
                           type: integer
                           format: int64
-                          description: Numero di esecuzioni del job
+                          description: Number of executions of the job
                         totalDurationSeconds:
                           type: integer
                           format: int64
-                          description: Durata totale del job in secondi
+                          description: Total job duration in seconds
                         totalRecordsProcessed:
                           type: integer
                           format: int64
                           description: Total records processed by the job
         '404':
-          description: Progetto non trovato
+          description: Project not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato - scope `projects:read` richiesto
+          description: Unauthorized - scope `projects:read` required
           content:
             application/json:
               schema:
@@ -5466,28 +5466,28 @@ paths:
         - Tasks
       summary: Mark zombie tasks as FAILED
       description: |
-        Detects and marks automatically come FAILED the tasks that are RUNNING but are running
-        for longer of the timeout specified (task "zombie").
+        Detects and marks as FAILED tasks that are RUNNING for longer than the specified timeout
+        (\"zombie\" tasks).
         
-        Un task è considerato "zombie" se:
-        - Ha status RUNNING
-        - È running da longer than the timeout specificato (default: 24 hours)
-        - Il timestamp di `startedAt` (o `scheduledTime` come fallback) supera il timeout
+        A task is considered a \"zombie\" if:
+        - It has status RUNNING
+        - It has been running longer than the specified timeout (default: 24 hours)
+        - The `startedAt` timestamp (or `scheduledTime` as a fallback) exceeds the timeout
         
-        Quando un task viene marcato come zombie:
-        - Lo status viene aggiornato a FAILED
-        - L'executionLog viene aggiornato con status FAILED, completedAt e un message di error
-        - Viene calcolata la durata totale dell'esecuzione
+        When a task is marked as a zombie:
+        - Status is updated to FAILED
+        - `executionLog` is updated with FAILED status, `completedAt`, and an error message
+        - Total execution duration is computed
         
-        **Nota:** Questo endpoint richiede privilegi di amministrathours (scope `admin`).
+        **Note:** This endpoint requires admin privileges (scope `admin`).
       operationId: markZombieTasks
       parameters:
       - name: timeoutHours
         in: query
         required: false
         description: |
-          Timeout in hours per considerare un task come "zombie" (default: 24).
-          I task RUNNING for longer di questo value verranno marcati come FAILED.
+          Timeout in hours to consider a task a \"zombie\" (default: 24).
+          RUNNING tasks exceeding this value will be marked as FAILED.
         schema:
           type: integer
           format: int64
@@ -5495,7 +5495,7 @@ paths:
           example: 24
       responses:
         '200':
-          description: Task zombie marcati con successo
+          description: Zombie tasks marked successfully
           content:
             application/json:
               schema:
@@ -5504,23 +5504,23 @@ paths:
                   markedCount:
                     type: integer
                     format: int64
-                    description: Numero dthe tasks marcati come FAILED
+                    description: Number of tasks marked as FAILED
                   markedTaskIds:
                     type: array
-                    description: Lista degli ID dethe tasks marcati come FAILED
+                    description: List of task IDs marked as FAILED
                     items:
                       type: integer
                       format: int64
                   timeoutHours:
                     type: integer
                     format: int64
-                    description: Timeout utilizzato (in hours)
+                    description: Timeout used (in hours)
                   message:
                     type: string
-                    description: Messaggio di conferma
+                    description: Confirmation message
                     example: "Marked 5 zombie task(s) as FAILED"
         '401':
-          description: Non autorizzato - scope `admin` richiesto
+          description: Unauthorized - scope `admin` required
           content:
             application/json:
               schema:
@@ -5537,7 +5537,7 @@ paths:
         - Projects
       summary: Test endpoint for projects
       description: |
-        Endpoint di test per verificare la connettività e l'autenticazione delthe API progetti.
+        Test endpoint to verify API connectivity and authentication for projects.
       operationId: test_1
       responses:
         '200':
@@ -5551,7 +5551,7 @@ paths:
                     type: string
                     example: "OK"
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5701,21 +5701,21 @@ paths:
     put:
       tags:
         - Python Extensions
-      summary: Update un'estensione Python
+      summary: Update a Python extension
       description: |
-        Aggiorna the data of un'estensione Python esistente, including configurations and metadata.
+        Updates the data of an existing Python extension, including configurations and metadata.
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
         in: path
         required: true
-        description: Unique ID dell'estensione
+        description: Extension ID
         schema:
           type: string
           example: "my-extension"
       requestBody:
         required: true
-        description: Dati aggiornati dell'estensione
+        description: Updated extension data
         content:
           application/json:
             schema:
@@ -5724,25 +5724,25 @@ paths:
                 type: object
       responses:
         '200':
-          description: Estensione aggiornata con successo
+          description: Extension updated successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Estensione non trovata
+          description: Extension not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5756,12 +5756,12 @@ paths:
     delete:
       tags:
         - Python Extensions
-      summary: Delete un'estensione Python
+      summary: Delete a Python extension
       description: |
         Deletes a Python extension from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. Gli agent che utilizzano questa
-        estensione potrebbero non funzionare correttamente.
+        **Warning:** This operation is irreversible. Agents that use this extension
+        may not work correctly.
       operationId: deletePythonExtension
       parameters:
       - name: extensionId
@@ -5773,19 +5773,19 @@ paths:
           example: "my-extension"
       responses:
         '200':
-          description: Estensione eliminata con successo
+          description: Extension deleted successfully
           content:
             application/json:
               schema:
                 type: object
         '404':
-          description: Estensione non trovata
+          description: Extension not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5802,21 +5802,21 @@ paths:
         - Python Extensions
       summary: Generate PySpark code from an extension
       description: |
-        Generate PySpark code from an extension Python registrata in the system.
+        Generates PySpark code from a Python extension registered in the system.
         
-        Utile per convertire estensioni Python in codice PySpark utilizzabile nethe jobs Spark.
+        Useful for converting Python extensions into PySpark code usable in Spark jobs.
       operationId: generatePysparkCode
       parameters:
       - name: extensionId
         in: path
         required: true
-        description: Unique ID dell'estensione
+        description: Extension ID
         schema:
           type: string
           example: "my-extension"
       responses:
         '200':
-          description: Codice PySpark generato con successo
+          description: PySpark code generated successfully
           content:
             application/json:
               schema:
@@ -5824,15 +5824,15 @@ paths:
                 properties:
                   code:
                     type: string
-                    description: Codice PySpark generato
+                    description: Generated PySpark code
         '404':
-          description: Estensione non trovata
+          description: Extension not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5850,19 +5850,19 @@ paths:
         - Agents
       summary: Get extensions of an agent
       description: |
-        Returns the list of all estensioni Python associate a un agent specifico.
+        Returns the list of all Python extensions associated with a specific agent.
       operationId: getAgentExtensions
       parameters:
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agent
+        description: Agent ID
         schema:
           type: string
           example: "123"
       responses:
         '200':
-          description: Lista delle estensioni dell'agent
+          description: List of the agent's extensions
           content:
             application/json:
               schema:
@@ -5870,13 +5870,13 @@ paths:
                 items:
                   type: object
         '404':
-          description: Agent non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5894,19 +5894,19 @@ paths:
         - Agents
       summary: Get Python extensions of an agent
       description: |
-        Returns the list of all estensioni Python associate a un agent specifico.
+        Returns the list of all Python extensions associated with a specific agent.
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agent
+        description: Agent ID
         schema:
           type: string
           example: "123"
       responses:
         '200':
-          description: Lista delle estensioni Python dell'agent
+          description: List of the agent's Python extensions
           content:
             application/json:
               schema:
@@ -5914,13 +5914,13 @@ paths:
                 items:
                   type: object
         '404':
-          description: Agent non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5937,19 +5937,19 @@ paths:
         - Agents
       summary: Update Python extensions of an agent
       description: |
-        Aggiorna the list di estensioni Python associate a un agent specifico.
+        Updates the list of Python extensions associated with a specific agent.
       operationId: updateAgentPythonExtensions
       parameters:
       - name: agentId
         in: path
         required: true
-        description: Unique ID dell'agent
+        description: Agent ID
         schema:
           type: string
           example: "123"
       requestBody:
         required: true
-        description: Lista di estensioni Python da associare all'agent
+        description: List of Python extensions to associate with the agent
         content:
           application/json:
             schema:
@@ -5958,25 +5958,25 @@ paths:
                 type: object
       responses:
         '200':
-          description: Estensioni aggiornate con successo
+          description: Extensions updated successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Agent non trovato
+          description: Agent not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5993,8 +5993,8 @@ paths:
         - Python Extensions
       summary: Get information about the Python Extensions plugin
       description: |
-        Returns general information about the Python Extensions plugin, incluse versioni e
-        configurazioni.
+        Returns general information about the Python Extensions plugin, including versions and
+        configurations.
       operationId: getPluginInfo_1
       responses:
         '200':
@@ -6004,7 +6004,7 @@ paths:
               schema:
                 type: object
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -6019,13 +6019,13 @@ paths:
     get:
       tags:
         - Python Extensions
-      summary: Get i tipi di estensione supportati
+      summary: Get supported extension types
       description: |
-        Returns the list of all tipi di estensione Python supportati from the system.
+        Returns the list of all Python extension types supported by the system.
       operationId: getSupportedExtensionTypes
       responses:
         '200':
-          description: Lista dei tipi supportati
+          description: List of supported types
           content:
             application/json:
               schema:
@@ -6033,7 +6033,7 @@ paths:
                 items:
                   type: string
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -6048,15 +6048,15 @@ paths:
     post:
       tags:
         - Python Extensions
-      summary: Processa estensioni Python da YAML
+      summary: Process Python extensions from YAML
       description: |
         Processes and registers Python extensions from a YAML definition.
         
-        Utile per importare estensioni da file di configurazione.
+        Useful for importing extensions from configuration files.
       operationId: processYamlExtensions
       requestBody:
         required: true
-        description: Definizione YAML delle estensioni
+        description: YAML definition of extensions
         content:
           application/json:
             schema:
@@ -6065,19 +6065,19 @@ paths:
                 type: object
       responses:
         '200':
-          description: Estensioni processate con successo
+          description: Extensions processed successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: YAML non valido
+          description: Invalid YAML
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -6092,15 +6092,15 @@ paths:
     post:
       tags:
         - Python Extensions
-      summary: Registra una nuova estensione Python
+      summary: Register a new Python extension
       description: |
-        Registra una nuova estensione Python in the system.
+        Registers a new Python extension in the system.
         
-        L'estensione can be utilizzata dagli agent per estendere le funzionalità dethe jobs Spark.
+        The extension can be used by agents to extend Spark jobs functionality.
       operationId: registerPythonExtension
       requestBody:
         required: true
-        description: Dati dell'estensione da registrare
+        description: Extension data to register
         content:
           application/json:
             schema:
@@ -6109,19 +6109,19 @@ paths:
                 type: object
       responses:
         '201':
-          description: Estensione registrata con successo
+          description: Extension registered successfully
           content:
             application/json:
               schema:
                 type: object
         '400':
-          description: Dati non validi
+          description: Invalid data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -6136,15 +6136,15 @@ paths:
     post:
       tags:
         - Python Extensions
-      summary: Valida un'estensione Python
+      summary: Validate a Python extension
       description: |
-        Validates the structure and syntax of a Python extension senza registrarla in the system.
+        Validates the structure and syntax of a Python extension without registering it in the system.
         
         Useful for verifying the correctness of an extension before registration.
       operationId: validatePythonExtension
       requestBody:
         required: true
-        description: Dati dell'estensione da validare
+        description: Extension data to validate
         content:
           application/json:
             schema:
@@ -6153,7 +6153,7 @@ paths:
                 type: object
       responses:
         '200':
-          description: Estensione valida
+          description: Extension is valid
           content:
             application/json:
               schema:
@@ -6166,15 +6166,15 @@ paths:
                     type: array
                     items:
                       type: string
-                    description: Lista di errori di validazione (se presenti)
+                    description: List of validation errors (if any)
         '400':
-          description: Estensione non valida
+          description: Extension is not valid
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Non autorizzato
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -6192,25 +6192,25 @@ components:
       in: header
       name: X-API-Key
       description: |
-        API Key per l'autenticazione. Formato: `{organization}:{key}`
+        API key used for authentication. Format: `{organization}:{key}`
         
-        Esempio: `super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!`
+        Example: `super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!`
   schemas:
     Error:
       type: object
       properties:
         error:
           type: string
-          description: Messaggio di error descrittivo
+          description: Descriptive error message
           example: "Job not found or invalid configuration"
         code:
           type: integer
-          description: Codice di status HTTP
+          description: HTTP status code
           example: 400
         timestamp:
           type: string
           format: date-time
-          description: Timestamp dell'error
+          description: Error timestamp
           example: "2025-12-10T23:15:30Z"
     CronJobRequest:
       type: object
