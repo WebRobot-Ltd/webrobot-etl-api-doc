@@ -1691,7 +1691,7 @@ paths:
       tags:
         - Categories
         - Test
-      summary: Endpoint di test per categorie
+      summary: Test endpoint for categories
       description: |
         Endpoint di test per verificare la funzionalità of the categorie.
       operationId: test
@@ -2226,7 +2226,7 @@ paths:
       description: |
         Executes a query SQL (Presto/Trino) su un dataset per recuperare o analizzare i dati.
         
-        La query viene eseguita sul catalogo MinIO e può utilizzare tutte le funzionalità SQL supportate da Trino.
+        The query is executed on the MinIO catalog and can use all SQL features supported by Trino.
       operationId: executeQuery
       requestBody:
         required: true
@@ -2376,7 +2376,7 @@ paths:
       tags:
         - Datasets
         - Query
-      summary: List tutte le tabelle disponibili
+      summary: List all available tables
       description: |
         Returns the list of all tables available in a specific catalog and schema.
       operationId: listTables
@@ -2484,7 +2484,7 @@ paths:
       tags:
         - Admin
         - ETL Library
-      summary: Get tutte le versioni della libreria ETL
+      summary: Get all ETL library versions
       description: |
         Returns the list of all ETL library versions available in the system,
         con supporto per filtri per tipo di build e stato attivo.
@@ -2675,7 +2675,7 @@ paths:
         - ETL Library
       summary: Delete una versione ETL
       description: |
-        Elimina una versione of the libreria ETL dal sistema.
+        Deletes an ETL library version from the system.
         
         **Attenzione:** Questa operazione è irreversibile. I job che utilizzano questa versione
         potrebbero non funzionare correttamente.
@@ -2769,7 +2769,7 @@ paths:
     get:
       tags:
         - Package
-      summary: Get l'URL per il download di un package
+      summary: Get URL for package download
       description: |
         Returns un URL temporaneo per scaricare un package di progetti e configurazioni.
       operationId: getUrlDownload
@@ -2784,7 +2784,7 @@ paths:
                   url:
                     type: string
                     format: uri
-                    description: URL temporaneo per il download
+                    description: Temporary URL for download
         '401':
           description: Non autorizzato
           content:
@@ -2816,7 +2816,7 @@ paths:
                   url:
                     type: string
                     format: uri
-                    description: URL temporaneo per il caricamento
+                    description: Temporary URL for upload
         '401':
           description: Non autorizzato
           content:
@@ -2913,7 +2913,7 @@ paths:
         - Package
       summary: Start import of all projects
       description: |
-        Starts the process di import di tutti i progetti and configurations da un package compresso.
+        Starts the import process of all projects and configurations from a compressed package.
         
         **Attenzione:** Questa operazione può sovrascrivere progetti esistenti.
       operationId: start_import_All
@@ -2992,9 +2992,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Disabilita un plugin
+      summary: Disable a plugin
       description: |
-        Disabilita un plugin in the sistema per un tipo di build specifico.
+        Disable a plugin in the system per un tipo di build specifico.
         
         I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin
@@ -3043,9 +3043,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Abilita un plugin
+      summary: Enable a plugin
       description: |
-        Abilita un plugin in the sistema per un tipo di build specifico.
+        Enable a plugin in the system per un tipo di build specifico.
         
         I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin
@@ -3094,9 +3094,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: List tutti i plugin
+      summary: List all plugins
       description: |
-        Returns la lista di tutti i plugin available in the system, filtrati per tipo di build.
+        Returns the list of all plugins available in the system, filtered by build type.
       operationId: listPlugins
       parameters:
       - name: buildType
@@ -3134,7 +3134,7 @@ paths:
         - Plugins
       summary: Upload a new plugin
       description: |
-        Carica un nuovo plugin in the sistema come file JAR.
+        Uploads a new plugin to the system as a JAR file.
         
         Il plugin può essere associato a una o più organizzazioni e a un tipo di build specifico.
       operationId: uploadPlugin
@@ -3299,7 +3299,7 @@ paths:
         - Plugins
       summary: Delete un'installazione plugin
       description: |
-        Elimina un'installazione plugin dal sistema.
+        Deletes a plugin installation from the system.
         
         **Attenzione:** Questa operazione è irreversibile. Il plugin non sarà più disponibile
         per l'uso nei job.
@@ -3343,9 +3343,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Disabilita un'installazione plugin
+      summary: Disable a plugin installation
       description: |
-        Disabilita un'installazione plugin in the sistema.
+        Disable a plugin installation in the system.
         
         I plugin disabilitati non saranno disponibili per l'uso nei job.
       operationId: disablePlugin_1
@@ -3388,9 +3388,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Abilita un'installazione plugin
+      summary: Enable a plugin installation
       description: |
-        Abilita un'installazione plugin in the sistema.
+        Enable a plugin installation in the system.
         
         I plugin abilitati saranno disponibili per l'uso nei job.
       operationId: enablePlugin_1
@@ -3433,9 +3433,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Get tutte le installazioni plugin
+      summary: Get all plugin installations
       description: |
-        Returns la lista di tutte le installazioni plugin available in the system,
+        Returns the list of all plugin installations available in the system,
         con supporto per filtri per organizzazione e stato abilitato.
       operationId: getAllInstallations
       parameters:
@@ -3476,9 +3476,9 @@ paths:
       tags:
         - Admin
         - Plugins
-      summary: Registra un nuovo plugin
+      summary: Register a new plugin
       description: |
-        Registra un nuovo plugin in the sistema come installazione.
+        Register a new plugin in the system come installazione.
         
         Il plugin può essere associato a una o più organizzazioni.
       operationId: registerPlugin
@@ -3521,9 +3521,9 @@ paths:
         - Plugins
       summary: Reload all plugins
       description: |
-        Ricarica tutti i plugin in the sistema, aggiornando le configurazioni e le installazioni.
+        Reloads all plugins in the system, updating configurations and installations.
         
-        Utile dopo aver caricato o modificato plugin per applicare le modifiche senza riavviare il sistema.
+        Useful after uploading or modifying plugins to apply changes without restarting the system.
       operationId: reloadPlugins
       responses:
         '200':
@@ -3553,9 +3553,9 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Get tutti i job di un progetto
+      summary: Get all jobs of a project
       description: |
-        Returns la lista di tutti i job ETL associati a un progetto specifico.
+        Returns the list of all ETL jobs associated with a specific project.
       operationId: getProjectJobs
       parameters:
       - name: projectId
@@ -3596,7 +3596,7 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Aggiunge un job a un progetto
+      summary: Add a job to a project
       description: |
         Creates a new job ETL e lo associa a un progetto esistente.
         
@@ -3652,9 +3652,9 @@ paths:
     get:
       tags:
         - Projects
-      summary: Get tutti i progetti
+      summary: Get all projects
       description: |
-        Returns la lista di tutti i progetti available in the system.
+        Returns the list of all projects available in the system.
         
         I progetti sono utilizzati to organize job, task e dataset correlati.
       operationId: getAllProjects
@@ -3684,7 +3684,7 @@ paths:
         - Projects
       summary: Create a new project
       description: |
-        Creates a new progetto in the sistema.
+        Creates a new progetto in the system.
         
         Un progetto può contenere più job ETL e può essere schedulato per esecuzione automatica.
       operationId: createProject
@@ -3726,9 +3726,9 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Get tutti i task di un job
+      summary: Get all tasks of a job
       description: |
-        Returns la lista di tutti i task associati a un job specifico.
+        Returns the list of all tasks associated with a specific job.
         
         I task rappresentano le singole operazioni che compongono un job ETL.
       operationId: getAllTasks
@@ -3937,9 +3937,9 @@ paths:
         - Projects
       summary: Delete un progetto
       description: |
-        Elimina un progetto dal sistema.
+        Deletes a project from the system.
         
-        **Attenzione:** Questa operazione è irreversibile. Tutti i job, task e dati associati
+        **Warning:** This operation is irreversible. All associated jobs, tasks and data
         al progetto verranno eliminati.
       operationId: deleteProject
       parameters:
@@ -4164,7 +4164,7 @@ paths:
       tags:
         - Jobs
         - ETL Execution
-      summary: Esegue un job Spark immediatamente
+      summary: Execute a Spark job immediately
       description: |
         Esegue un job Spark in modalità immediata, allocando risorse in the cluster Kubernetes.
         
@@ -4216,10 +4216,10 @@ paths:
                   description: Argomenti aggiuntivi da passare al job Spark
             examples:
               default:
-                summary: Esecuzione con parametri di default
+                summary: Execution with default parameters
                 value: {}
               withCredentials:
-                summary: Esecuzione con credenziali cloud specifiche
+                summary: Execution with specific cloud credentials
                 value:
                   cloudCredentialIds:
                     - "550e8400-e29b-41d4-a716-446655440000"
@@ -4573,9 +4573,9 @@ paths:
       tags:
         - Projects
         - Jobs
-      summary: Rimuove un job da un progetto
+      summary: Remove a job from a project
       description: |
-        Rimuove un job da un progetto, eliminando l'associazione.
+        Remove a job from a project, eliminando l'associazione.
         
         **Attenzione:** The job stesso non viene eliminato, solo l'associazione al progetto.
       operationId: removeJobFromProject
@@ -4707,7 +4707,7 @@ paths:
       tags:
         - Projects
         - Scheduler
-      summary: Imposta la schedulazione di un progetto
+      summary: Set project schedule
       description: |
         Imposta o aggiorna la schedulazione di un progetto per esecuzione automatica.
         
@@ -4830,12 +4830,12 @@ paths:
         - Projects
         - Jobs
         - Webhooks
-      summary: Webhook per notificare il completamento di un job
+      summary: Webhook to notify job completion
       description: |
         Endpoint webhook chiamato da Spark jobs per notificare il completamento o il fallimento
         di un'esecuzione job.
         
-        Questo endpoint is called automatically dal sistema Spark quando un job termina
+        This endpoint is called automatically by the Spark system when a job terminates
         (con status RUNNING, COMPLETED o FAILED).
       operationId: jobCompletionWebhook
       parameters:
@@ -4956,7 +4956,7 @@ paths:
         - Projects
         - Jobs
         - Tasks
-      summary: Ferma un task
+      summary: Stop a task
       description: |
         Ferma l'esecuzione di un task in corso.
         
@@ -5147,7 +5147,7 @@ paths:
         - Metrics
       summary: Get le metriche aggregate di un job
       description: |
-        Returns le metriche aggregate di tutte le esecuzioni di un job, incluse somme, medie
+        Returns the aggregated metrics of all executions of a job, including sums, averages
         e conteggi per status.
         
         Le metriche vengono calcolate a livello database per performance ottimali e includono:
@@ -5298,7 +5298,7 @@ paths:
         - Metrics
       summary: Get le metriche aggregate di un progetto
       description: |
-        Returns le metriche aggregate di tutte le esecuzioni di tutti i job di un progetto,
+        Returns the aggregated metrics of all executions of all jobs of a project,
         incluse somme, medie e conteggi per status.
         
         Le metriche vengono calcolate a livello database per performance ottimali e includono:
@@ -5464,7 +5464,7 @@ paths:
         - Projects
         - Admin
         - Tasks
-      summary: Marca i task zombie come FAILED
+      summary: Mark zombie tasks as FAILED
       description: |
         Rileva e marca automatically come FAILED i task che risultano RUNNING ma sono in esecuzione
         da più tempo of the timeout specified (task "zombie").
@@ -5535,7 +5535,7 @@ paths:
     get:
       tags:
         - Projects
-      summary: Test endpoint per progetti
+      summary: Test endpoint for projects
       description: |
         Endpoint di test per verificare la connettività e l'autenticazione dell'API progetti.
       operationId: test_1
@@ -5758,7 +5758,7 @@ paths:
         - Python Extensions
       summary: Delete un'estensione Python
       description: |
-        Elimina un'estensione Python dal sistema.
+        Deletes a Python extension from the system.
         
         **Attenzione:** Questa operazione è irreversibile. Gli agent che utilizzano questa
         estensione potrebbero non funzionare correttamente.
@@ -5800,9 +5800,9 @@ paths:
     post:
       tags:
         - Python Extensions
-      summary: Genera codice PySpark da un'estensione
+      summary: Generate PySpark code from an extension
       description: |
-        Genera codice PySpark da un'estensione Python registrata in the sistema.
+        Generate PySpark code from an extension Python registrata in the system.
         
         Utile per convertire estensioni Python in codice PySpark utilizzabile nei job Spark.
       operationId: generatePysparkCode
@@ -5850,7 +5850,7 @@ paths:
         - Agents
       summary: Get le estensioni di un agent
       description: |
-        Returns la lista di tutte le estensioni Python associate a un agent specifico.
+        Returns la lista of all estensioni Python associate a un agent specifico.
       operationId: getAgentExtensions
       parameters:
       - name: agentId
@@ -5894,7 +5894,7 @@ paths:
         - Agents
       summary: Get le estensioni Python di un agent
       description: |
-        Returns la lista di tutte le estensioni Python associate a un agent specifico.
+        Returns la lista of all estensioni Python associate a un agent specifico.
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
@@ -6021,7 +6021,7 @@ paths:
         - Python Extensions
       summary: Get i tipi di estensione supportati
       description: |
-        Returns la lista di tutti i tipi di estensione Python supportati dal sistema.
+        Returns la lista of all tipi di estensione Python supportati from the system.
       operationId: getSupportedExtensionTypes
       responses:
         '200':
@@ -6094,7 +6094,7 @@ paths:
         - Python Extensions
       summary: Registra una nuova estensione Python
       description: |
-        Registra una nuova estensione Python in the sistema.
+        Registra una nuova estensione Python in the system.
         
         L'estensione può essere utilizzata dagli agent per estendere le funzionalità dei job Spark.
       operationId: registerPythonExtension
@@ -6138,7 +6138,7 @@ paths:
         - Python Extensions
       summary: Valida un'estensione Python
       description: |
-        Valida la struttura e la sintassi di un'estensione Python senza registrarla in the sistema.
+        Valida la struttura e la sintassi di un'estensione Python senza registrarla in the system.
         
         Utile per verificare la correttezza di un'estensione prima della registrazione.
       operationId: validatePythonExtension
