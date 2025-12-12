@@ -31,6 +31,9 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copia sorgenti
 COPY . .
 
+# Disabilita il plugin search di Redocly sostituendolo con uno stub no-op
+RUN node scripts/disable-search.js
+
 # Crea directory cache scrivibili per redocly
 # IMPORTANTE: Deve essere fatto DOPO aver copiato node_modules
 RUN mkdir -p /tmp/.npm /tmp/.babel-cache && \
