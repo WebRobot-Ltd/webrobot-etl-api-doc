@@ -2,15 +2,27 @@
 
 # Script per configurare il job Jenkins per WebRobot ETL API Documentation
 # Basato sull'esperienza con il setup Jenkins precedente
+#
+# IMPORTANTE: Questo script deve essere eseguito sul bastion host (metaglobe.finance)
+# dove è attivo il port forward persistente per Jenkins sulla porta 8081
+#
+# Uso:
+#   ssh root@metaglobe.finance
+#   cd /path/to/webrobot-etl-api-doc
+#   export JENKINS_TOKEN=il_tuo_token
+#   ./setup_jenkins_job.sh
 
 set -e
 
 echo "🚀 SETUP JENKINS JOB PER WEBROBOT ETL API DOC"
 echo "============================================="
+echo "⚠️  Questo script deve essere eseguito sul bastion host"
+echo ""
 
 # Variabili di configurazione
 JENKINS_CLI_JAR="${JENKINS_CLI_JAR:-/tmp/jenkins-cli.jar}"
 JOB_NAME="webrobot-etl-api-doc-pipeline"
+# Jenkins è accessibile via port forward persistente sul bastion sulla porta 8081
 JENKINS_URL="${JENKINS_URL:-http://localhost:8081}"
 JENKINS_USER="${JENKINS_USER:-admin}"
 
@@ -80,9 +92,12 @@ test_jenkins_connection() {
         error "Jenkins non raggiungibile su $JENKINS_URL"
         echo ""
         echo "💡 Possibili soluzioni:"
-        echo "1. Verifica che Jenkins sia in esecuzione"
-        echo "2. Controlla il port forwarding: kubectl port-forward -n cicd svc/jenkins 8081:8080"
+        echo "1. Verifica di essere sul bastion host (metaglobe.finance)"
+        echo "2. Verifica che il port forward sia attivo:"
+        echo "   kubectl port-forward -n cicd svc/jenkins 8081:8080"
         echo "3. Verifica JENKINS_URL (default: http://localhost:8081)"
+        echo "4. Se non sei sul bastion, connettiti con:"
+        echo "   ssh root@metaglobe.finance"
         exit 1
     fi
 
@@ -262,7 +277,10 @@ show_info() {
     echo "   - DEPLOY_K8S (deploy su Kubernetes)"
     echo ""
     echo "🚀 Come utilizzare:"
-    echo "1. Vai su: $JENKINS_URL/job/$JOB_NAME"
+    echo "1. Accedi a Jenkins (dal bastion o via port forward):"
+    echo "   - Dal bastion: $JENKINS_URL/job/$JOB_NAME"
+    echo "   - Da locale: ssh -L 8081:localhost:8081 root@metaglobe.finance"
+    echo "                poi apri http://localhost:8081/job/$JOB_NAME"
     echo "2. Clicca 'Build with Parameters'"
     echo "3. Configura i parametri desiderati"
     echo "4. Clicca 'Build'"
@@ -274,6 +292,8 @@ show_info() {
     echo "🔧 Troubleshooting:"
     echo "   - Logs: $JENKINS_URL/job/$JOB_NAME/lastBuild/console"
     echo "   - Status: $JENKINS_URL/job/$JOB_NAME"
+    echo ""
+    echo "📍 Nota: Questo script è stato eseguito sul bastion host"
     echo ""
 }
 
