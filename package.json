@@ -19,6 +19,9 @@
   "devDependencies": {
     "@redocly/cli": "^1.10.0",
     "redoc-cli": "^0.13.21"
+  },
+  "overrides": {
+    "@opentelemetry/resources": "^2.0.0"
   }
 }
 
