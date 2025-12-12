@@ -312,6 +312,15 @@ paths:
                 $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/{country}/execute:
     post:
+      tags:
+        - EAN Plugin
+        - Jobs
+      summary: Execute EAN Image Sourcing job for a country
+      description: |
+        Executes an EAN Image Sourcing job for the specified country.
+        
+        This endpoint triggers a Spark job that searches for product images
+        based on EAN codes in the dataset for the given country.
       operationId: executeJob
       parameters:
       - name: country
@@ -333,6 +342,15 @@ paths:
             application/json: {}
   /webrobot/api/ean-image-sourcing/bootstrap/status:
     get:
+      tags:
+        - EAN Plugin
+        - Bootstrap
+      summary: Get bootstrap status
+      description: |
+        Returns the status of the EAN Image Sourcing bootstrap process.
+        
+        The bootstrap process initializes the dataset and prepares it for
+        image sourcing operations.
       operationId: getBootstrapStatus
       responses:
         default:
