@@ -478,10 +478,17 @@ paths:
                 $ref: '#/components/schemas/Error'
   /webrobot/api/ean-image-sourcing/info:
     get:
+      tags:
+        - EAN Plugin
+        - Info
+      summary: Get EAN Image Sourcing plugin information
+      description: |
+        Returns information about the EAN Image Sourcing plugin, including
+        version, configuration, and available features.
       operationId: getPluginInfo
       responses:
         default:
-          -description: default response
+          description: default response
           content:
             application/json: {}
   /webrobot/api/ean-image-sourcing/{country}/status:
