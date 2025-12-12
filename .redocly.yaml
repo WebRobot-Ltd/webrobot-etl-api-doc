@@ -7,8 +7,11 @@ apis:
 docs:
   root: index.md
   sidebars: sidebars.yaml
-  # Explicitly set index.md as home page (no redirect)
-  homePage: index.md
+
+# Explicit redirects configuration
+# Force root to point to index.md instead of auto-redirecting to first page
+redirects:
+  '/': '/index'
 
 # Theme configuration
 theme:
