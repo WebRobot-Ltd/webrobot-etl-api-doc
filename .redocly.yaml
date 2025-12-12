@@ -17,3 +17,8 @@ theme:
         - lang: Python
         - lang: JavaScript
 
+# Disable search plugin to avoid errors with undefined descriptions
+features:
+  search:
+    enabled: false
+
