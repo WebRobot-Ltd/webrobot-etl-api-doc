@@ -5710,6 +5710,7 @@ paths:
       - name: table
         in: path
         required: true
+        description: Table name in Strapi
         schema:
           type: string
       requestBody:
