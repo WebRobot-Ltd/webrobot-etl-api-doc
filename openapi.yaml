@@ -6223,6 +6223,7 @@ components:
   schemas:
     Error:
       type: object
+      description: Standard error response object
       properties:
         error:
           type: string
@@ -6239,6 +6240,7 @@ components:
           example: "2025-12-10T23:15:30Z"
     CronJobRequest:
       type: object
+      description: Request payload for creating or updating a Kubernetes CronJob
       properties:
         name:
           type: string
@@ -6264,6 +6266,7 @@ components:
           type: string
     BodyPart:
       type: object
+      description: Represents a part of a multipart request body
       properties:
         contentDisposition:
           $ref: '#/components/schemas/ContentDisposition'
@@ -6375,6 +6378,7 @@ components:
               $ref: '#/components/schemas/ParameterizedHeader'
     FormDataContentDisposition:
       type: object
+      description: Content disposition information for form data
       properties:
         type:
           type: string
@@ -6400,6 +6404,7 @@ components:
           type: string
     FormDataMultiPart:
       type: object
+      description: Multipart form data container
       properties:
         contentDisposition:
           $ref: '#/components/schemas/ContentDisposition'
@@ -6450,8 +6455,10 @@ components:
               $ref: '#/components/schemas/ParameterizedHeader'
     MessageBodyWorkers:
       type: object
+      description: Message body workers for processing request/response bodies
     MultiPart:
       type: object
+      description: Multipart request/response container
       properties:
         contentDisposition:
           $ref: '#/components/schemas/ContentDisposition'
@@ -6496,6 +6503,7 @@ components:
               $ref: '#/components/schemas/ParameterizedHeader'
     ParameterizedHeader:
       type: object
+      description: HTTP header with parameters
       properties:
         value:
           type: string
@@ -6505,6 +6513,7 @@ components:
             type: string
     TrainingRequestBean:
       type: object
+      description: Request payload for AI/ML training job
       properties:
         model:
           type: string
@@ -6520,6 +6529,7 @@ components:
             type: object
     ModelPublishRequest:
       type: object
+      description: Request payload for publishing a trained model
       properties:
         localModelPath:
           type: string
@@ -6529,6 +6539,7 @@ components:
           type: string
     DatasetUploadRequest:
       type: object
+      description: Request payload for uploading a dataset
       properties:
         localPath:
           type: string
@@ -6538,6 +6549,7 @@ components:
           type: string
     AgentDto:
       type: object
+      description: PySpark agent data transfer object
       properties:
         id:
           type: string
@@ -6599,6 +6611,7 @@ components:
           format: date-time
     JobCategoryDto:
       type: object
+      description: Job category data transfer object
       properties:
         id:
           type: string
@@ -6627,6 +6640,7 @@ components:
           format: date-time
     CloudCredential:
       type: object
+      description: Cloud service credential configuration
       properties:
         id:
           type: integer
@@ -6780,6 +6794,7 @@ components:
           type: boolean
     TimePeriod:
       type: object
+      description: Time period with start and end times
       properties:
         startTimePeriod:
           type: string
@@ -6787,6 +6802,7 @@ components:
           type: string
     DatasetUploadApiDto:
       type: object
+      description: Dataset upload API data transfer object
       properties:
         name:
           type: string
@@ -6800,6 +6816,7 @@ components:
           type: string
     DatasetDto:
       type: object
+      description: Dataset data transfer object
       properties:
         id:
           type: string
@@ -6846,6 +6863,7 @@ components:
           type: string
     PrestoQueryRequest:
       type: object
+      description: Request payload for executing a Presto SQL query
       properties:
         sql:
           type: string
@@ -6861,6 +6879,7 @@ components:
           format: int32
     EtlLibraryVersionApiDto:
       type: object
+      description: ETL library version API data transfer object
       properties:
         id:
           type: integer
@@ -6888,6 +6907,7 @@ components:
           type: string
     PluginInstallation:
       type: object
+      description: Plugin installation information
       properties:
         id:
           type: integer
