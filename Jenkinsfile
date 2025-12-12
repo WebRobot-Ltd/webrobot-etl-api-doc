@@ -81,7 +81,7 @@ kind: Pod
 spec:
   containers:
   - name: nodejs
-    image: node:18-alpine
+    image: node:20-alpine
     command:
     - sleep
     args:
@@ -99,7 +99,19 @@ spec:
                         sh 'npm run lint || echo "⚠️ Lint warnings (continuing...)"'
                         
                         echo "🔨 Build documentazione con redocly..."
-                        sh 'npm run build'
+                        echo "⚠️  Temporaneamente commentando sezione docs per build-docs (non supporta docs mode)..."
+                        sh '''
+                            # Salva backup e commenta sezione docs per build-docs
+                            sed -i.bak 's/^docs:/#docs:/' .redocly.yaml
+                            sed -i.bak 's/^  root:/#  root:/' .redocly.yaml
+                            sed -i.bak 's/^  sidebars:/#  sidebars:/' .redocly.yaml
+                            
+                            # Esegui build
+                            npm run build
+                            
+                            # Ripristina configurazione originale
+                            mv .redocly.yaml.bak .redocly.yaml
+                        '''
                         
                         echo "✅ Verifica file generato..."
                         sh 'test -f redoc-static.html || (echo "❌ File redoc-static.html non trovato!" && exit 1)'
