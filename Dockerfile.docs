@@ -10,7 +10,10 @@ WORKDIR /app
 # Copia package files
 COPY package*.json ./
 
-# Installa dipendenze
+# Copia script necessari per postinstall prima di npm ci
+COPY scripts/ ./scripts/
+
+# Installa dipendenze (postinstall verrà eseguito e userà gli script copiati)
 RUN npm ci --production=false
 
 # Copia sorgenti
