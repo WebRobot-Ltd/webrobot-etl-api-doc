@@ -6,7 +6,7 @@
     "start": "redocly preview --product realm",
     "build": "redocly build-docs",
     "build-docs": "redocly build-docs",
-    "postinstall": "node scripts/disable-search.js",
+    "postinstall": "node scripts/disable-search.js && node scripts/patch-otel.js",
     "docker:build": "docker build -t webrobot-etl-api-doc .",
     "docker:build-docs": "docker build -f Dockerfile.docs -t webrobot-etl-api-doc:docs .",
     "docker:run": "docker run -p 8080:80 webrobot-etl-api-doc",

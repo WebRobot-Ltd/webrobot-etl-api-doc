@@ -31,8 +31,8 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copia sorgenti
 COPY . .
 
-# Disabilita il plugin search di Redocly sostituendolo con uno stub no-op
-RUN node scripts/disable-search.js
+# Applica patch: disabilita search plugin e fixa OpenTelemetry defaultResource
+RUN node scripts/disable-search.js && node scripts/patch-otel.js
 
 # Crea directory cache scrivibili per redocly
 # IMPORTANTE: Deve essere fatto DOPO aver copiato node_modules
