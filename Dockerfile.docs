@@ -3,7 +3,7 @@
 # Usa nginx come reverse proxy per servire sulla porta 80
 
 # Stage 1: Builder
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN npm ci --production=false
 COPY . .
 
 # Stage 2: Production
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Installa nginx e wget per health check
 RUN apk add --no-cache nginx wget supervisor
@@ -77,25 +77,29 @@ http { \
 }' > /etc/nginx/nginx.conf
 
 # Configurazione supervisor per gestire nginx e redocly preview
-RUN echo '[supervisord] \
-nodaemon=true \
-[program:redocly] \
-command=npx redocly preview --product realm --port 4000 --host 0.0.0.0 \
-directory=/app \
-autostart=true \
-autorestart=true \
-stderr_logfile=/dev/stderr \
-stderr_logfile_maxbytes=0 \
-stdout_logfile=/dev/stdout \
-stdout_logfile_maxbytes=0 \
-[program:nginx] \
-command=nginx -g "daemon off;" \
-autostart=true \
-autorestart=true \
-stderr_logfile=/dev/stderr \
-stderr_logfile_maxbytes=0 \
-stdout_logfile=/dev/stdout \
-stdout_logfile_maxbytes=0' > /etc/supervisord.conf
+RUN cat > /etc/supervisord.conf << 'EOF'
+[supervisord]
+nodaemon=true
+
+[program:redocly]
+command=npx redocly preview --product realm --port 4000 --host 0.0.0.0
+directory=/app
+autostart=true
+autorestart=true
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+
+[program:nginx]
+command=nginx -g "daemon off;"
+autostart=true
+autorestart=true
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+EOF
 
 # Esponi porta
 EXPOSE 80
