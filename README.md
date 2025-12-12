@@ -1,85 +1,85 @@
 # WebRobot ETL API Documentation
 
-Documentazione API generata con [Redocly](https://redocly.com/) e [Redoc](https://github.com/Redocly/redoc).
+API documentation generated with [Redocly](https://redocly.com/) and [Redoc](https://github.com/Redocly/redoc).
 
 ## Setup
 
-### Installazione Redocly CLI
+### Redocly CLI Installation
 
 ```bash
 npm install -g @redocly/cli
 ```
 
-### Sviluppo Locale
+### Local Development
 
-Per visualizzare la documentazione in locale:
+To view the documentation locally:
 
 ```bash
-# Avvia il server di sviluppo
+# Start the development server
 redocly preview-docs
 
-# Oppure con Redoc standalone
+# Or with Redoc standalone
 npx redoc-cli serve openapi.yaml --port 8080
 ```
 
 ### Build
 
-Per generare la documentazione statica:
+To generate static documentation:
 
 ```bash
-# Build con Redocly
+# Build with Redocly
 redocly build-docs
 
-# Oppure con Redoc standalone
+# Or with Redoc standalone
 npx redoc-cli bundle openapi.yaml -o dist/index.html
 ```
 
-## Aggiornamento OpenAPI Spec
+## Updating OpenAPI Spec
 
-La specifica OpenAPI può essere estratta dall'API in esecuzione:
+The OpenAPI specification can be extracted from the running API:
 
 ```bash
-# Dall'API locale
+# From local API
 curl http://localhost:8020/api/openapi.json > openapi.json
 
-# Dall'API di produzione
+# From production API
 curl https://api.webrobot.eu/api/openapi.json > openapi.json
 
-# Converti JSON a YAML (se necessario)
+# Convert JSON to YAML (if needed)
 npx js-yaml openapi.json > openapi.yaml
 ```
 
-## Struttura
+## Structure
 
-- `openapi.yaml` - Specifica OpenAPI principale
-- `redocly.yaml` - Configurazione Redocly
-- `decorators/` - Decoratori personalizzati (opzionale)
-- `dist/` - Output della build (generato)
+- `openapi.yaml` - Main OpenAPI specification
+- `redocly.yaml` - Redocly configuration
+- `decorators/` - Custom decorators (optional)
+- `dist/` - Build output (generated)
 
 ## Deployment
 
-### GitHub Pages (Consigliato)
+### GitHub Pages (Recommended)
 
-La documentazione viene automaticamente deployata su GitHub Pages tramite GitHub Actions quando si fa push su `main` o `master`.
+The documentation is automatically deployed to GitHub Pages via GitHub Actions when pushing to `main` or `master`.
 
 **Setup:**
-1. Vai su Settings > Pages nel repository GitHub
-2. Seleziona "GitHub Actions" come source
-3. Il workflow `.github/workflows/deploy.yml` genererà automaticamente la documentazione
+1. Go to Settings > Pages in the GitHub repository
+2. Select "GitHub Actions" as the source
+3. The `.github/workflows/deploy.yml` workflow will automatically generate the documentation
 
-**URL:** https://docs.webrobot.eu (se configurato il CNAME)
+**URL:** https://docs.webrobot.eu (if CNAME is configured)
 
 ### Redocly Cloud
 
-⚠️ **Nota:** Redocly Cloud attualmente ha un bug interno (`resourceFromAttributes is not a function`) che impedisce il build. 
-Stiamo usando GitHub Pages come alternativa.
+⚠️ **Note:** Redocly Cloud currently has an internal bug (`resourceFromAttributes is not a function`) that prevents the build. 
+We are using GitHub Pages as an alternative.
 
-### Altre opzioni
+### Other Options
 
-- **Netlify**: Connetti il repository a Netlify
-- **Vercel**: Connetti il repository a Vercel
+- **Netlify**: Connect the repository to Netlify
+- **Vercel**: Connect the repository to Vercel
 
-## Riferimenti
+## References
 
 - [Redocly Documentation](https://redocly.com/docs/)
 - [OpenAPI Specification](https://swagger.io/specification/)
