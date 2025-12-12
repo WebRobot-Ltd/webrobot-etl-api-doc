@@ -31,10 +31,12 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copia sorgenti
 COPY . .
 
-# Crea directory cache scrivibili per redocly e symlink per babel cache
+# Crea directory cache scrivibili per redocly
+# IMPORTANTE: Deve essere fatto DOPO aver copiato node_modules
 RUN mkdir -p /tmp/.npm /tmp/.babel-cache && \
     chmod -R 777 /tmp/.npm /tmp/.babel-cache && \
-    mkdir -p /app/node_modules/.cache && \
+    mkdir -p /app/node_modules/.cache/babel-plugin && \
+    chown -R 101:101 /app/node_modules/.cache && \
     chmod -R 777 /app/node_modules/.cache
 
 # Crea directory per nginx
