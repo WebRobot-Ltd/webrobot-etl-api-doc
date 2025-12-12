@@ -7,6 +7,8 @@ apis:
 docs:
   root: index.md
   sidebars: sidebars.yaml
+  # Explicitly set index.md as home page (no redirect)
+  homePage: index.md
 
 # Theme configuration
 theme:
@@ -18,7 +20,7 @@ theme:
         - lang: JavaScript
 
 # Disable search plugin completely
-features:
-  search:
-    enabled: false
+# The search plugin checks for r.search?.hide
+search:
+  hide: true
 

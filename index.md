@@ -1,3 +1,9 @@
+---
+title: WebRobot ETL API Documentation
+version: 1.0.0
+description: Comprehensive guides and API reference for building and managing ETL pipelines
+---
+
 # WebRobot ETL API Documentation
 
 Welcome to the WebRobot ETL API documentation. This site provides comprehensive guides and API reference for building and managing ETL pipelines.
@@ -19,23 +25,25 @@ Get started with the WebRobot ETL API in minutes:
      -d '{"name": "my-project", "description": "My first project"}'
    ```
 
-3. **Build a Pipeline**: Follow our [step-by-step guide](guides/build-a-pipeline.md) to create your first CI/CD pipeline
+3. **Build a Pipeline**: Follow our [step-by-step guide](guides/build-a-pipeline.md) to create your first ETL pipeline using YAML syntax
 
 ## Documentation Sections
 
 ### 📚 Guides
-- **[Build a Pipeline](guides/build-a-pipeline.md)**: Step-by-step tutorial for creating Jenkins pipelines
-- **[Pipeline Stages Reference](guides/pipeline-stages.md)**: Complete reference of available pipeline stages
+- **[Build a Pipeline](guides/build-a-pipeline.md)**: Guide to building ETL pipelines using YAML syntax, attribute resolvers, custom actions, and Python extensions
+- **[Pipeline Stages Reference](guides/pipeline-stages.md)**: Complete reference of pipeline stages, YAML syntax, attribute resolvers, custom actions, and Python extensions
 
 ### 📖 API Reference
 - **[WebRobot ETL API](openapi.yaml)**: Complete OpenAPI specification with interactive documentation
 
 ## Features
 
-- **Pipeline Management**: Create, update, and manage CI/CD pipelines programmatically
-- **Stage Configuration**: Define custom stages with input/output specifications
-- **Code Generation**: Automatic YAML generation from database configuration
-- **Multi-Environment**: Support for dev, staging, and production environments
+- **Pipeline Management**: Create, update, and manage ETL pipelines programmatically via API
+- **YAML Syntax**: Define pipelines using declarative YAML configuration
+- **Attribute Resolvers**: Custom extraction methods for flexible data extraction
+- **Custom Actions**: Extend browser interactions with custom action factories
+- **Python Extensions**: Create custom Python stages, resolvers, and actions
+- **Intelligent Stages**: LLM-powered stages for adaptive web scraping
 
 ## Base URLs
 
@@ -52,7 +60,7 @@ X-API-Key: {organization}:{key}
 
 Example:
 ```
-X-API-Key: super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!
+X-API-Key: your-organization:your-api-key
 ```
 
 ## Rate Limiting

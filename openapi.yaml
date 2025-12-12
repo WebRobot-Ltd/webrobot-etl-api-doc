@@ -6549,7 +6549,7 @@ components:
       description: 'API key used for authentication. Format: `{organization}:{key}`
 
 
-        Example: `super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!`
+        Example: `your-organization:your-api-key`
 
         '
   schemas:

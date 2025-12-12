@@ -1,18 +1,48 @@
+---
+title: Build a Pipeline
+version: 1.0.0
+description: Guide to building ETL pipelines using YAML syntax and the WebRobot ETL API
+---
+
 # Build a Pipeline
 
-This guide walks you through creating a CI/CD pipeline using the WebRobot ETL API. You'll learn how to define stages, configure parameters, and generate Jenkins YAML automatically.
+This guide explains how to create ETL pipelines using YAML syntax and the WebRobot ETL API. You'll learn how to structure pipeline YAML files, define stages, use attribute resolvers, and extend pipelines with custom actions and Python extensions.
 
 ## Overview
 
-A pipeline consists of:
-- **Stages**: Sequential steps in your CI/CD process
-- **Parameters**: User-configurable build options
-- **Environment Variables**: Configuration values shared across stages
-- **Input/Output**: Data flow between stages
+A pipeline YAML file defines:
+- **Fetch Configuration**: Initial URL and browser traces
+- **Pipeline Stages**: Sequential data processing steps
+- **Attribute Resolvers**: Custom extraction methods
+- **Custom Actions**: Browser interaction extensions
+- **Python Extensions**: Custom Python stages and resolvers
 
-## Step 1: Create a Pipeline
+## Pipeline YAML Structure
 
-First, create a new pipeline configuration:
+### Basic Structure
+
+```yaml
+fetch:          # Optional - initial page fetch
+  url: "https://example.com"
+  traces:       # Optional - browser interactions
+    - { action: "wait", params: { seconds: 2 } }
+    - { prompt: "click the accept cookies button" }
+
+globals:        # Optional - global variables
+  limit_pages: 50
+  site_url: "https://example.com"
+
+pipeline:       # REQUIRED - ordered list of stages
+  - stage: explore
+    args: [ "a.category", 1 ]
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+```
+
+## Step 1: Create a Pipeline via API
+
+First, create a pipeline configuration using the API:
 
 ```bash
 curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
@@ -21,11 +51,8 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
   -d '{
     "projectId": "your-project-id",
     "name": "my-pipeline",
-    "description": "My first CI/CD pipeline",
-    "repositoryUrl": "https://github.com/your-org/your-repo",
-    "dockerImage": "ghcr.io/your-org/your-app",
-    "k8sNamespace": "webrobot",
-    "k8sContext": "webrobot",
+    "description": "E-commerce product scraper",
+    "yamlContent": "fetch:\n  url: \"https://shop.example.com\"\npipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }",
     "enabled": true
   }'
 ```
@@ -36,345 +63,270 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
   "id": 1,
   "projectId": "your-project-id",
   "name": "my-pipeline",
-  "description": "My first CI/CD pipeline",
-  "repositoryUrl": "https://github.com/your-org/your-repo",
-  "dockerImage": "ghcr.io/your-org/your-app",
-  "k8sNamespace": "webrobot",
-  "k8sContext": "webrobot",
+  "description": "E-commerce product scraper",
+  "yamlContent": "...",
   "enabled": true,
   "createdAt": "2025-12-12T10:00:00Z"
 }
 ```
 
-Save the `id` from the response - you'll need it for the next steps.
+## Step 2: Understanding Stage Types
 
-## Step 2: Add Parameters
+### Core Stages
 
-Define build parameters that users can configure:
+| Stage | Description | Arguments |
+|-------|-------------|-----------|
+| `explore` | Breadth-first link discovery | selector/prompt, depth (Int), optional trace |
+| `join` | Visit N child links per row | selector, action prompt (`"none"` if absent), limit (Int) |
+| `extract` | Extract fields using selector-map | List of selector-map objects |
+| `flatSelect` | Segment HTML block, create row per segment | selector, extraction prompt or selector-map list, prefix |
+
+### Intelligent Stages (LLM-powered)
+
+| Stage | Description | Arguments |
+|-------|-------------|-----------|
+| `intelligent_explore` | Like `explore`, but uses LLM to infer selector from NL prompt | prompt, depth, optional trace |
+| `intelligent_join` | Join with inferred selector (PTA/LLM) + inferred actions | selectorPrompt or `"auto"`, actionPrompt, limit |
+| `iextract` | LLM extraction on HTML block (chunking) | extractor, prompt, prefix |
+| `intelligent_flatSelect` | Segmentation + LLM multiple extraction | segPrompt, extrPrompt, prefix |
+
+### Utility Stages
+
+| Stage | Description |
+|-------|-------------|
+| `echo` | Copy row (debug) |
+| `filter_country` | Filter rows by country |
+| `sentiment` | Calculate sentiment for single row |
+| `sentiment_monthly` | Aggregate sentiment by month |
+| `intelligent_table` | LLM table parsing |
+
+## Step 3: Using Attribute Resolvers
+
+### Native Methods
+
+Built-in extraction methods available in `extract` stages:
+
+```yaml
+pipeline:
+  - stage: extract
+    args:
+      # Extract visible text
+      - { selector: "h1", method: "text", as: "title" }
+      
+      # Extract full HTML
+      - { selector: "div.content", method: "code", as: "html_content" }
+      
+      # Extract HTML attribute
+      - { selector: "a", method: "attr(href)", as: "link" }
+      
+      # Extract all attributes
+      - { selector: "img", method: "attrs", as: "image_attrs" }
+```
+
+### Custom Attribute Resolvers
+
+Custom resolvers are registered via plugins and can be used in YAML:
+
+```yaml
+pipeline:
+  - stage: extract
+    args:
+      # Custom price resolver
+      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
+      
+      # Custom LLM resolver
+      - { selector: "div.product", method: "llm", args: ["Extract dimensions and weight"], as: "llm_extracted" }
+      
+      # Custom sentiment resolver
+      - { selector: "p.review", method: "sentiment", as: "review_sentiment" }
+```
+
+**Available Custom Resolvers:**
+
+| Resolver | Description | Arguments |
+|----------|-------------|-----------|
+| `price` | Extract and normalize price | 0-1 ⇒ targetCurrency (e.g., `"USD"`) |
+| `llm` | LLM-based extraction | prompt (String), optional prefix |
+| `sentiment` | Sentiment analysis | text |
+
+## Step 4: Custom Actions (Traces)
+
+### Action Factories
+
+Built-in action factories for browser interactions:
+
+```yaml
+fetch:
+  url: "https://example.com"
+  traces:
+    # Wait action
+    - { action: "wait", params: { seconds: 2 } }
+    
+    # Scroll action
+    - { action: "scroll_to_bottom", params: { behavior: "smooth" } }
+    
+    # AI-driven action (requires TOGETHER_AI_API_KEY)
+    - { prompt: "click the login button" }
+    - { prompt: "fill the search form with 'laptop'" }
+```
+
+**Available Actions:**
+
+| Action | Parameters |
+|--------|------------|
+| `wait` | `seconds` (Int/Double) |
+| `scroll_to_bottom` | `behavior` = `smooth|auto` |
+
+### Custom Actions
+
+Custom actions can be registered via plugins and used in traces:
+
+```yaml
+fetch:
+  url: "https://example.com"
+  traces:
+    - { action: "custom_click", params: { selector: ".button" } }
+    - { action: "custom_fill", params: { selector: "#input", value: "text" } }
+```
+
+## Step 5: Python Extensions
+
+### Python Row Transform Stages
+
+Python functions that transform entire rows:
+
+```python
+def my_transform(row: Dict[str, Any]) -> Dict[str, Any]:
+    """Transform row data"""
+    if hasattr(row, 'asDict'):
+        row_dict = row.asDict()
+    else:
+        row_dict = dict(row)
+    
+    # Your transformation logic
+    row_dict['processed'] = True
+    return row_dict
+```
+
+**Usage in YAML:**
+
+```yaml
+pipeline:
+  - stage: python_row_transform:my_transform
+    name: "Transform data"
+```
+
+### Python Attribute Resolvers
+
+Python functions that resolve specific attributes:
+
+```python
+def my_resolver(elem: Any, attribute_name: Optional[str] = None) -> Any:
+    """Resolve attribute value"""
+    if not elem:
+        return None
+    # Your resolution logic
+    return resolved_value
+```
+
+**Usage in YAML:**
+
+```yaml
+pipeline:
+  - stage: extract
+    args:
+      - { selector: "div.data", method: "python_resolver:my_resolver", as: "resolved_value" }
+```
+
+### Python Intelligent Actions
+
+Python functions for intelligent browser actions:
+
+```python
+def my_action(page: Any, params: Dict[str, Any]) -> bool:
+    """Execute custom browser action"""
+    # Your action logic
+    return True
+```
+
+**Usage in YAML:**
+
+```yaml
+fetch:
+  url: "https://example.com"
+  traces:
+    - { action: "python_action:my_action", params: { key: "value" } }
+```
+
+## Step 6: Complete Pipeline Example
+
+### E-commerce Product Scraper
+
+```yaml
+fetch:
+  url: "https://shop.example.com"
+  traces:
+    - { action: "wait", params: { seconds: 1 } }
+    - { prompt: "accept cookies if present" }
+
+pipeline:
+  # Intelligent exploration
+  - stage: intelligent_explore
+    args: [ "category links", 2 ]
+  
+  # Join product pages
+  - stage: join
+    args: [ "a.product-link", "none", 20 ]
+  
+  # Extract product data
+  - stage: extract
+    args:
+      - { selector: "h1.title", method: "text", as: "product_title" }
+      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
+      - { selector: "div.description", method: "code", as: "description_html" }
+      - { selector: "img.product-image", method: "attr(src)", as: "image_url" }
+      - { selector: "div.reviews", method: "llm", args: ["Extract average rating"], as: "rating" }
+  
+  # Python transformation
+  - stage: python_row_transform:normalize_price
+    name: "Normalize prices"
+  
+  # Price comparison
+  - stage: priceCompare
+    args: []
+```
+
+## Step 7: Update Pipeline YAML via API
+
+Update the pipeline YAML content:
 
 ```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/parameters \
+curl -X PUT https://api.webrobot.eu/api/webrobot/api/pipelines/1 \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
-  -d '[
-    {
-      "name": "BUILD_TYPE",
-      "type": "choice",
-      "choices": ["dev", "staging", "production"],
-      "defaultValue": "dev",
-      "description": "Build environment type"
-    },
-    {
-      "name": "PUSH_IMAGE",
-      "type": "boolean",
-      "defaultValue": true,
-      "description": "Push Docker image to registry"
-    },
-    {
-      "name": "DEPLOY_K8S",
-      "type": "boolean",
-      "defaultValue": true,
-      "description": "Deploy to Kubernetes"
+  -d '{
+    "yamlContent": "fetch:\n  url: \"https://new-url.com\"\npipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }"
+  }'
+```
+
+## Step 8: Execute Pipeline
+
+Execute the pipeline:
+
+```bash
+curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/execute \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameters": {
+      "limit": 100
     }
-  ]'
-```
-
-## Step 3: Configure Environment Variables
-
-Set environment variables available to all stages:
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/environment \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '[
-    {
-      "key": "GITHUB_REPOSITORY",
-      "value": "your-org/your-repo"
-    },
-    {
-      "key": "DOCKER_IMAGE",
-      "value": "ghcr.io/${GITHUB_REPOSITORY}"
-    },
-    {
-      "key": "K8S_NAMESPACE",
-      "value": "webrobot"
-    }
-  ]'
-```
-
-## Step 4: Add Stages
-
-### Stage 1: Initialize
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Initialize",
-    "order": 1,
-    "type": "script",
-    "description": "Initialize build environment",
-    "agent": {
-      "type": "any"
-    },
-    "steps": [
-      {
-        "type": "script",
-        "script": "env.DO_DEPLOY = false"
-      }
-    ],
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "DO_DEPLOY",
-        "type": "boolean",
-        "description": "Flag to enable automatic deployment"
-      }
-    ]
   }'
-```
-
-### Stage 2: Checkout
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Checkout",
-    "order": 2,
-    "type": "checkout",
-    "description": "Checkout source code from repository",
-    "agent": {
-      "type": "any"
-    },
-    "steps": [
-      {
-        "type": "checkout",
-        "scm": "git"
-      }
-    ],
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "WORKSPACE",
-        "type": "string",
-        "description": "Workspace directory path"
-      }
-    ]
-  }'
-```
-
-### Stage 3: Build
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Build",
-    "order": 3,
-    "type": "build",
-    "description": "Build application",
-    "when": {
-      "condition": "!params.REDEPLOY_ONLY"
-    },
-    "agent": {
-      "type": "kubernetes",
-      "label": "nodejs",
-      "yaml": "apiVersion: v1\nkind: Pod\nspec:\n  containers:\n  - name: nodejs\n    image: node:18-alpine"
-    },
-    "steps": [
-      {
-        "type": "script",
-        "script": "npm ci"
-      },
-      {
-        "type": "script",
-        "script": "npm run build"
-      }
-    ],
-    "inputs": [
-      {
-        "name": "WORKSPACE",
-        "type": "string",
-        "required": true
-      }
-    ],
-    "outputs": [
-      {
-        "name": "BUILD_ARTIFACT",
-        "type": "string",
-        "description": "Path to build artifact"
-      }
-    ]
-  }'
-```
-
-### Stage 4: Build & Push Docker Image
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Build & Push Docker Image",
-    "order": 4,
-    "type": "docker",
-    "description": "Build and push Docker image",
-    "when": {
-      "condition": "!params.REDEPLOY_ONLY && params.PUSH_IMAGE"
-    },
-    "agent": {
-      "type": "kubernetes",
-      "label": "docker",
-      "yaml": "apiVersion: v1\nkind: Pod\nspec:\n  containers:\n  - name: kaniko\n    image: gcr.io/kaniko-project/executor:v1.9.0"
-    },
-    "steps": [
-      {
-        "type": "script",
-        "script": "/kaniko/executor --context=$(pwd) --dockerfile=Dockerfile --destination=${DOCKER_IMAGE}:${BUILD_NUMBER}"
-      }
-    ],
-    "inputs": [
-      {
-        "name": "BUILD_ARTIFACT",
-        "type": "string"
-      },
-      {
-        "name": "DOCKER_IMAGE",
-        "type": "string",
-        "required": true
-      }
-    ],
-    "outputs": [
-      {
-        "name": "IMAGE_TAG",
-        "type": "string",
-        "description": "Docker image tag"
-      }
-    ]
-  }'
-```
-
-### Stage 5: Deploy to Kubernetes
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Deploy to Kubernetes",
-    "order": 5,
-    "type": "deploy",
-    "description": "Deploy application to Kubernetes",
-    "when": {
-      "condition": "params.DEPLOY_K8S || env.DO_DEPLOY == true"
-    },
-    "agent": {
-      "type": "kubernetes",
-      "label": "kubectl",
-      "yaml": "apiVersion: v1\nkind: Pod\nspec:\n  containers:\n  - name: kubectl\n    image: alpine/k8s:1.28.2"
-    },
-    "steps": [
-      {
-        "type": "script",
-        "script": "kubectl apply -f k8s/deployment.yaml -n ${K8S_NAMESPACE}"
-      },
-      {
-        "type": "script",
-        "script": "kubectl set image deployment/my-app app=${DOCKER_IMAGE}:${BUILD_NUMBER} -n ${K8S_NAMESPACE}"
-      }
-    ],
-    "inputs": [
-      {
-        "name": "IMAGE_TAG",
-        "type": "string",
-        "required": true
-      },
-      {
-        "name": "K8S_NAMESPACE",
-        "type": "string",
-        "required": true
-      }
-    ],
-    "outputs": [
-      {
-        "name": "DEPLOYMENT_STATUS",
-        "type": "string",
-        "description": "Kubernetes deployment status"
-      }
-    ]
-  }'
-```
-
-## Step 5: Reorder Stages
-
-If you need to change the order of stages:
-
-```bash
-curl -X PUT https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages/3/order \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "order": 2
-  }'
-```
-
-## Step 6: Generate Jenkinsfile
-
-Once your pipeline is configured, generate the Jenkinsfile YAML:
-
-```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/generate \
-  -H "X-API-Key: your-api-key" \
-  -H "Accept: application/x-yaml"
-```
-
-**Response:** Complete Jenkinsfile in YAML format
-
-## Step 7: Update a Stage
-
-Modify an existing stage:
-
-```bash
-curl -X PUT https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages/3 \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Build & Test",
-    "description": "Build and run tests",
-    "steps": [
-      {
-        "type": "script",
-        "script": "npm ci"
-      },
-      {
-        "type": "script",
-        "script": "npm test"
-      },
-      {
-        "type": "script",
-        "script": "npm run build"
-      }
-    ]
-  }'
-```
-
-## Step 8: Delete a Stage
-
-Remove a stage from the pipeline:
-
-```bash
-curl -X DELETE https://api.webrobot.eu/api/webrobot/api/pipelines/1/stages/3 \
-  -H "X-API-Key: your-api-key"
 ```
 
 ## Python Example
 
-Here's a complete Python example:
+Complete Python example for creating and executing pipelines:
 
 ```python
 import requests
@@ -386,15 +338,29 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+# Pipeline YAML content
+pipeline_yaml = """
+fetch:
+  url: "https://shop.example.com"
+  traces:
+    - { action: "wait", params: { seconds: 1 } }
+
+pipeline:
+  - stage: intelligent_explore
+    args: [ "category links", 1 ]
+  
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+      - { selector: "span.price", method: "price", args: ["USD"], as: "price" }
+"""
+
 # Create pipeline
 pipeline_data = {
     "projectId": "your-project-id",
-    "name": "my-pipeline",
-    "description": "My first CI/CD pipeline",
-    "repositoryUrl": "https://github.com/your-org/your-repo",
-    "dockerImage": "ghcr.io/your-org/your-app",
-    "k8sNamespace": "webrobot",
-    "k8sContext": "webrobot",
+    "name": "product-scraper",
+    "description": "E-commerce product scraper",
+    "yamlContent": pipeline_yaml,
     "enabled": True
 }
 
@@ -406,48 +372,19 @@ response = requests.post(
 pipeline = response.json()
 pipeline_id = pipeline["id"]
 
-# Add stage
-stage_data = {
-    "name": "Build",
-    "order": 1,
-    "type": "build",
-    "description": "Build application",
-    "agent": {
-        "type": "kubernetes",
-        "label": "nodejs"
-    },
-    "steps": [
-        {"type": "script", "script": "npm ci"},
-        {"type": "script", "script": "npm run build"}
-    ],
-    "inputs": [],
-    "outputs": [
-        {
-            "name": "BUILD_ARTIFACT",
-            "type": "string",
-            "description": "Path to build artifact"
-        }
-    ]
-}
-
+# Execute pipeline
 response = requests.post(
-    f"{API_BASE}/webrobot/api/pipelines/{pipeline_id}/stages",
+    f"{API_BASE}/webrobot/api/pipelines/{pipeline_id}/execute",
     headers=HEADERS,
-    json=stage_data
+    json={"parameters": {"limit": 50}}
 )
-
-# Generate Jenkinsfile
-response = requests.post(
-    f"{API_BASE}/webrobot/api/pipelines/{pipeline_id}/generate",
-    headers={**HEADERS, "Accept": "application/x-yaml"}
-)
-jenkinsfile = response.text
-print(jenkinsfile)
+execution = response.json()
+print(f"Execution ID: {execution['id']}")
 ```
 
 ## Next Steps
 
 - Learn about [available pipeline stages](pipeline-stages.md)
-- Explore the [API Reference](../openapi.yaml) for complete endpoint documentation
-- Check out advanced features like conditional stages and parallel execution
-
+- Explore [Attribute Resolvers](pipeline-stages.md#attribute-resolvers) in detail
+- Check out [Python Extensions](pipeline-stages.md#python-extensions) guide
+- Review the [API Reference](../openapi.yaml) for complete endpoint documentation
