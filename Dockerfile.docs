@@ -28,6 +28,10 @@ WORKDIR /app
 # Copia node_modules dal builder
 COPY --from=builder /app/node_modules ./node_modules
 
+# Crea directory cache scrivibili per redocly
+RUN mkdir -p /tmp/.npm /tmp/.babel-cache && \
+    chmod -R 777 /tmp/.npm /tmp/.babel-cache
+
 # Copia sorgenti
 COPY . .
 
