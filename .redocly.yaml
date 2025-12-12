@@ -16,5 +16,9 @@ theme:
         - lang: curl
         - lang: Python
         - lang: JavaScript
-  search: false  # Disable search to avoid indexer crash
+
+# Disable search plugin completely
+features:
+  search:
+    enabled: false
 
