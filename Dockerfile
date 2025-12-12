@@ -28,12 +28,26 @@ FROM nginx:alpine
 # Copia HTML statico generato
 COPY --from=builder /app/redoc-static.html /usr/share/nginx/html/index.html
 
-# Configurazione nginx personalizzata (opzionale)
+# Crea directory necessarie per nginx (cache, temp, etc.)
+RUN mkdir -p /var/cache/nginx/client_temp \
+    /var/cache/nginx/proxy_temp \
+    /var/cache/nginx/fastcgi_temp \
+    /var/cache/nginx/uwsgi_temp \
+    /var/cache/nginx/scgi_temp \
+    /var/run && \
+    chown -R nginx:nginx /var/cache/nginx /var/run
+
+# Configurazione nginx personalizzata
 RUN echo 'server { \
     listen 80; \
     server_name _; \
     root /usr/share/nginx/html; \
     index index.html; \
+    client_body_temp_path /tmp/client_temp; \
+    proxy_temp_path /tmp/proxy_temp; \
+    fastcgi_temp_path /tmp/fastcgi_temp; \
+    uwsgi_temp_path /tmp/uwsgi_temp; \
+    scgi_temp_path /tmp/scgi_temp; \
     location / { \
         try_files $uri $uri/ /index.html; \
     } \
