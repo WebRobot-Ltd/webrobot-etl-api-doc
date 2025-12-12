@@ -163,10 +163,10 @@ spec:
             steps {
                 container('kaniko') {
                     script {
-                        echo "🐳 Build e Push immagine Docker con Kaniko..."
+                        echo "🐳 Build e Push immagine Docker con Kaniko (modalità docs multipagina)..."
                         sh """
                             /kaniko/executor --context=\$(pwd) \\
-                                --dockerfile=Dockerfile \\
+                                --dockerfile=Dockerfile.docs \\
                                 --destination=${env.DOCKER_IMAGE}:${env.DOCKER_TAG} \\
                                 --destination=${env.DOCKER_IMAGE}:latest \\
                                 --cache=false
