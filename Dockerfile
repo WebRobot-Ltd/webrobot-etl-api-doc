@@ -29,13 +29,14 @@ FROM nginx:alpine
 COPY --from=builder /app/redoc-static.html /usr/share/nginx/html/index.html
 
 # Crea directory necessarie per nginx (cache, temp, etc.)
+# Nota: /var/run/secrets è montato da Kubernetes e non può essere modificato
 RUN mkdir -p /var/cache/nginx/client_temp \
     /var/cache/nginx/proxy_temp \
     /var/cache/nginx/fastcgi_temp \
     /var/cache/nginx/uwsgi_temp \
     /var/cache/nginx/scgi_temp \
-    /var/run && \
-    chown -R nginx:nginx /var/cache/nginx /var/run
+    /var/run/nginx && \
+    chown -R nginx:nginx /var/cache/nginx /var/run/nginx
 
 # Configurazione nginx personalizzata
 RUN echo 'server { \

@@ -72,7 +72,7 @@ spec:
         - name: nginx-cache
           mountPath: /var/cache/nginx
         - name: nginx-run
-          mountPath: /var/run
+          mountPath: /var/run/nginx
       volumes:
       - name: nginx-cache
         emptyDir: {}
