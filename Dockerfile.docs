@@ -76,30 +76,8 @@ http { \
     } \
 }' > /etc/nginx/nginx.conf
 
-# Configurazione supervisor per gestire nginx e redocly preview
-RUN cat > /etc/supervisord.conf << 'EOF'
-[supervisord]
-nodaemon=true
-
-[program:redocly]
-command=npx redocly preview --product realm --port 4000 --host 0.0.0.0
-directory=/app
-autostart=true
-autorestart=true
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-
-[program:nginx]
-command=nginx -g "daemon off;"
-autostart=true
-autorestart=true
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-EOF
+# Copia configurazione supervisor
+COPY supervisord.conf /etc/supervisord.conf
 
 # Esponi porta
 EXPOSE 80
