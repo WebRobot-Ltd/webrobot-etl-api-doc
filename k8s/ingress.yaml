@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webrobot-etl-api-doc-ingress
+  namespace: webrobot-api
+  labels:
+    app: webrobot-etl-api-doc
+    ingress: api-doc
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/transport.respondingTimeouts.idleTimeout: "300"
+    traefik.ingress.kubernetes.io/transport.respondingTimeouts.readTimeout: "300"
+    traefik.ingress.kubernetes.io/transport.respondingTimeouts.writeTimeout: "300"
+    traefik.ingress.kubernetes.io/custom-request-headers: "X-Forwarded-Proto:%[req.scheme"
+spec:
+  rules:
+  - host: docs.webrobot.eu
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webrobot-etl-api-doc-service
+            port:
+              number: 80
+
