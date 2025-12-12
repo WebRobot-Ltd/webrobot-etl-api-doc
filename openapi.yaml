@@ -326,6 +326,7 @@ paths:
       - name: country
         in: path
         required: true
+        description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
       requestBody:
@@ -5594,11 +5595,13 @@ paths:
       - name: protocol
         in: path
         required: true
+        description: HTTP protocol (http or https)
         schema:
           type: string
       - name: url
         in: path
         required: true
+        description: URL to fetch HTML content from
         schema:
           type: string
       responses:
@@ -5613,11 +5616,13 @@ paths:
       - name: table
         in: path
         required: true
+        description: Table name in Strapi
         schema:
           type: string
       - name: id
         in: path
         required: true
+        description: Record ID
         schema:
           type: string
       responses:
@@ -5631,11 +5636,13 @@ paths:
       - name: table
         in: path
         required: true
+        description: Table name in Strapi
         schema:
           type: string
       - name: id
         in: path
         required: true
+        description: Record ID
         schema:
           type: string
       requestBody:
@@ -5656,11 +5663,13 @@ paths:
       - name: table
         in: path
         required: true
+        description: Table name in Strapi
         schema:
           type: string
       - name: id
         in: path
         required: true
+        description: Record ID
         schema:
           type: string
       responses:
@@ -5685,6 +5694,7 @@ paths:
           default: 0
       - name: pageSize
         in: query
+        description: Number of records per page
         schema:
           type: integer
           format: int32
