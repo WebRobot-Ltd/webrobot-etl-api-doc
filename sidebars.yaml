@@ -1,0 +1,16 @@
+# Sidebar navigation for Redocly Realm docs site
+- label: Home
+  items:
+    - page: index.md
+      label: Home
+- label: Guides
+  items:
+    - page: guides/build-a-pipeline.md
+      label: Build a Pipeline
+    - page: guides/pipeline-stages.md
+      label: Pipeline Stages Reference
+- label: API Reference
+  items:
+    - api: webrobot-etl-api@v1
+      label: WebRobot ETL API
+

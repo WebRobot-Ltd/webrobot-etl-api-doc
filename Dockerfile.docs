@@ -1,0 +1,109 @@
+# Dockerfile per WebRobot ETL API Documentation con modalità docs multipagina
+# Questo Dockerfile serve redocly preview in produzione per supportare la modalità docs
+# Usa nginx come reverse proxy per servire sulla porta 80
+
+# Stage 1: Builder
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copia package files
+COPY package*.json ./
+
+# Installa dipendenze
+RUN npm ci --production=false
+
+# Copia sorgenti
+COPY . .
+
+# Stage 2: Production
+FROM node:18-alpine
+
+# Installa nginx e wget per health check
+RUN apk add --no-cache nginx wget supervisor
+
+# Imposta working directory
+WORKDIR /app
+
+# Copia node_modules dal builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copia sorgenti
+COPY . .
+
+# Crea directory per nginx
+RUN mkdir -p /var/cache/nginx/client_temp \
+    /var/cache/nginx/proxy_temp \
+    /var/cache/nginx/fastcgi_temp \
+    /var/cache/nginx/uwsgi_temp \
+    /var/cache/nginx/scgi_temp \
+    /var/run/nginx && \
+    chown -R nginx:nginx /var/cache/nginx /var/run/nginx
+
+# Configurazione nginx come reverse proxy
+RUN echo 'pid /var/run/nginx/nginx.pid; \
+events { \
+    worker_connections 1024; \
+} \
+http { \
+    client_body_temp_path /tmp/client_temp; \
+    proxy_temp_path /tmp/proxy_temp; \
+    fastcgi_temp_path /tmp/fastcgi_temp; \
+    uwsgi_temp_path /tmp/uwsgi_temp; \
+    scgi_temp_path /tmp/scgi_temp; \
+    upstream redocly_preview { \
+        server localhost:4000; \
+    } \
+    server { \
+        listen 80; \
+        server_name _; \
+        location /health { \
+            access_log off; \
+            return 200 "healthy\n"; \
+            add_header Content-Type text/plain; \
+        } \
+        location / { \
+            proxy_pass http://redocly_preview; \
+            proxy_http_version 1.1; \
+            proxy_set_header Upgrade $http_upgrade; \
+            proxy_set_header Connection "upgrade"; \
+            proxy_set_header Host $host; \
+            proxy_set_header X-Real-IP $remote_addr; \
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+            proxy_set_header X-Forwarded-Proto $scheme; \
+            proxy_cache_bypass $http_upgrade; \
+        } \
+    } \
+}' > /etc/nginx/nginx.conf
+
+# Configurazione supervisor per gestire nginx e redocly preview
+RUN echo '[supervisord] \
+nodaemon=true \
+[program:redocly] \
+command=npx redocly preview --product realm --port 4000 --host 0.0.0.0 \
+directory=/app \
+autostart=true \
+autorestart=true \
+stderr_logfile=/dev/stderr \
+stderr_logfile_maxbytes=0 \
+stdout_logfile=/dev/stdout \
+stdout_logfile_maxbytes=0 \
+[program:nginx] \
+command=nginx -g "daemon off;" \
+autostart=true \
+autorestart=true \
+stderr_logfile=/dev/stderr \
+stderr_logfile_maxbytes=0 \
+stdout_logfile=/dev/stdout \
+stdout_logfile_maxbytes=0' > /etc/supervisord.conf
+
+# Esponi porta
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost/health || exit 1
+
+# Avvia supervisor che gestisce sia nginx che redocly preview
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+

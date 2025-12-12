@@ -1,5 +1,19 @@
-# Configurazione minimale - solo OpenAPI spec
+# Redocly Realm configuration for multi-page documentation site
 apis:
   webrobot-etl-api@v1:
     root: openapi.yaml
+
+# Docs configuration for multi-page documentation
+docs:
+  root: index.md
+  sidebars: sidebars.yaml
+
+# Theme configuration
+theme:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: Python
+        - lang: JavaScript
 

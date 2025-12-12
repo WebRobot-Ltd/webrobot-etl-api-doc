@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "WebRobot ETL API Documentation",
   "scripts": {
-    "start": "redocly preview-docs openapi.yaml",
-    "build": "redocly build-docs openapi.yaml",
+    "start": "redocly preview --product realm",
+    "build": "redocly build-docs",
+    "build-docs": "redocly build-docs",
+    "docker:build": "docker build -t webrobot-etl-api-doc .",
+    "docker:build-docs": "docker build -f Dockerfile.docs -t webrobot-etl-api-doc:docs .",
+    "docker:run": "docker run -p 8080:80 webrobot-etl-api-doc",
+    "docker:run-docs": "docker run -p 8080:80 webrobot-etl-api-doc:docs",
     "lint": "redocly lint openapi.yaml",
     "bundle": "redoc-cli bundle openapi.yaml -o dist/index.html"
   },
@@ -17,11 +22,10 @@
   "author": "WebRobot",
   "license": "PROPRIETARY",
   "devDependencies": {
-    "@redocly/cli": "^1.10.0",
+    "@redocly/cli": "^2.12.6",
     "redoc-cli": "^0.13.21"
   },
   "overrides": {
     "@opentelemetry/resources": "^1.30.1"
   }
 }
-
