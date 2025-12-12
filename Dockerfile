@@ -39,25 +39,32 @@ RUN mkdir -p /var/cache/nginx/client_temp \
     chown -R nginx:nginx /var/cache/nginx /var/run/nginx
 
 # Configurazione nginx personalizzata
-RUN echo 'server { \
-    listen 80; \
-    server_name _; \
-    root /usr/share/nginx/html; \
-    index index.html; \
+# Configura nginx per usare directory scrivibili
+RUN echo 'pid /var/run/nginx/nginx.pid; \
+events { \
+    worker_connections 1024; \
+} \
+http { \
     client_body_temp_path /tmp/client_temp; \
     proxy_temp_path /tmp/proxy_temp; \
     fastcgi_temp_path /tmp/fastcgi_temp; \
     uwsgi_temp_path /tmp/uwsgi_temp; \
     scgi_temp_path /tmp/scgi_temp; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
+    server { \
+        listen 80; \
+        server_name _; \
+        root /usr/share/nginx/html; \
+        index index.html; \
+        location / { \
+            try_files $uri $uri/ /index.html; \
+        } \
+        location /health { \
+            access_log off; \
+            return 200 "healthy\n"; \
+            add_header Content-Type text/plain; \
+        } \
     } \
-    location /health { \
-        access_log off; \
-        return 200 "healthy\n"; \
-        add_header Content-Type text/plain; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+}' > /etc/nginx/nginx.conf
 
 # Esponi porta
 EXPOSE 80
