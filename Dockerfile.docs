@@ -43,8 +43,13 @@ RUN mkdir -p /tmp/.npm /tmp/.babel-cache && \
     chmod -R 777 /tmp/.npm /tmp/.babel-cache && \
     mkdir -p /app/node_modules/.cache/babel-plugin && \
     mkdir -p /app/node_modules/@redocly/realm/dist/server/esbuild/cache/server && \
-    chown -R 101:101 /app/node_modules/.cache /app/node_modules/@redocly/realm/dist/server/esbuild && \
-    chmod -R 777 /app/node_modules/.cache /app/node_modules/@redocly/realm/dist/server/esbuild
+    mkdir -p /app/node_modules/@redocly/realm/dist/client/runtime/generated && \
+    chown -R 101:101 /app/node_modules/.cache \
+        /app/node_modules/@redocly/realm/dist/server/esbuild \
+        /app/node_modules/@redocly/realm/dist/client/runtime && \
+    chmod -R 777 /app/node_modules/.cache \
+        /app/node_modules/@redocly/realm/dist/server/esbuild \
+        /app/node_modules/@redocly/realm/dist/client/runtime
 
 # Crea directory per nginx
 RUN mkdir -p /var/cache/nginx/client_temp \
