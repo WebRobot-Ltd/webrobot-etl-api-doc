@@ -106,8 +106,8 @@ spec:
                             sed -i.bak 's/^  root:/#  root:/' .redocly.yaml
                             sed -i.bak 's/^  sidebars:/#  sidebars:/' .redocly.yaml
                             
-                            # Esegui build specificando esplicitamente l'API
-                            npx redocly build-docs webrobot-etl-api@v1 -o redoc-static.html
+                            # Esegui build usando il path diretto al file OpenAPI
+                            npx redocly build-docs openapi.yaml -o redoc-static.html
                             
                             # Ripristina configurazione originale
                             mv .redocly.yaml.bak .redocly.yaml
