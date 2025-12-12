@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: webrobot-etl-api-doc-ingress
-  namespace: webrobot-api
+  namespace: webrobot
   labels:
     app: webrobot-etl-api-doc
     ingress: api-doc

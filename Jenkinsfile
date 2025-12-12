@@ -198,11 +198,10 @@ spec:
                         sh """
                             if [ -d k8s ]; then
                                 echo "📋 Applicazione manifesti Kubernetes..."
-                                # Applica deployment nel namespace webrobot
+                                # Applica tutti i manifesti nel namespace webrobot
                                 kubectl apply -f k8s/deployment.yaml -n webrobot
-                                # Applica service e ingress nel namespace webrobot-api
-                                kubectl apply -f k8s/service.yaml -n webrobot-api
-                                kubectl apply -f k8s/ingress.yaml -n webrobot-api
+                                kubectl apply -f k8s/service.yaml -n webrobot
+                                kubectl apply -f k8s/ingress.yaml -n webrobot
                                 
                                 # Aggiorna l'immagine se necessario
                                 kubectl set image deployment/webrobot-etl-api-doc \\
