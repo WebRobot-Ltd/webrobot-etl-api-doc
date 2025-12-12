@@ -1,21 +1,29 @@
 openapi: 3.0.1
 info:
   title: WebRobot ETL API
-  description: |
-    API for managing projects, jobs, datasets, and ETL pipelines on WebRobot.
-    
+  description: 'API for managing projects, jobs, datasets, and ETL pipelines on WebRobot.
+
+
     ## Authentication
-    
+
+
     The API uses API Keys for authentication. Include the `X-API-Key` header in all requests.
-    
+
+
     ## Base URL
-    
+
+
     - Production: `https://api.webrobot.eu/api`
+
     - Development: `http://localhost:8020/api`
-    
+
+
     ## Rate Limiting
-    
+
+
     Requests are limited to 1000 requests per minute per API key.
+
+    '
   version: 1.0.0
   contact:
     name: WebRobot Support
@@ -23,27 +31,26 @@ info:
   license:
     name: Proprietary
     url: https://webrobot.eu
-
 servers:
-  - url: https://api.webrobot.eu/api
-    description: Production
-  - url: http://localhost:8020/api
-    description: Local development
-
+- url: https://api.webrobot.eu/api
+  description: Production
+- url: http://localhost:8020/api
+  description: Local development
 security:
-  - ApiKeyAuth: []
-
+- ApiKeyAuth: []
 paths:
   /webrobot/cloud/scheduler/cronjobs:
     get:
       tags:
-        - Cloud
-        - Scheduler
+      - Cloud
+      - Scheduler
       summary: List all Kubernetes CronJobs
-      description: |
-        Returns the list of all CronJobs configured in the Kubernetes cluster.
-        
+      description: 'Returns the list of all CronJobs configured in the Kubernetes cluster.
+
+
         CronJobs are used to schedule periodic execution of Spark jobs.
+
+        '
       operationId: listCronJobs
       parameters:
       - name: namespace
@@ -51,7 +58,7 @@ paths:
         description: Kubernetes namespace to filter (optional)
         schema:
           type: string
-          example: "webrobot"
+          example: webrobot
       responses:
         '200':
           description: List of CronJobs retrieved successfully
@@ -69,13 +76,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Cloud
-        - Scheduler
+      - Cloud
+      - Scheduler
       summary: Create a new Kubernetes CronJob
-      description: |
-        Creates a new Kubernetes CronJob to schedule periodic execution of a Spark job.
-        
+      description: 'Creates a new Kubernetes CronJob to schedule periodic execution of a Spark job.
+
+
         The CronJob will execute the job according to the specified schedule (cron format).
+
+        '
       operationId: createCronJob
       requestBody:
         required: true
@@ -106,11 +115,12 @@ paths:
   /webrobot/cloud/scheduler/cronjobs/{name}:
     get:
       tags:
-        - Cloud
-        - Scheduler
+      - Cloud
+      - Scheduler
       summary: Get a specific CronJob
-      description: |
-        Returns the details of a specific Kubernetes CronJob.
+      description: 'Returns the details of a specific Kubernetes CronJob.
+
+        '
       operationId: getCronJob
       parameters:
       - name: name
@@ -119,13 +129,13 @@ paths:
         description: CronJob name
         schema:
           type: string
-          example: "daily-etl-job"
+          example: daily-etl-job
       - name: namespace
         in: query
         description: Kubernetes namespace (optional)
         schema:
           type: string
-          example: "webrobot"
+          example: webrobot
       responses:
         '200':
           description: CronJob details
@@ -147,13 +157,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Cloud
-        - Scheduler
+      - Cloud
+      - Scheduler
       summary: Delete a Kubernetes CronJob
-      description: |
-        Deletes a Kubernetes CronJob and all its scheduled executions.
-        
+      description: 'Deletes a Kubernetes CronJob and all its scheduled executions.
+
+
         **Warning:** This operation is irreversible.
+
+        '
       operationId: deleteCronJob
       parameters:
       - name: name
@@ -162,13 +174,13 @@ paths:
         description: Name of the CronJob to delete
         schema:
           type: string
-          example: "daily-etl-job"
+          example: daily-etl-job
       - name: namespace
         in: query
         description: Kubernetes namespace (optional)
         schema:
           type: string
-          example: "webrobot"
+          example: webrobot
       responses:
         '200':
           description: CronJob deleted successfully
@@ -191,12 +203,14 @@ paths:
   /webrobot/cloud/spark/capabilities:
     get:
       tags:
-        - Cloud
-        - Spark
+      - Cloud
+      - Spark
       summary: Get Spark cluster capabilities
-      description: |
-        Returns information about available capabilities and configurations of the Spark cluster,
+      description: 'Returns information about available capabilities and configurations of the Spark cluster,
+
         including supported versions, available resources, and configurations.
+
+        '
       operationId: getCapabilities
       responses:
         '200':
@@ -214,12 +228,14 @@ paths:
   /webrobot/cloud/spark/info:
     get:
       tags:
-        - Cloud
-        - Spark
+      - Cloud
+      - Spark
       summary: Get Spark cluster information
-      description: |
-        Returns general information about the Spark cluster, including versions, configurations
+      description: 'Returns general information about the Spark cluster, including versions, configurations
+
         e status of the cluster.
+
+        '
       operationId: getInfo
       responses:
         '200':
@@ -237,12 +253,13 @@ paths:
   /webrobot/cloud/spark/health:
     get:
       tags:
-        - Cloud
-        - Spark
-        - Health
+      - Cloud
+      - Spark
+      - Health
       summary: Spark service health check
-      description: |
-        Checks the health status of the Spark service and cluster.
+      description: 'Checks the health status of the Spark service and cluster.
+
+        '
       operationId: healthCheck
       responses:
         '200':
@@ -254,7 +271,7 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: "UP"
+                    example: UP
         '503':
           description: Spark service unavailable
           content:
@@ -264,11 +281,12 @@ paths:
   /webrobot/cloud/training/info:
     get:
       tags:
-        - Cloud
-        - Training
+      - Cloud
+      - Training
       summary: Get training service information
-      description: |
-        Returns information about the AI/ML training service, including versions and configurations.
+      description: 'Returns information about the AI/ML training service, including versions and configurations.
+
+        '
       operationId: getInfo_1
       responses:
         '200':
@@ -286,12 +304,13 @@ paths:
   /webrobot/cloud/training/health:
     get:
       tags:
-        - Cloud
-        - Training
-        - Health
+      - Cloud
+      - Training
+      - Health
       summary: Training service health check
-      description: |
-        Checks the health status of the AI/ML training service.
+      description: 'Checks the health status of the AI/ML training service.
+
+        '
       operationId: healthCheck_1
       responses:
         '200':
@@ -303,7 +322,7 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: "UP"
+                    example: UP
         '503':
           description: Training service unavailable
           content:
@@ -313,14 +332,17 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/execute:
     post:
       tags:
-        - EAN Plugin
-        - Jobs
+      - EAN Plugin
+      - Jobs
       summary: Execute EAN Image Sourcing job for a country
-      description: |
-        Executes an EAN Image Sourcing job for the specified country.
-        
+      description: 'Executes an EAN Image Sourcing job for the specified country.
+
+
         This endpoint triggers a Spark job that searches for product images
+
         based on EAN codes in the dataset for the given country.
+
+        '
       operationId: executeJob
       parameters:
       - name: country
@@ -344,14 +366,17 @@ paths:
   /webrobot/api/ean-image-sourcing/bootstrap/status:
     get:
       tags:
-        - EAN Plugin
-        - Bootstrap
+      - EAN Plugin
+      - Bootstrap
       summary: Get bootstrap status
-      description: |
-        Returns the status of the EAN Image Sourcing bootstrap process.
-        
+      description: 'Returns the status of the EAN Image Sourcing bootstrap process.
+
+
         The bootstrap process initializes the dataset and prepares it for
+
         image sourcing operations.
+
+        '
       operationId: getBootstrapStatus
       responses:
         default:
@@ -361,22 +386,32 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/images:
     post:
       tags:
-        - EAN Plugin
-        - Images
+      - EAN Plugin
+      - Images
       summary: Search and retrieve images for EAN products
-      description: |
-        Searches for images of products identified by EAN codes in the dataset of the specified country.
-        
+      description: 'Searches for images of products identified by EAN codes in the dataset of the specified country.
+
+
         Returns images with:
+
         - Full image URL
+
         - Base64 data (if requested)
+
         - Similarity schours (0.0 - 1.0)
+
         - Additional metadata
-        
+
+
         **Note:**
+
         - Images are searched in the most recent available dataset
+
         - Results are sorted by descending score
+
         - The `includeBase64` field in the request controls whether to include base64 data
+
+        '
       operationId: getImagesSimplified
       parameters:
       - name: country
@@ -385,26 +420,30 @@ paths:
         description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
-          example: "denmark"
+          example: denmark
       requestBody:
         required: true
-        description: |
-          Image search request for EAN products.
-          
+        description: 'Image search request for EAN products.
+
+
           Specifies the EAN codes of products to search images for.
+
+          '
         content:
           application/json:
             schema:
               type: object
               required:
-                - eans
+              - eans
               properties:
                 eans:
                   type: array
                   items:
                     type: string
                   description: List of EAN codes to search
-                  example: ["5901234123457", "5901234123458"]
+                  example:
+                  - '5901234123457'
+                  - '5901234123458'
                 includeBase64:
                   type: boolean
                   description: If true, includes base64 data of images
@@ -419,11 +458,14 @@ paths:
               basic:
                 summary: Basic search without base64
                 value:
-                  eans: ["5901234123457"]
+                  eans:
+                  - '5901234123457'
               withBase64:
                 summary: Search with base64 data
                 value:
-                  eans: ["5901234123457", "5901234123458"]
+                  eans:
+                  - '5901234123457'
+                  - '5901234123458'
                   includeBase64: true
                   limit: 10
       responses:
@@ -442,7 +484,7 @@ paths:
                         ean:
                           type: string
                           description: Product EAN code
-                          example: "5901234123457"
+                          example: '5901234123457'
                         images:
                           type: array
                           items:
@@ -451,7 +493,7 @@ paths:
                               url:
                                 type: string
                                 description: Full image URL
-                                example: "https://example.com/image.jpg"
+                                example: https://example.com/image.jpg
                               base64:
                                 type: string
                                 nullable: true
@@ -464,7 +506,7 @@ paths:
                               source:
                                 type: string
                                 description: Image source
-                                example: "google_images"
+                                example: google_images
         '400':
           description: Invalid request - empty EAN list or invalid format
           content:
@@ -480,12 +522,14 @@ paths:
   /webrobot/api/ean-image-sourcing/info:
     get:
       tags:
-        - EAN Plugin
-        - Info
+      - EAN Plugin
+      - Info
       summary: Get EAN Image Sourcing plugin information
-      description: |
-        Returns information about the EAN Image Sourcing plugin, including
+      description: 'Returns information about the EAN Image Sourcing plugin, including
+
         version, configuration, and available features.
+
+        '
       operationId: getPluginInfo
       responses:
         default:
@@ -495,19 +539,27 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/status:
     get:
       tags:
-        - EAN Plugin
-        - Jobs
+      - EAN Plugin
+      - Jobs
       summary: Get status of the last EAN job executed for a country
-      description: |
-        Returns information about the last EAN Image Sourcing job executed for the specified country.
-        
+      description: 'Returns information about the last EAN Image Sourcing job executed for the specified country.
+
+
         Includes execution details such as:
+
         - Job status (PENDING, RUNNING, COMPLETED, FAILED)
+
         - Start and end timestamps
+
         - Execution time
+
         - Spark UI URL (if available)
+
         - Number of executor pods
+
         - Error messages (if failed)
+
+        '
       operationId: getStatus
       parameters:
       - name: country
@@ -516,7 +568,7 @@ paths:
         description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
-          example: "denmark"
+          example: denmark
       responses:
         '200':
           description: Job status retrieved successfully
@@ -527,37 +579,41 @@ paths:
                 properties:
                   country:
                     type: string
-                    example: "denmark"
+                    example: denmark
                   hasJobs:
                     type: boolean
                     description: Indicates if there are jobs for this country
                   latestJobStatus:
                     type: string
-                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
-                    example: "COMPLETED"
+                    enum:
+                    - PENDING
+                    - RUNNING
+                    - COMPLETED
+                    - FAILED
+                    example: COMPLETED
                   latestJobId:
                     type: string
-                    example: "210"
+                    example: '210'
                   projectId:
                     type: string
-                    example: "98"
+                    example: '98'
                   latestExecution:
                     type: object
                     properties:
                       executionId:
                         type: string
-                        example: "spark-2d53940045a6-95379617"
+                        example: spark-2d53940045a6-95379617
                       status:
                         type: string
-                        example: "COMPLETED"
+                        example: COMPLETED
                       submittedAt:
                         type: string
                         format: date-time
-                        example: "2025-12-10T19:36:47.798498"
+                        example: '2025-12-10T19:36:47.798498'
                       completedAt:
                         type: string
                         format: date-time
-                        example: "2025-12-10T19:58:04.825877"
+                        example: '2025-12-10T19:58:04.825877'
                       executionTimeSeconds:
                         type: integer
                         description: Execution time in seconds
@@ -583,13 +639,15 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/query:
     post:
       tags:
-        - EAN Plugin
-        - Query
+      - EAN Plugin
+      - Query
       summary: Execute a query on the EAN dataset
-      description: |
-        Executes a custom query on the EAN dataset of the specified country.
-        
+      description: 'Executes a custom query on the EAN dataset of the specified country.
+
+
         Allows querying the dataset with custom filters and conditions.
+
+        '
       operationId: queryImages
       parameters:
       - name: country
@@ -598,7 +656,7 @@ paths:
         description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
-          example: "denmark"
+          example: denmark
       requestBody:
         required: true
         description: Query to execute on the dataset
@@ -636,13 +694,15 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/schedule:
     post:
       tags:
-        - EAN Plugin
-        - Scheduler
+      - EAN Plugin
+      - Scheduler
       summary: Schedule a recurring EAN job
-      description: |
-        Creates or updates the schedule for a recurring EAN Image Sourcing job for a country.
-        
+      description: 'Creates or updates the schedule for a recurring EAN Image Sourcing job for a country.
+
+
         The job will be executed automatically according to the specified schedule (cron format).
+
+        '
       operationId: scheduleJob
       parameters:
       - name: country
@@ -651,7 +711,7 @@ paths:
         description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
-          example: "denmark"
+          example: denmark
       requestBody:
         required: true
         description: Schedule configuration (cron format)
@@ -683,13 +743,15 @@ paths:
   /webrobot/api/ean-image-sourcing/{country}/upload:
     post:
       tags:
-        - EAN Plugin
-        - Upload
+      - EAN Plugin
+      - Upload
       summary: Upload an EAN dataset
-      description: |
-        Uploads a new EAN dataset for the specified country.
-        
+      description: 'Uploads a new EAN dataset for the specified country.
+
+
         The file must be in CSV format with EAN codes and related data.
+
+        '
       operationId: uploadCsv
       parameters:
       - name: country
@@ -698,7 +760,7 @@ paths:
         description: ISO country code (e.g. "denmark", "italy", "france")
         schema:
           type: string
-          example: "denmark"
+          example: denmark
       requestBody:
         required: true
         description: CSV file to upload
@@ -728,13 +790,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}:
     delete:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Cancel an AI training job
-      description: |
-        Cancels an AI training job that is running or queued for the specified provider.
-        
+      description: 'Cancels an AI training job that is running or queued for the specified provider.
+
+
         **Warning:** This operation is irreversible and interrupts training if in progress.
+
+        '
       operationId: cancelTraining
       parameters:
       - name: provider
@@ -743,14 +807,14 @@ paths:
         description: AI provider name (e.g. "huggingface", "openai", "cohere")
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       - name: jobId
         in: path
         required: true
         description: ID of the training job to cancel
         schema:
           type: string
-          example: "job-12345"
+          example: job-12345
       responses:
         '200':
           description: Job cancelled successfully
@@ -773,13 +837,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/download:
     get:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Download a trained model
-      description: |
-        Downloads a trained AI model from the specified provider.
-        
+      description: 'Downloads a trained AI model from the specified provider.
+
+
         The model is downloaded to the specified path or the default path.
+
+        '
       operationId: downloadModel
       parameters:
       - name: provider
@@ -788,20 +854,20 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       - name: jobId
         in: path
         required: true
         description: Training job ID
         schema:
           type: string
-          example: "job-12345"
+          example: job-12345
       - name: outputPath
         in: query
         description: Destination path for download (optional)
         schema:
           type: string
-          example: "/path/to/models"
+          example: /path/to/models
       responses:
         '200':
           description: Model downloaded successfully
@@ -824,13 +890,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/cost-estimate:
     post:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Estimate the cost of a training job
-      description: |
-        Calculates a cost estimate for an AI training job based on the specified parameters.
-        
+      description: 'Calculates a cost estimate for an AI training job based on the specified parameters.
+
+
         The estimate includes compute, storage and other necessary service costs.
+
+        '
       operationId: estimateCost
       parameters:
       - name: provider
@@ -839,7 +907,7 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       requestBody:
         required: true
         description: Training job parameters for estimation
@@ -861,7 +929,7 @@ paths:
                     description: Costo stimato in USD
                   currency:
                     type: string
-                    example: "USD"
+                    example: USD
         '400':
           description: Parametri non validi
           content:
@@ -877,12 +945,14 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/models:
     get:
       tags:
-        - AI Providers
-        - Models
+      - AI Providers
+      - Models
       summary: Get models supported by a provider
-      description: |
-        Returns the list of all AI models supported by the specified provider,
+      description: 'Returns the list of all AI models supported by the specified provider,
+
         including information on versions, capabilities and requirements.
+
+        '
       operationId: getSupportedModels
       parameters:
       - name: provider
@@ -891,7 +961,7 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       responses:
         '200':
           description: List of supported models
@@ -916,11 +986,13 @@ paths:
   /webrobot/api/ai-providers/providers:
     get:
       tags:
-        - AI Providers
+      - AI Providers
       summary: Get list of supported AI providers
-      description: |
-        Returns the list of all AI providers supported by the platform,
+      description: 'Returns the list of all AI providers supported by the platform,
+
         including information on available capabilities and configurations.
+
+        '
       operationId: getSupportedProviders
       responses:
         '200':
@@ -940,13 +1012,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/logs:
     get:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Get logs of a training job
-      description: |
-        Returns the execution logs of an AI training job.
-        
+      description: 'Returns the execution logs of an AI training job.
+
+
         The logs include information on progress, errors, and training metrics.
+
+        '
       operationId: getTrainingLogs
       parameters:
       - name: provider
@@ -955,14 +1029,14 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       - name: jobId
         in: path
         required: true
         description: Training job ID
         schema:
           type: string
-          example: "job-12345"
+          example: job-12345
       responses:
         '200':
           description: Training job logs
@@ -990,12 +1064,14 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/training/{jobId}/status:
     get:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Get status of a training job
-      description: |
-        Returns the current status of an AI training job, including information on
+      description: 'Returns the current status of an AI training job, including information on
+
         progress, duration and any errors.
+
+        '
       operationId: getTrainingStatus
       parameters:
       - name: provider
@@ -1004,14 +1080,14 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       - name: jobId
         in: path
         required: true
         description: Training job ID
         schema:
           type: string
-          example: "job-12345"
+          example: job-12345
       responses:
         '200':
           description: Training job status
@@ -1022,7 +1098,11 @@ paths:
                 properties:
                   status:
                     type: string
-                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                    enum:
+                    - PENDING
+                    - RUNNING
+                    - COMPLETED
+                    - FAILED
                   progress:
                     type: number
                     format: float
@@ -1042,13 +1122,15 @@ paths:
   /webrobot/api/ai-providers/providers/huggingface/models/publish:
     post:
       tags:
-        - AI Providers
-        - Models
+      - AI Providers
+      - Models
       summary: Publish a model to Hugging Face
-      description: |
-        Publishes a trained model to the Hugging Face Model Hub platform.
-        
+      description: 'Publishes a trained model to the Hugging Face Model Hub platform.
+
+
         The model must have been trained and must be available for publication.
+
+        '
       operationId: publishModel
       requestBody:
         required: true
@@ -1079,13 +1161,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/training:
     post:
       tags:
-        - AI Providers
-        - Training
+      - AI Providers
+      - Training
       summary: Start a new AI training job
-      description: |
-        Starts a new job of training for an AI model using the provider specified.
-        
+      description: 'Starts a new job of training for an AI model using the provider specified.
+
+
         The job is executed in the background and can be monitored through the status and logs endpoints.
+
+        '
       operationId: startTraining
       parameters:
       - name: provider
@@ -1094,7 +1178,7 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       requestBody:
         required: true
         description: Training job configuration
@@ -1128,13 +1212,15 @@ paths:
   /webrobot/api/ai-providers/providers/{provider}/datasets:
     post:
       tags:
-        - AI Providers
-        - Datasets
+      - AI Providers
+      - Datasets
       summary: Upload a dataset for AI training
-      description: |
-        Uploads a dataset to use for training AI models on the provider specified.
-        
+      description: 'Uploads a dataset to use for training AI models on the provider specified.
+
+
         The dataset must be in a format supported by the provider.
+
+        '
       operationId: uploadDataset
       parameters:
       - name: provider
@@ -1143,7 +1229,7 @@ paths:
         description: AI provider name
         schema:
           type: string
-          example: "huggingface"
+          example: huggingface
       requestBody:
         required: true
         description: Information on the dataset to upload
@@ -1173,13 +1259,16 @@ paths:
   /webrobot/api/agents:
     post:
       tags:
-        - Agents
+      - Agents
       summary: Create a new PySpark agent
-      description: |
-        Creates a new PySpark agent that can be used to execute ETL jobs.
-        
+      description: 'Creates a new PySpark agent that can be used to execute ETL jobs.
+
+
         An agent contains the PySpark code that is executed when a job is started.
+
         The agent must be associated with a category.
+
+        '
       operationId: createAgent
       requestBody:
         required: true
@@ -1216,13 +1305,16 @@ paths:
   /webrobot/api/agents/{agentId}:
     delete:
       tags:
-        - Agents
+      - Agents
       summary: Delete an agent
-      description: |
-        Deletes a PySpark agent from the system.
-        
+      description: 'Deletes a PySpark agent from the system.
+
+
         **Warning:** This operation is irreversible. Jobs that use this agent
+
         will no longer be able to be executed.
+
+        '
       operationId: deleteAgent
       parameters:
       - name: agentId
@@ -1231,7 +1323,7 @@ paths:
         description: Unique ID of the agent to delete
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: Agent deleted successfully
@@ -1260,10 +1352,11 @@ paths:
   /webrobot/api/agents/{categoryId}/{agentId}:
     get:
       tags:
-        - Agents
+      - Agents
       summary: Get a specific agent
-      description: |
-        Returns the details of a specific PySpark agent, including the source code.
+      description: 'Returns the details of a specific PySpark agent, including the source code.
+
+        '
       operationId: getAgent
       parameters:
       - name: categoryId
@@ -1272,14 +1365,14 @@ paths:
         description: ID of the category the agent belongs to
         schema:
           type: string
-          example: "1"
+          example: '1'
       - name: agentId
         in: path
         required: true
         description: Unique ID of the agent
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: Agent details
@@ -1307,13 +1400,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Agents
+      - Agents
       summary: Update an agent
-      description: |
-        Updates the data of an existing PySpark agent, including the source code.
-        
+      description: 'Updates the data of an existing PySpark agent, including the source code.
+
+
         **Note:** Updating the source code requires that no job is running
+
         with this agent.
+
+        '
       operationId: updateAgent
       parameters:
       - name: categoryId
@@ -1322,14 +1418,14 @@ paths:
         description: ID of the category the agent belongs to
         schema:
           type: string
-          example: "1"
+          example: '1'
       - name: agentId
         in: path
         required: true
         description: Unique ID of the agent to update
         schema:
           type: string
-          example: "123"
+          example: '123'
       requestBody:
         required: true
         description: Updated agent data
@@ -1377,10 +1473,11 @@ paths:
   /webrobot/api/agents/{categoryId}/name/{agentName}:
     get:
       tags:
-        - Agents
+      - Agents
       summary: Get an agent by name
-      description: |
-        Returns the details of a PySpark agent searching by name within of a category.
+      description: 'Returns the details of a PySpark agent searching by name within of a category.
+
+        '
       operationId: getAgentFromName
       parameters:
       - name: categoryId
@@ -1389,14 +1486,14 @@ paths:
         description: Category ID
         schema:
           type: string
-          example: "1"
+          example: '1'
       - name: agentName
         in: path
         required: true
         description: Agent name
         schema:
           type: string
-          example: "my-agent"
+          example: my-agent
       responses:
         '200':
           description: Agent details
@@ -1425,10 +1522,11 @@ paths:
   /webrobot/api/agents/{categoryId}:
     get:
       tags:
-        - Agents
+      - Agents
       summary: Get all agents of a category
-      description: |
-        Returns the list of all PySpark agents belonging to a specific category.
+      description: 'Returns the list of all PySpark agents belonging to a specific category.
+
+        '
       operationId: getAllAgents
       parameters:
       - name: categoryId
@@ -1437,7 +1535,7 @@ paths:
         description: Category ID
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: List of agents in the category
@@ -1468,12 +1566,14 @@ paths:
   /webrobot/api/categories:
     get:
       tags:
-        - Categories
+      - Categories
       summary: Get all categories
-      description: |
-        Returns the list of all categories available in the system.
-        
+      description: 'Returns the list of all categories available in the system.
+
+
         Categories are used to organize projects, agents, and jobs.
+
+        '
       operationId: getAllCategories
       responses:
         '200':
@@ -1498,10 +1598,11 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Categories
+      - Categories
       summary: Create a new category
-      description: |
-        Creates a new category to organize projects, agents and jobs.
+      description: 'Creates a new category to organize projects, agents and jobs.
+
+        '
       operationId: createCategory
       requestBody:
         required: true
@@ -1538,10 +1639,11 @@ paths:
   /webrobot/api/categories/id/{categoryId}:
     get:
       tags:
-        - Categories
+      - Categories
       summary: Get a specific category
-      description: |
-        Returns the details of a specific category, including the list of associated projects.
+      description: 'Returns the details of a specific category, including the list of associated projects.
+
+        '
       operationId: getCategory
       parameters:
       - name: categoryId
@@ -1550,7 +1652,7 @@ paths:
         description: Unique ID of the category
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Category details
@@ -1578,10 +1680,11 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Categories
+      - Categories
       summary: Update a category
-      description: |
-        Updates the data of an existing category.
+      description: 'Updates the data of an existing category.
+
+        '
       operationId: updateCategory
       parameters:
       - name: categoryId
@@ -1590,7 +1693,7 @@ paths:
         description: Unique ID of the category to update
         schema:
           type: string
-          example: "1"
+          example: '1'
       requestBody:
         required: true
         description: Updated category data
@@ -1631,12 +1734,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Categories
+      - Categories
       summary: Delete a category
-      description: |
-        Deletes a category from the system.
-        
+      description: 'Deletes a category from the system.
+
+
         **Warning:** This operation is irreversible. Associated projects will not be deleted.
+
+        '
       operationId: deleteCategory
       parameters:
       - name: categoryId
@@ -1645,7 +1750,7 @@ paths:
         description: Unique ID of the category to delete
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Category deleted successfully
@@ -1674,10 +1779,11 @@ paths:
   /webrobot/api/categories/{categoryName}:
     get:
       tags:
-        - Categories
+      - Categories
       summary: Get a category by name
-      description: |
-        Returns the details of a category searching by name.
+      description: 'Returns the details of a category searching by name.
+
+        '
       operationId: getCategoryFromName
       parameters:
       - name: categoryName
@@ -1686,7 +1792,7 @@ paths:
         description: Category name
         schema:
           type: string
-          example: "my-category"
+          example: my-category
       responses:
         '200':
           description: Category details
@@ -1715,11 +1821,12 @@ paths:
   /webrobot/api/categories/test:
     get:
       tags:
-        - Categories
-        - Test
+      - Categories
+      - Test
       summary: Test endpoint for categories
-      description: |
-        Test endpoint to verify categories functionality.
+      description: 'Test endpoint to verify categories functionality.
+
+        '
       operationId: test
       responses:
         '200':
@@ -1737,14 +1844,18 @@ paths:
   /webrobot/api/cloud-credentials:
     get:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Get all cloud credentials
-      description: |
-        Returns the list of all cloud credentials configured in the system,
+      description: 'Returns the list of all cloud credentials configured in the system,
+
         with support for pagination and provider filtering.
-        
+
+
         Cloud credentials are used to access external services such as
+
         AWS, Azure, GCP, etc. during Spark job execution.
+
+        '
       operationId: getAllCloudCredentials
       parameters:
       - name: provider
@@ -1752,7 +1863,7 @@ paths:
         description: Filter by cloud provider (e.g. "aws", "azure", "gcp")
         schema:
           type: string
-          example: "aws"
+          example: aws
       - name: page
         in: query
         description: Page number (0-based)
@@ -1792,12 +1903,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Create a new cloud credential
-      description: |
-        Creates a new cloud credential to access external cloud services.
-        
+      description: 'Creates a new cloud credential to access external cloud services.
+
+
         Credentials are encrypted and stored securely in the database.
+
+        '
       operationId: createCloudCredential
       requestBody:
         required: true
@@ -1834,12 +1947,14 @@ paths:
   /webrobot/api/cloud-credentials/id/{credentialId}:
     get:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Get a specific cloud credential
-      description: |
-        Returns the details of a specific cloud credential.
-        
+      description: 'Returns the details of a specific cloud credential.
+
+
         **Note:** Sensitive credentials are returned in encrypted form.
+
+        '
       operationId: getCloudCredentialById
       parameters:
       - name: credentialId
@@ -1848,7 +1963,7 @@ paths:
         description: Unique ID of the credential
         schema:
           type: string
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          example: 550e8400-e29b-41d4-a716-446655440000
       responses:
         '200':
           description: Credential details
@@ -1876,12 +1991,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Update a cloud credential
-      description: |
-        Updates the data of an existing cloud credential.
-        
+      description: 'Updates the data of an existing cloud credential.
+
+
         New credentials are encrypted before being saved.
+
+        '
       operationId: updateCloudCredential
       parameters:
       - name: credentialId
@@ -1890,7 +2007,7 @@ paths:
         description: Unique ID of the credential to update
         schema:
           type: string
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          example: 550e8400-e29b-41d4-a716-446655440000
       requestBody:
         required: true
         description: Updated credential data
@@ -1931,13 +2048,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Delete a cloud credential
-      description: |
-        Deletes a cloud credential from the system.
-        
+      description: 'Deletes a cloud credential from the system.
+
+
         **Warning:** This operation is irreversible. Jobs using this credential
+
         will no longer be able to access cloud services.
+
+        '
       operationId: deleteCloudCredential
       parameters:
       - name: credentialId
@@ -1946,7 +2066,7 @@ paths:
         description: Unique ID of the credential to delete
         schema:
           type: string
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          example: 550e8400-e29b-41d4-a716-446655440000
       responses:
         '200':
           description: Credential deleted successfully
@@ -1975,10 +2095,11 @@ paths:
   /webrobot/api/cloud-credentials/provider/{provider}:
     get:
       tags:
-        - Cloud Credentials
+      - Cloud Credentials
       summary: Get cloud credentials by provider
-      description: |
-        Returns the list of all cloud credentials configured for a specific provider.
+      description: 'Returns the list of all cloud credentials configured for a specific provider.
+
+        '
       operationId: getCloudCredentialsByProvider
       parameters:
       - name: provider
@@ -1987,7 +2108,7 @@ paths:
         description: Cloud provider name (e.g. "aws", "azure", "gcp")
         schema:
           type: string
-          example: "aws"
+          example: aws
       responses:
         '200':
           description: List of credentials for the provider
@@ -2018,12 +2139,14 @@ paths:
   /webrobot/api/datasets:
     get:
       tags:
-        - Datasets
+      - Datasets
       summary: Get all datasets
-      description: |
-        Returns the list of all datasets available in the system, with support for filters.
-        
+      description: 'Returns the list of all datasets available in the system, with support for filters.
+
+
         Datasets can be filtered by type, format, and indexing status.
+
+        '
       operationId: getAllDatasets_1
       parameters:
       - name: type
@@ -2031,19 +2154,19 @@ paths:
         description: Filter by dataset type
         schema:
           type: string
-          example: "parquet"
+          example: parquet
       - name: indexed
         in: query
         description: Filter by indexing status (true/false)
         schema:
           type: string
-          example: "true"
+          example: 'true'
       - name: format
         in: query
         description: Filter by format (parquet, csv, json, etc.)
         schema:
           type: string
-          example: "parquet"
+          example: parquet
       responses:
         '200':
           description: List of datasets
@@ -2067,12 +2190,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Datasets
+      - Datasets
       summary: Create a new dataset
-      description: |
-        Creates a new dataset in the system with the specified configurations.
-        
+      description: 'Creates a new dataset in the system with the specified configurations.
+
+
         The dataset can be associated with a project and used as input or output for ETL jobs.
+
+        '
       operationId: createDataset
       requestBody:
         required: true
@@ -2109,10 +2234,11 @@ paths:
   /webrobot/api/datasets/{datasetId}:
     get:
       tags:
-        - Datasets
+      - Datasets
       summary: Get a specific dataset
-      description: |
-        Returns the details of a specific dataset, including information on schema, format and path.
+      description: 'Returns the details of a specific dataset, including information on schema, format and path.
+
+        '
       operationId: getDataset_1
       parameters:
       - name: datasetId
@@ -2121,7 +2247,7 @@ paths:
         description: Dataset ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: Dataset details
@@ -2149,10 +2275,11 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Datasets
+      - Datasets
       summary: Update a dataset
-      description: |
-        Updates the data of an existing dataset, including configurations and metadata.
+      description: 'Updates the data of an existing dataset, including configurations and metadata.
+
+        '
       operationId: updateDataset
       parameters:
       - name: datasetId
@@ -2161,7 +2288,7 @@ paths:
         description: Unique ID of the dataset to update
         schema:
           type: string
-          example: "123"
+          example: '123'
       requestBody:
         required: true
         description: Updated dataset data
@@ -2202,13 +2329,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Datasets
+      - Datasets
       summary: Delete a dataset
-      description: |
-        Deletes a dataset from the system.
-        
+      description: 'Deletes a dataset from the system.
+
+
         **Warning:** This operation is irreversible. Jobs that use this dataset
+
         as input or output may not work correctly.
+
+        '
       operationId: deleteDataset_1
       parameters:
       - name: datasetId
@@ -2217,7 +2347,7 @@ paths:
         description: Unique ID of the dataset to delete
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: Dataset deleted successfully
@@ -2246,13 +2376,15 @@ paths:
   /webrobot/api/datasets/query:
     post:
       tags:
-        - Datasets
-        - Query
+      - Datasets
+      - Query
       summary: Executes an SQL query on a dataset
-      description: |
-        Executes an SQL query (Presto/Trino) on a dataset to retrieve or analyze the data.
-        
+      description: 'Executes an SQL query (Presto/Trino) on a dataset to retrieve or analyze the data.
+
+
         The query is executed on the MinIO catalog and can use all SQL features supported by Trino.
+
+        '
       operationId: executeQuery
       requestBody:
         required: true
@@ -2294,12 +2426,13 @@ paths:
   /webrobot/api/datasets/query/task/{taskId}/info:
     get:
       tags:
-        - Datasets
-        - Query
-        - Tasks
+      - Datasets
+      - Query
+      - Tasks
       summary: Get information about the dataset associated with a task
-      description: |
-        Returns information about the output dataset associated with a specific task.
+      description: 'Returns information about the output dataset associated with a specific task.
+
+        '
       operationId: getDatasetInfoByTask
       parameters:
       - name: taskId
@@ -2308,7 +2441,7 @@ paths:
         description: Task ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: Dataset information
@@ -2337,34 +2470,35 @@ paths:
   /webrobot/api/datasets/query/columns:
     get:
       tags:
-        - Datasets
-        - Query
+      - Datasets
+      - Query
       summary: Get columns of a table
-      description: |
-        Returns the list of columns and their types of a table in the Trino catalog.
+      description: 'Returns the list of columns and their types of a table in the Trino catalog.
+
+        '
       operationId: getTableColumns
       parameters:
       - name: catalog
         in: query
-        description: "Catalog name (default: minio)"
+        description: 'Catalog name (default: minio)'
         schema:
           type: string
           default: minio
-          example: "minio"
+          example: minio
       - name: schema
         in: query
-        description: "Schema name (default: default)"
+        description: 'Schema name (default: default)'
         schema:
           type: string
           default: default
-          example: "default"
+          example: default
       - name: table
         in: query
         required: true
         description: Table name
         schema:
           type: string
-          example: "my_table"
+          example: my_table
       responses:
         '200':
           description: List of columns
@@ -2400,27 +2534,28 @@ paths:
   /webrobot/api/datasets/query/tables:
     get:
       tags:
-        - Datasets
-        - Query
+      - Datasets
+      - Query
       summary: List all available tables
-      description: |
-        Returns the list of all tables available in a specific catalog and schema.
+      description: 'Returns the list of all tables available in a specific catalog and schema.
+
+        '
       operationId: listTables
       parameters:
       - name: catalog
         in: query
-        description: "Catalog name (default: minio)"
+        description: 'Catalog name (default: minio)'
         schema:
           type: string
           default: minio
-          example: "minio"
+          example: minio
       - name: schema
         in: query
-        description: "Schema name (default: default)"
+        description: 'Schema name (default: default)'
         schema:
           type: string
           default: default
-          example: "default"
+          example: default
       responses:
         '200':
           description: List of tables
@@ -2445,14 +2580,16 @@ paths:
   /webrobot/api/datasets/query/task/{taskId}:
     post:
       tags:
-        - Datasets
-        - Query
-        - Tasks
+      - Datasets
+      - Query
+      - Tasks
       summary: Executes an SQL query on the output dataset of a task
-      description: |
-        Executes a SQL query on the output dataset associated with a specific task.
-        
+      description: 'Executes a SQL query on the output dataset associated with a specific task.
+
+
         Useful for analyzing the results of a task after its execution.
+
+        '
       operationId: queryDatasetByTask
       parameters:
       - name: taskId
@@ -2461,7 +2598,7 @@ paths:
         description: Task ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       requestBody:
         required: true
         description: SQL query to execute
@@ -2508,12 +2645,14 @@ paths:
   /webrobot/api/admin/etl-library-versions:
     get:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Get all ETL library versions
-      description: |
-        Returns the list of all ETL library versions available in the system,
+      description: 'Returns the list of all ETL library versions available in the system,
+
         with support for filtering by build type and active status.
+
+        '
       operationId: getAllVersions
       parameters:
       - name: buildType
@@ -2521,7 +2660,7 @@ paths:
         description: Filter by build type (e.g. "development", "production")
         schema:
           type: string
-          example: "development"
+          example: development
       - name: activeOnly
         in: query
         description: Return only active versions
@@ -2551,13 +2690,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Create or update an ETL library version
-      description: |
-        Creates a new ETL library version or updates an existing one.
-        
+      description: 'Creates a new ETL library version or updates an existing one.
+
+
         ETL versions are used to execute Spark jobs with specific library versions.
+
+        '
       operationId: createOrUpdateVersion
       requestBody:
         required: true
@@ -2600,11 +2741,12 @@ paths:
   /webrobot/api/admin/etl-library-versions/id/{id}:
     get:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Get a specific ETL version
-      description: |
-        Returns the details of a version of the library ETL identified by the ID.
+      description: 'Returns the details of a version of the library ETL identified by the ID.
+
+        '
       operationId: getVersionById
       parameters:
       - name: id
@@ -2642,11 +2784,12 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Update an ETL version
-      description: |
-        Updates the data of an existing ETL library version.
+      description: 'Updates the data of an existing ETL library version.
+
+        '
       operationId: updateVersion
       parameters:
       - name: id
@@ -2697,14 +2840,17 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Delete an ETL version
-      description: |
-        Deletes an ETL library version from the system.
-        
+      description: 'Deletes an ETL library version from the system.
+
+
         **Warning:** This operation is irreversible. Jobs using this version
+
         may not work correctly.
+
+        '
       operationId: deleteVersion
       parameters:
       - name: id
@@ -2743,12 +2889,14 @@ paths:
   /webrobot/api/admin/etl-library-versions/build-type/{buildType}/build-number/{buildNumber}:
     get:
       tags:
-        - Admin
-        - ETL Library
+      - Admin
+      - ETL Library
       summary: Get an ETL version by build type and build number
-      description: |
-        Returns the details of a version of the library ETL identified by build type
+      description: 'Returns the details of a version of the library ETL identified by build type
+
         and build number.
+
+        '
       operationId: getVersionByBuildTypeAndBuildNumber
       parameters:
       - name: buildType
@@ -2757,7 +2905,7 @@ paths:
         description: Build type (e.g. "development", "production")
         schema:
           type: string
-          example: "development"
+          example: development
       - name: buildNumber
         in: path
         required: true
@@ -2794,10 +2942,11 @@ paths:
   /webrobot/api/package/download:
     get:
       tags:
-        - Package
+      - Package
       summary: Get URL for package download
-      description: |
-        Returns a temporary URL to download a package of projects and configurations.
+      description: 'Returns a temporary URL to download a package of projects and configurations.
+
+        '
       operationId: getUrlDownload
       responses:
         '200':
@@ -2826,10 +2975,11 @@ paths:
   /webrobot/api/package/upload:
     get:
       tags:
-        - Package
+      - Package
       summary: Get URL for package upload
-      description: |
-        Returns a temporary URL to upload a package of projects and configurations.
+      description: 'Returns a temporary URL to upload a package of projects and configurations.
+
+        '
       operationId: getUrlUpload
       responses:
         '200':
@@ -2858,11 +3008,13 @@ paths:
   /webrobot/api/package/export/all:
     get:
       tags:
-        - Package
+      - Package
       summary: Start export of all projects
-      description: |
-        Starts the export process for all projects and system configurations
+      description: 'Starts the export process for all projects and system configurations
+
         in a compressed package.
+
+        '
       operationId: start_export_All
       responses:
         '200':
@@ -2890,11 +3042,13 @@ paths:
   /webrobot/api/package/export/id/{projectId}:
     get:
       tags:
-        - Package
+      - Package
       summary: Start export of a specific project
-      description: |
-        Starts the export process for a specific project and its configurations
+      description: 'Starts the export process for a specific project and its configurations
+
         in a compressed package.
+
+        '
       operationId: start_export_project
       parameters:
       - name: projectId
@@ -2903,7 +3057,7 @@ paths:
         description: Project ID to export
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: Export started successfully
@@ -2936,12 +3090,14 @@ paths:
   /webrobot/api/package/import/all:
     get:
       tags:
-        - Package
+      - Package
       summary: Start import of all projects
-      description: |
-        Starts the import process of all projects and configurations from a compressed package.
-        
+      description: 'Starts the import process of all projects and configurations from a compressed package.
+
+
         **Warning:** This operation may overwrite existing projects.
+
+        '
       operationId: start_import_All
       responses:
         '200':
@@ -2969,12 +3125,14 @@ paths:
   /webrobot/api/package/import/id/{projectId}:
     get:
       tags:
-        - Package
+      - Package
       summary: Start import of a specific project
-      description: |
-        Starts the import process of a specific project and its configurations from a compressed package.
-        
+      description: 'Starts the import process of a specific project and its configurations from a compressed package.
+
+
         **Warning:** This operation may overwrite the existing project if present.
+
+        '
       operationId: start_import_project
       parameters:
       - name: projectId
@@ -2983,7 +3141,7 @@ paths:
         description: Project ID to import
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: Import started successfully
@@ -3016,13 +3174,15 @@ paths:
   /webrobot/api/admin/plugins/{pluginId}/disable:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Disable a plugin
-      description: |
-        Disable a plugin in the system for a specific build type.
-        
+      description: 'Disable a plugin in the system for a specific build type.
+
+
         Disabled plugins will not be available for use in jobs.
+
+        '
       operationId: disablePlugin
       parameters:
       - name: pluginId
@@ -3031,14 +3191,14 @@ paths:
         description: Plugin ID
         schema:
           type: string
-          example: "ean-image-sourcing"
+          example: ean-image-sourcing
       - name: buildType
         in: query
-        description: "Build type (default: development)"
+        description: 'Build type (default: development)'
         schema:
           type: string
           default: development
-          example: "development"
+          example: development
       responses:
         '200':
           description: Plugin disabled successfully
@@ -3067,13 +3227,15 @@ paths:
   /webrobot/api/admin/plugins/{pluginId}/enable:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Enable a plugin
-      description: |
-        Enable a plugin in the system for a specific build type.
-        
+      description: 'Enable a plugin in the system for a specific build type.
+
+
         Enabled plugins will be available for use in jobs.
+
+        '
       operationId: enablePlugin
       parameters:
       - name: pluginId
@@ -3082,14 +3244,14 @@ paths:
         description: Plugin ID
         schema:
           type: string
-          example: "ean-image-sourcing"
+          example: ean-image-sourcing
       - name: buildType
         in: query
-        description: "Build type (default: development)"
+        description: 'Build type (default: development)'
         schema:
           type: string
           default: development
-          example: "development"
+          example: development
       responses:
         '200':
           description: Plugin enabled successfully
@@ -3118,20 +3280,21 @@ paths:
   /webrobot/api/admin/plugins:
     get:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: List all plugins
-      description: |
-        Returns the list of all plugins available in the system, filtered by build type.
+      description: 'Returns the list of all plugins available in the system, filtered by build type.
+
+        '
       operationId: listPlugins
       parameters:
       - name: buildType
         in: query
-        description: "Build type (default: development)"
+        description: 'Build type (default: development)'
         schema:
           type: string
           default: development
-          example: "development"
+          example: development
       responses:
         '200':
           description: List of plugins
@@ -3156,13 +3319,15 @@ paths:
   /webrobot/api/admin/plugins/upload:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Upload a new plugin
-      description: |
-        Uploads a new plugin to the system as a JAR file.
-        
+      description: 'Uploads a new plugin to the system as a JAR file.
+
+
         The plugin can be associated with one or more organizations and a specific build type.
+
+        '
       operationId: uploadPlugin
       requestBody:
         required: true
@@ -3172,8 +3337,8 @@ paths:
             schema:
               type: object
               required:
-                - file
-                - pluginId
+              - file
+              - pluginId
               properties:
                 file:
                   $ref: '#/components/schemas/FormDataContentDisposition'
@@ -3181,12 +3346,12 @@ paths:
                 pluginId:
                   type: string
                   description: Plugin ID
-                  example: "my-plugin"
+                  example: my-plugin
                 buildType:
                   type: string
-                  description: "Build type (default: development)"
+                  description: 'Build type (default: development)'
                   default: development
-                  example: "development"
+                  example: development
                 buildNumber:
                   type: integer
                   format: int32
@@ -3195,7 +3360,7 @@ paths:
                 organizationIds:
                   type: string
                   description: List of organization IDs separated by comma
-                  example: "1,2,3"
+                  example: 1,2,3
       responses:
         '201':
           description: Plugin uploaded successfully
@@ -3224,11 +3389,12 @@ paths:
   /webrobot/api/admin/plugin-installations/{id}:
     get:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Get a specific plugin installation
-      description: |
-        Returns the details of a plugin installation identified by the ID.
+      description: 'Returns the details of a plugin installation identified by the ID.
+
+        '
       operationId: getInstallationById
       parameters:
       - name: id
@@ -3266,11 +3432,12 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Update a plugin installation
-      description: |
-        Updates the data of an existing plugin installation, including configurations and metadata.
+      description: 'Updates the data of an existing plugin installation, including configurations and metadata.
+
+        '
       operationId: updateInstallation
       parameters:
       - name: id
@@ -3321,14 +3488,17 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Delete a plugin installation
-      description: |
-        Deletes a plugin installation from the system.
-        
+      description: 'Deletes a plugin installation from the system.
+
+
         **Warning:** This operation is irreversible. The plugin will no longer be available
+
         for use in jobs.
+
+        '
       operationId: deleteInstallation
       parameters:
       - name: id
@@ -3367,13 +3537,15 @@ paths:
   /webrobot/api/admin/plugin-installations/{id}/disable:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Disable a plugin installation
-      description: |
-        Disable a plugin installation in the system.
-        
+      description: 'Disable a plugin installation in the system.
+
+
         Disabled plugins will not be available for use in jobs.
+
+        '
       operationId: disablePlugin_1
       parameters:
       - name: id
@@ -3412,13 +3584,15 @@ paths:
   /webrobot/api/admin/plugin-installations/{id}/enable:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Enable a plugin installation
-      description: |
-        Enable a plugin installation in the system.
-        
+      description: 'Enable a plugin installation in the system.
+
+
         Enabled plugins will be available for use in jobs.
+
+        '
       operationId: enablePlugin_1
       parameters:
       - name: id
@@ -3457,12 +3631,14 @@ paths:
   /webrobot/api/admin/plugin-installations:
     get:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Get all plugin installations
-      description: |
-        Returns the list of all plugin installations available in the system,
+      description: 'Returns the list of all plugin installations available in the system,
+
         with support for filtering by organization and enabled status.
+
+        '
       operationId: getAllInstallations
       parameters:
       - name: organizationId
@@ -3470,7 +3646,7 @@ paths:
         description: Filter by organization ID
         schema:
           type: string
-          example: "1"
+          example: '1'
       - name: enabledOnly
         in: query
         description: Return only enabled installations
@@ -3500,13 +3676,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Register a new plugin
-      description: |
-        Registers a new plugin in the system as an installation.
-        
+      description: 'Registers a new plugin in the system as an installation.
+
+
         The plugin can be associated with one or more organizations.
+
+        '
       operationId: registerPlugin
       requestBody:
         required: true
@@ -3543,13 +3721,15 @@ paths:
   /webrobot/api/admin/plugin-installations/reload:
     post:
       tags:
-        - Admin
-        - Plugins
+      - Admin
+      - Plugins
       summary: Reload all plugins
-      description: |
-        Reloads all plugins in the system, updating configurations and installations.
-        
+      description: 'Reloads all plugins in the system, updating configurations and installations.
+
+
         Useful after uploading or modifying plugins to apply changes without restarting the system.
+
+        '
       operationId: reloadPlugins
       responses:
         '200':
@@ -3561,7 +3741,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Plugins reloaded successfully"
+                    example: Plugins reloaded successfully
         '401':
           description: Unauthorized - scope `admin:write` required
           content:
@@ -3577,11 +3757,12 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs:
     get:
       tags:
-        - Projects
-        - Jobs
+      - Projects
+      - Jobs
       summary: Get all jobs of a project
-      description: |
-        Returns the list of all ETL jobs associated with a specific project.
+      description: 'Returns the list of all ETL jobs associated with a specific project.
+
+        '
       operationId: getProjectJobs
       parameters:
       - name: projectId
@@ -3590,7 +3771,7 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: List of jobs for the project
@@ -3620,13 +3801,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Projects
-        - Jobs
+      - Projects
+      - Jobs
       summary: Add a job to a project
-      description: |
-        Creates a new ETL job and associates it with an existing project.
-        
+      description: 'Creates a new ETL job and associates it with an existing project.
+
+
         The job must be associated with an agent with valid PySpark code.
+
+        '
       operationId: addJobToProject
       parameters:
       - name: projectId
@@ -3635,7 +3818,7 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       requestBody:
         required: true
         description: Job data to create
@@ -3677,12 +3860,14 @@ paths:
   /webrobot/api/projects:
     get:
       tags:
-        - Projects
+      - Projects
       summary: Get all projects
-      description: |
-        Returns the list of all projects available in the system.
-        
+      description: 'Returns the list of all projects available in the system.
+
+
         Projects are used to organize related jobs, tasks, and datasets.
+
+        '
       operationId: getAllProjects
       responses:
         '200':
@@ -3707,12 +3892,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Projects
+      - Projects
       summary: Create a new project
-      description: |
-        Creates a new project in the system.
-        
+      description: 'Creates a new project in the system.
+
+
         A project can contain multiple ETL jobs and can be scheduled for automatic execution.
+
+        '
       operationId: createProject
       requestBody:
         required: true
@@ -3749,14 +3936,16 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Get all tasks of a job
-      description: |
-        Returns the list of all tasks associated with a specific job.
-        
+      description: 'Returns the list of all tasks associated with a specific job.
+
+
         Tasks represent the individual operations that make up an ETL job.
+
+        '
       operationId: getAllTasks
       parameters:
       - name: projectId
@@ -3765,14 +3954,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       responses:
         '200':
           description: List of tasks for the job
@@ -3802,14 +3991,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Create a new task in a job
-      description: |
-        Creates a new task and associates it with an existing job.
-        
+      description: 'Creates a new task and associates it with an existing job.
+
+
         A task can be of type SPARK, AUTONOMOUS_AGENT, or BACKGROUND_TASK.
+
+        '
       operationId: createTask
       parameters:
       - name: projectId
@@ -3818,14 +4009,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       requestBody:
         required: true
         description: Task data to create
@@ -3867,10 +4058,11 @@ paths:
   /webrobot/api/projects/id/{projectId}:
     get:
       tags:
-        - Projects
+      - Projects
       summary: Get a specific project
-      description: |
-        Returns the details of a specific project, including the list of associated jobs.
+      description: 'Returns the details of a specific project, including the list of associated jobs.
+
+        '
       operationId: getProject
       parameters:
       - name: projectId
@@ -3879,7 +4071,7 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: Project details
@@ -3907,10 +4099,11 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Projects
+      - Projects
       summary: Update a project
-      description: |
-        Updates the data of an existing project, including configurations and scheduling.
+      description: 'Updates the data of an existing project, including configurations and scheduling.
+
+        '
       operationId: updateProject
       parameters:
       - name: projectId
@@ -3919,7 +4112,7 @@ paths:
         description: Unique ID of the project to update
         schema:
           type: string
-          example: "98"
+          example: '98'
       requestBody:
         required: true
         description: Updated project data
@@ -3960,13 +4153,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Projects
+      - Projects
       summary: Delete a project
-      description: |
-        Deletes a project from the system.
-        
+      description: 'Deletes a project from the system.
+
+
         **Warning:** This operation is irreversible. All associated jobs, tasks and data
+
         will be deleted.
+
+        '
       operationId: deleteProject
       parameters:
       - name: projectId
@@ -3975,7 +4171,7 @@ paths:
         description: Unique ID of the project to delete
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: Project deleted successfully
@@ -4004,12 +4200,13 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Get a specific task
-      description: |
-        Returns the details of a specific task, including configurations and execution status.
+      description: 'Returns the details of a specific task, including configurations and execution status.
+
+        '
       operationId: getTask
       parameters:
       - name: projectId
@@ -4018,21 +4215,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Task ID
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Task details
@@ -4060,12 +4257,13 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Update a task
-      description: |
-        Updates the data of an existing task, including configurations and metadata.
+      description: 'Updates the data of an existing task, including configurations and metadata.
+
+        '
       operationId: updateTask
       parameters:
       - name: projectId
@@ -4074,21 +4272,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Unique ID of the task to update
         schema:
           type: string
-          example: "1"
+          example: '1'
       requestBody:
         required: true
         description: Updated task data
@@ -4129,14 +4327,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Delete a task
-      description: |
-        Deletes a task from a job.
-        
+      description: 'Deletes a task from a job.
+
+
         **Warning:** This operation is irreversible. The task will be removed from the job.
+
+        '
       operationId: deleteTask
       parameters:
       - name: projectId
@@ -4145,21 +4345,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Unique ID of the task to delete
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Task deleted successfully
@@ -4188,21 +4388,29 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/execute:
     post:
       tags:
-        - Jobs
-        - ETL Execution
+      - Jobs
+      - ETL Execution
       summary: Execute a Spark job immediately
-      description: |
-        Executes a Spark job immediately, allocating resources in the Kubernetes cluster.
-        
+      description: 'Executes a Spark job immediately, allocating resources in the Kubernetes cluster.
+
+
         The job is executed with the configurations specified in the job itself or through
+
         optional parameters in the request.
-        
+
+
         **Important notes:**
+
         - The job must be associated with an agent with valid PySpark code
+
         - Cloud credentials are injected automatically if configured
+
         - The webhook is called automatically at start (RUNNING) and at the end (COMPLETED/FAILED)
-        
+
+
         **Rate limiting:** Max 10 concurrent executions per project
+
+        '
       operationId: executeJob_1
       parameters:
       - name: projectId
@@ -4211,20 +4419,22 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID to execute
         schema:
           type: string
-          example: "210"
+          example: '210'
       requestBody:
         required: false
-        description: |
-          Optional parameters for job execution.
-          
-          If not provided, the job's default values are used.
+        description: 'Optional parameters for job execution.
+
+
+          If not provided, the job''s default values are used.
+
+          '
         content:
           application/json:
             schema:
@@ -4248,7 +4458,7 @@ paths:
                 summary: Execution with specific cloud credentials
                 value:
                   cloudCredentialIds:
-                    - "550e8400-e29b-41d4-a716-446655440000"
+                  - 550e8400-e29b-41d4-a716-446655440000
       responses:
         '200':
           description: Job executed successfully
@@ -4260,19 +4470,19 @@ paths:
                   executionId:
                     type: string
                     description: Spark execution ID
-                    example: "spark-2d53940045a6-95379617"
+                    example: spark-2d53940045a6-95379617
                   status:
                     type: string
                     description: Execution status
-                    example: "SUBMITTED"
+                    example: SUBMITTED
                   message:
                     type: string
                     description: Descriptive message
-                    example: "Job execution submitted successfully"
+                    example: Job execution submitted successfully
                   clusterId:
                     type: string
                     description: Cluster ID used
-                    example: "default-cluster"
+                    example: default-cluster
                   success:
                     type: boolean
                     description: Indicates whether the submission succeeded
@@ -4316,13 +4526,15 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/logs:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Execution
+      - Projects
+      - Jobs
+      - Execution
       summary: Get logs of a job execution
-      description: |
-        Returns execution logs for a specific Spark job, with support for filtering
+      description: 'Returns execution logs for a specific Spark job, with support for filtering
+
         by pod type (driver/executor) and limiting the number of lines.
+
+        '
       operationId: getExecutionLogs
       parameters:
       - name: projectId
@@ -4331,28 +4543,30 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: executionId
         in: path
         required: true
         description: Spark execution ID
         schema:
           type: string
-          example: "spark-2d53940045a6-95379617"
+          example: spark-2d53940045a6-95379617
       - name: podType
         in: query
         description: Pod type to fetch logs from (driver, executor; if omitted, returns all)
         schema:
           type: string
-          enum: [driver, executor]
-          example: "driver"
+          enum:
+          - driver
+          - executor
+          example: driver
       - name: tail
         in: query
         description: Number of trailing lines to return (optional)
@@ -4393,21 +4607,30 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/executions/{executionId}/status:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Execution
+      - Projects
+      - Jobs
+      - Execution
       summary: Get status of a job execution
-      description: |
-        Returns the detailed status of a Spark job execution, including information on
+      description: 'Returns the detailed status of a Spark job execution, including information on
+
         progress, duration, metrics, and any errors.
-        
+
+
         The status is retrieved from the database and includes details such as:
+
         - Execution status (PENDING, RUNNING, COMPLETED, FAILED)
+
         - Start and end timestamps
+
         - Execution time
+
         - URL Spark UI
+
         - Number of executor pods
+
         - Error messages (if failed)
+
+        '
       operationId: getExecutionStatus
       parameters:
       - name: projectId
@@ -4416,21 +4639,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: executionId
         in: path
         required: true
         description: Spark execution ID
         schema:
           type: string
-          example: "spark-2d53940045a6-95379617"
+          example: spark-2d53940045a6-95379617
       responses:
         '200':
           description: Execution status
@@ -4441,11 +4664,16 @@ paths:
                 properties:
                   executionId:
                     type: string
-                    example: "spark-2d53940045a6-95379617"
+                    example: spark-2d53940045a6-95379617
                   status:
                     type: string
-                    enum: [PENDING, RUNNING, COMPLETED, FAILED, UNKNOWN]
-                    example: "COMPLETED"
+                    enum:
+                    - PENDING
+                    - RUNNING
+                    - COMPLETED
+                    - FAILED
+                    - UNKNOWN
+                    example: COMPLETED
                   startedAt:
                     type: string
                     format: date-time
@@ -4488,11 +4716,12 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}:
     get:
       tags:
-        - Projects
-        - Jobs
+      - Projects
+      - Jobs
       summary: Get a specific job
-      description: |
-        Returns the details of a specific ETL job, including configurations and execution status.
+      description: 'Returns the details of a specific ETL job, including configurations and execution status.
+
+        '
       operationId: getJob
       parameters:
       - name: projectId
@@ -4501,14 +4730,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       responses:
         '200':
           description: Job details
@@ -4536,11 +4765,12 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Projects
-        - Jobs
+      - Projects
+      - Jobs
       summary: Update a job
-      description: |
-        Updates the data of an existing job, including configurations and metadata.
+      description: 'Updates the data of an existing job, including configurations and metadata.
+
+        '
       operationId: updateJob
       parameters:
       - name: projectId
@@ -4549,14 +4779,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Unique ID of the job to update
         schema:
           type: string
-          example: "210"
+          example: '210'
       requestBody:
         required: true
         description: Updated job data
@@ -4597,13 +4827,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Projects
-        - Jobs
+      - Projects
+      - Jobs
       summary: Remove a job from a project
-      description: |
-        Remove a job from a project by removing the association.
-        
+      description: 'Remove a job from a project by removing the association.
+
+
         **Warning:** The job itself is not deleted, only the association to the project.
+
+        '
       operationId: removeJobFromProject
       parameters:
       - name: projectId
@@ -4612,14 +4844,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID to remove
         schema:
           type: string
-          example: "210"
+          example: '210'
       responses:
         '200':
           description: Job removed from project successfully
@@ -4648,10 +4880,11 @@ paths:
   /webrobot/api/projects/{projectName}:
     get:
       tags:
-        - Projects
+      - Projects
       summary: Get a project by name
-      description: |
-        Returns the details of a project searching by name.
+      description: 'Returns the details of a project searching by name.
+
+        '
       operationId: getProjectFromName
       parameters:
       - name: projectName
@@ -4660,7 +4893,7 @@ paths:
         description: Project name
         schema:
           type: string
-          example: "my-project"
+          example: my-project
       responses:
         '200':
           description: Project details
@@ -4689,12 +4922,14 @@ paths:
   /webrobot/api/projects/id/{projectId}/schedule:
     get:
       tags:
-        - Projects
-        - Scheduler
+      - Projects
+      - Scheduler
       summary: Get project schedule
-      description: |
-        Returns the project's schedule configuration, including information about
+      description: 'Returns the project''s schedule configuration, including information about
+
         when and how it is executed automatically.
+
+        '
       operationId: getProjectSchedule
       parameters:
       - name: projectId
@@ -4703,7 +4938,7 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       responses:
         '200':
           description: Schedule configuration
@@ -4731,13 +4966,15 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       tags:
-        - Projects
-        - Scheduler
+      - Projects
+      - Scheduler
       summary: Set project schedule
-      description: |
-        Sets or updates the schedule of a project for automatic execution.
-        
+      description: 'Sets or updates the schedule of a project for automatic execution.
+
+
         The schedule uses cron expressions to define when to execute the project.
+
+        '
       operationId: setProjectSchedule
       parameters:
       - name: projectId
@@ -4746,7 +4983,7 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       requestBody:
         required: true
         description: Schedule configuration
@@ -4788,12 +5025,13 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/status:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Get status of a task
-      description: |
-        Returns the current status of a task, including execution details and progress.
+      description: 'Returns the current status of a task, including execution details and progress.
+
+        '
       operationId: getTaskStatus
       parameters:
       - name: projectId
@@ -4802,21 +5040,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Task ID
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Task status
@@ -4827,7 +5065,11 @@ paths:
                 properties:
                   status:
                     type: string
-                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                    enum:
+                    - PENDING
+                    - RUNNING
+                    - COMPLETED
+                    - FAILED
                   progress:
                     type: number
                     format: float
@@ -4853,16 +5095,20 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/completion:
     post:
       tags:
-        - Projects
-        - Jobs
-        - Webhooks
+      - Projects
+      - Jobs
+      - Webhooks
       summary: Webhook to notify job completion
-      description: |
-        Webhook endpoint called by Spark jobs to notify completion or failure
+      description: 'Webhook endpoint called by Spark jobs to notify completion or failure
+
         of a job execution.
-        
+
+
         This endpoint is called automatically by the Spark system when a job terminates
+
         (with status RUNNING, COMPLETED or FAILED).
+
+        '
       operationId: jobCompletionWebhook
       parameters:
       - name: projectId
@@ -4871,14 +5117,14 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       requestBody:
         required: true
         description: Job completion webhook payload
@@ -4914,14 +5160,16 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/start:
     post:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Start a task
-      description: |
-        Starts execution of a specific task.
-        
+      description: 'Starts execution of a specific task.
+
+
         The task must be of type SPARK, AUTONOMOUS_AGENT, or BACKGROUND_TASK.
+
+        '
       operationId: startTask
       parameters:
       - name: projectId
@@ -4930,21 +5178,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Unique ID of the task to start
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Task started successfully
@@ -4979,15 +5227,18 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/stop:
     post:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
+      - Projects
+      - Jobs
+      - Tasks
       summary: Stop a task
-      description: |
-        Stops execution of a task in progress.
-        
+      description: 'Stops execution of a task in progress.
+
+
         **Warning:** This operation may interrupt a running task, potentially causing
+
         data loss or inconsistency.
+
+        '
       operationId: stopTask
       parameters:
       - name: projectId
@@ -4996,21 +5247,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "210"
+          example: '210'
       - name: taskId
         in: path
         required: true
         description: Task ID to stop
         schema:
           type: string
-          example: "1"
+          example: '1'
       responses:
         '200':
           description: Task stopped successfully
@@ -5045,22 +5296,31 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/tasks/{taskId}/metrics:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Tasks
-        - Metrics
+      - Projects
+      - Jobs
+      - Tasks
+      - Metrics
       summary: Get metrics of a task
-      description: |
-        Returns detailed metrics for a specific task, including duration, processed records,
+      description: 'Returns detailed metrics for a specific task, including duration, processed records,
+
         memory usage, CPU usage, and other performance metrics.
-        
+
+
         Metrics are extracted from the task `executionLog` and include:
+
         - Execution duration
+
         - Processed and output records
+
         - Memory usage (driver and executors)
+
         - CPU usage
+
         - Error and warning counts
+
         - Output file size
+
+        '
       operationId: getTaskMetrics
       parameters:
       - name: projectId
@@ -5069,21 +5329,21 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "220"
+          example: '220'
       - name: taskId
         in: path
         required: true
         description: Task ID
         schema:
           type: string
-          example: "229"
+          example: '229'
       responses:
         '200':
           description: Task metrics
@@ -5168,22 +5428,31 @@ paths:
   /webrobot/api/projects/id/{projectId}/jobs/{jobId}/metrics:
     get:
       tags:
-        - Projects
-        - Jobs
-        - Metrics
+      - Projects
+      - Jobs
+      - Metrics
       summary: Get metrics aggregate of a job
-      description: |
-        Returns the aggregated metrics of all executions of a job, including sums, averages
+      description: 'Returns the aggregated metrics of all executions of a job, including sums, averages
+
         and counts by status.
-        
+
+
         Metrics are computed at the database level for optimal performance and include:
+
         - Total number of executions
+
         - Total and average duration
+
         - Total processed and output records
+
         - Total memory usage
+
         - Execution counts by status (COMPLETED, FAILED, RUNNING)
-        
+
+
         Metrics can be filtered by time range using `startTime` and `endTime`.
+
+        '
       operationId: getJobMetrics
       parameters:
       - name: projectId
@@ -5192,34 +5461,38 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: jobId
         in: path
         required: true
         description: Job ID
         schema:
           type: string
-          example: "220"
+          example: '220'
       - name: startTime
         in: query
         required: false
-        description: |
-          Start timestamp for filtering executions (ISO 8601 format).
+        description: 'Start timestamp for filtering executions (ISO 8601 format).
+
           Example: "2025-12-11T00:00:00Z"
+
+          '
         schema:
           type: string
           format: date-time
-          example: "2025-12-11T00:00:00Z"
+          example: '2025-12-11T00:00:00Z'
       - name: endTime
         in: query
         required: false
-        description: |
-          End timestamp for filtering executions (ISO 8601 format).
+        description: 'End timestamp for filtering executions (ISO 8601 format).
+
           Example: "2025-12-11T23:59:59Z"
+
+          '
         schema:
           type: string
           format: date-time
-          example: "2025-12-11T23:59:59Z"
+          example: '2025-12-11T23:59:59Z'
       responses:
         '200':
           description: Aggregated job metrics
@@ -5320,22 +5593,32 @@ paths:
   /webrobot/api/projects/id/{projectId}/metrics:
     get:
       tags:
-        - Projects
-        - Metrics
+      - Projects
+      - Metrics
       summary: Get metrics aggregate of a project
-      description: |
-        Returns the aggregated metrics of all executions of all jobs of a project,
+      description: 'Returns the aggregated metrics of all executions of all jobs of a project,
+
         including sums, averages, and counts by status.
-        
+
+
         Metrics are computed at the database level for optimal performance and include:
+
         - Total number of executions for the project
+
         - Total and average duration
+
         - Total processed and output records
+
         - Total memory usage
+
         - Execution counts by status (COMPLETED, FAILED, RUNNING)
+
         - Per-job breakdown with metrics for each job
-        
+
+
         Metrics can be filtered by time range using `startTime` and `endTime`.
+
+        '
       operationId: getProjectMetrics
       parameters:
       - name: projectId
@@ -5344,27 +5627,31 @@ paths:
         description: Project ID
         schema:
           type: string
-          example: "98"
+          example: '98'
       - name: startTime
         in: query
         required: false
-        description: |
-          Start timestamp for filtering executions (ISO 8601 format).
+        description: 'Start timestamp for filtering executions (ISO 8601 format).
+
           Example: "2025-12-11T00:00:00Z"
+
+          '
         schema:
           type: string
           format: date-time
-          example: "2025-12-11T00:00:00Z"
+          example: '2025-12-11T00:00:00Z'
       - name: endTime
         in: query
         required: false
-        description: |
-          End timestamp for filtering executions (ISO 8601 format).
+        description: 'End timestamp for filtering executions (ISO 8601 format).
+
           Example: "2025-12-11T23:59:59Z"
+
+          '
         schema:
           type: string
           format: date-time
-          example: "2025-12-11T23:59:59Z"
+          example: '2025-12-11T23:59:59Z'
       responses:
         '200':
           description: Aggregated project metrics
@@ -5487,33 +5774,46 @@ paths:
   /webrobot/api/projects/admin/tasks/mark-zombies:
     post:
       tags:
-        - Projects
-        - Admin
-        - Tasks
+      - Projects
+      - Admin
+      - Tasks
       summary: Mark zombie tasks as FAILED
-      description: |
-        Detects and marks as FAILED tasks that are RUNNING for longer than the specified timeout
+      description: 'Detects and marks as FAILED tasks that are RUNNING for longer than the specified timeout
+
         (\"zombie\" tasks).
-        
+
+
         A task is considered a \"zombie\" if:
+
         - It has status RUNNING
+
         - It has been running longer than the specified timeout (default: 24 hours)
+
         - The `startedAt` timestamp (or `scheduledTime` as a fallback) exceeds the timeout
-        
+
+
         When a task is marked as a zombie:
+
         - Status is updated to FAILED
+
         - `executionLog` is updated with FAILED status, `completedAt`, and an error message
+
         - Total execution duration is computed
-        
+
+
         **Note:** This endpoint requires admin privileges (scope `admin`).
+
+        '
       operationId: markZombieTasks
       parameters:
       - name: timeoutHours
         in: query
         required: false
-        description: |
-          Timeout in hours to consider a task a \"zombie\" (default: 24).
+        description: 'Timeout in hours to consider a task a \"zombie\" (default: 24).
+
           RUNNING tasks exceeding this value will be marked as FAILED.
+
+          '
         schema:
           type: integer
           format: int64
@@ -5544,7 +5844,7 @@ paths:
                   message:
                     type: string
                     description: Confirmation message
-                    example: "Marked 5 zombie task(s) as FAILED"
+                    example: Marked 5 zombie task(s) as FAILED
         '401':
           description: Unauthorized - scope `admin` required
           content:
@@ -5560,10 +5860,11 @@ paths:
   /webrobot/api/projects/test:
     get:
       tags:
-        - Projects
+      - Projects
       summary: Test endpoint for projects
-      description: |
-        Test endpoint to verify API connectivity and authentication for projects.
+      description: 'Test endpoint to verify API connectivity and authentication for projects.
+
+        '
       operationId: test_1
       responses:
         '200':
@@ -5575,7 +5876,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "OK"
+                    example: OK
         '401':
           description: Unauthorized
           content:
@@ -5736,10 +6037,11 @@ paths:
   /webrobot/api/python-extensions/python-extensions/{extensionId}:
     put:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Update a Python extension
-      description: |
-        Updates the data of an existing Python extension, including configurations and metadata.
+      description: 'Updates the data of an existing Python extension, including configurations and metadata.
+
+        '
       operationId: updatePythonExtension
       parameters:
       - name: extensionId
@@ -5748,7 +6050,7 @@ paths:
         description: Extension ID
         schema:
           type: string
-          example: "my-extension"
+          example: my-extension
       requestBody:
         required: true
         description: Updated extension data
@@ -5791,13 +6093,16 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Delete a Python extension
-      description: |
-        Deletes a Python extension from the system.
-        
+      description: 'Deletes a Python extension from the system.
+
+
         **Warning:** This operation is irreversible. Agents that use this extension
+
         may not work correctly.
+
+        '
       operationId: deletePythonExtension
       parameters:
       - name: extensionId
@@ -5806,7 +6111,7 @@ paths:
         description: Unique ID of the extension to delete
         schema:
           type: string
-          example: "my-extension"
+          example: my-extension
       responses:
         '200':
           description: Extension deleted successfully
@@ -5835,12 +6140,14 @@ paths:
   /webrobot/api/python-extensions/python-extensions/{extensionId}/generate-pyspark:
     post:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Generate PySpark code from an extension
-      description: |
-        Generates PySpark code from a Python extension registered in the system.
-        
+      description: 'Generates PySpark code from a Python extension registered in the system.
+
+
         Useful for converting Python extensions into PySpark code usable in Spark jobs.
+
+        '
       operationId: generatePysparkCode
       parameters:
       - name: extensionId
@@ -5849,7 +6156,7 @@ paths:
         description: Extension ID
         schema:
           type: string
-          example: "my-extension"
+          example: my-extension
       responses:
         '200':
           description: PySpark code generated successfully
@@ -5882,11 +6189,12 @@ paths:
   /webrobot/api/python-extensions/agents/{agentId}/extensions:
     get:
       tags:
-        - Python Extensions
-        - Agents
+      - Python Extensions
+      - Agents
       summary: Get extensions of an agent
-      description: |
-        Returns the list of all Python extensions associated with a specific agent.
+      description: 'Returns the list of all Python extensions associated with a specific agent.
+
+        '
       operationId: getAgentExtensions
       parameters:
       - name: agentId
@@ -5895,7 +6203,7 @@ paths:
         description: Agent ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: List of the agent's extensions
@@ -5926,11 +6234,12 @@ paths:
   /webrobot/api/python-extensions/agents/{agentId}/python-extensions:
     get:
       tags:
-        - Python Extensions
-        - Agents
+      - Python Extensions
+      - Agents
       summary: Get Python extensions of an agent
-      description: |
-        Returns the list of all Python extensions associated with a specific agent.
+      description: 'Returns the list of all Python extensions associated with a specific agent.
+
+        '
       operationId: getAgentPythonExtensions
       parameters:
       - name: agentId
@@ -5939,7 +6248,7 @@ paths:
         description: Agent ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       responses:
         '200':
           description: List of the agent's Python extensions
@@ -5969,11 +6278,12 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       tags:
-        - Python Extensions
-        - Agents
+      - Python Extensions
+      - Agents
       summary: Update Python extensions of an agent
-      description: |
-        Updates the list of Python extensions associated with a specific agent.
+      description: 'Updates the list of Python extensions associated with a specific agent.
+
+        '
       operationId: updateAgentPythonExtensions
       parameters:
       - name: agentId
@@ -5982,7 +6292,7 @@ paths:
         description: Agent ID
         schema:
           type: string
-          example: "123"
+          example: '123'
       requestBody:
         required: true
         description: List of Python extensions to associate with the agent
@@ -6026,11 +6336,13 @@ paths:
   /webrobot/api/python-extensions/info:
     get:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Get information about the Python Extensions plugin
-      description: |
-        Returns general information about the Python Extensions plugin, including versions and
+      description: 'Returns general information about the Python Extensions plugin, including versions and
+
         configurations.
+
+        '
       operationId: getPluginInfo_1
       responses:
         '200':
@@ -6054,10 +6366,11 @@ paths:
   /webrobot/api/python-extensions/supported-types:
     get:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Get supported extension types
-      description: |
-        Returns the list of all Python extension types supported by the system.
+      description: 'Returns the list of all Python extension types supported by the system.
+
+        '
       operationId: getSupportedExtensionTypes
       responses:
         '200':
@@ -6083,12 +6396,14 @@ paths:
   /webrobot/api/python-extensions/process-yaml:
     post:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Process Python extensions from YAML
-      description: |
-        Processes and registers Python extensions from a YAML definition.
-        
+      description: 'Processes and registers Python extensions from a YAML definition.
+
+
         Useful for importing extensions from configuration files.
+
+        '
       operationId: processYamlExtensions
       requestBody:
         required: true
@@ -6127,12 +6442,14 @@ paths:
   /webrobot/api/python-extensions/python-extensions/register:
     post:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Register a new Python extension
-      description: |
-        Registers a new Python extension in the system.
-        
+      description: 'Registers a new Python extension in the system.
+
+
         The extension can be used by agents to extend Spark jobs functionality.
+
+        '
       operationId: registerPythonExtension
       requestBody:
         required: true
@@ -6171,12 +6488,14 @@ paths:
   /webrobot/api/python-extensions/validate:
     post:
       tags:
-        - Python Extensions
+      - Python Extensions
       summary: Validate a Python extension
-      description: |
-        Validates the structure and syntax of a Python extension without registering it in the system.
-        
+      description: 'Validates the structure and syntax of a Python extension without registering it in the system.
+
+
         Useful for verifying the correctness of an extension before registration.
+
+        '
       operationId: validatePythonExtension
       requestBody:
         required: true
@@ -6227,10 +6546,12 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
-      description: |
-        API key used for authentication. Format: `{organization}:{key}`
-        
+      description: 'API key used for authentication. Format: `{organization}:{key}`
+
+
         Example: `super-admin-dev:W3bR0b0t-Sup3r-4dm1n-D3v-K3y-2024-S3cur3!`
+
+        '
   schemas:
     Error:
       type: object
@@ -6239,7 +6560,7 @@ components:
         error:
           type: string
           description: Descriptive error message
-          example: "Job not found or invalid configuration"
+          example: Job not found or invalid configuration
         code:
           type: integer
           description: HTTP status code
@@ -6248,33 +6569,44 @@ components:
           type: string
           format: date-time
           description: Error timestamp
-          example: "2025-12-10T23:15:30Z"
+          example: '2025-12-10T23:15:30Z'
     CronJobRequest:
       type: object
       description: Request payload for creating or updating a Kubernetes CronJob
       properties:
         name:
           type: string
+          description: CronJob name
         namespace:
           type: string
+          description: Kubernetes namespace
         schedule:
           type: string
+          description: Cron schedule expression
         webhookUrl:
           type: string
+          description: Webhook URL to call on job completion
         jobId:
           type: string
+          description: Job ID to execute
         projectId:
           type: string
+          description: Project ID
         clusterProvider:
           type: string
+          description: Cluster provider name
         clusterConfigId:
           type: string
+          description: Cluster configuration ID
         secretName:
           type: string
+          description: Kubernetes secret name
         secretKey:
           type: string
+          description: Secret key name
         image:
           type: string
+          description: Docker image to use
     BodyPart:
       type: object
       description: Represents a part of a multipart request body
@@ -6283,12 +6615,14 @@ components:
           $ref: '#/components/schemas/ContentDisposition'
         entity:
           type: object
+          description: Entity
         headers:
           type: object
           additionalProperties:
             type: array
             items:
               type: string
+          description: Headers
         mediaType:
           type: object
           properties:
@@ -6304,41 +6638,51 @@ components:
               type: boolean
             wildcardSubtype:
               type: boolean
+          description: Mediatype
         messageBodyWorkers:
           $ref: '#/components/schemas/MessageBodyWorkers'
         parent:
           $ref: '#/components/schemas/MultiPart'
         providers:
           type: object
+          description: Providers
         parameterizedHeaders:
           type: object
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/ParameterizedHeader'
+          description: Parameterizedheaders
     ContentDisposition:
       type: object
       properties:
         type:
           type: string
+          description: Type
         parameters:
           type: object
           additionalProperties:
             type: string
+          description: Parameters
         fileName:
           type: string
+          description: Filename
         creationDate:
           type: string
           format: date-time
+          description: Creationdate
         modificationDate:
           type: string
           format: date-time
+          description: Modificationdate
         readDate:
           type: string
           format: date-time
+          description: Readdate
         size:
           type: integer
           format: int64
+          description: Size
     FormDataBodyPart:
       type: object
       properties:
@@ -6346,12 +6690,14 @@ components:
           $ref: '#/components/schemas/ContentDisposition'
         entity:
           type: object
+          description: Entity
         headers:
           type: object
           additionalProperties:
             type: array
             items:
               type: string
+          description: Headers
         mediaType:
           type: object
           properties:
@@ -6367,52 +6713,66 @@ components:
               type: boolean
             wildcardSubtype:
               type: boolean
+          description: Mediatype
         messageBodyWorkers:
           $ref: '#/components/schemas/MessageBodyWorkers'
         parent:
           $ref: '#/components/schemas/MultiPart'
         providers:
           type: object
+          description: Providers
         name:
           type: string
+          description: Name
         value:
           type: string
+          description: Value
         formDataContentDisposition:
           $ref: '#/components/schemas/FormDataContentDisposition'
         simple:
           type: boolean
+          description: Simple
         parameterizedHeaders:
           type: object
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/ParameterizedHeader'
+          description: Parameterizedheaders
     FormDataContentDisposition:
       type: object
       description: Content disposition information for form data
       properties:
         type:
           type: string
+          description: Type
         parameters:
           type: object
           additionalProperties:
             type: string
+          description: Parameters
         fileName:
           type: string
+          description: Filename
         creationDate:
           type: string
           format: date-time
+          description: Creationdate
         modificationDate:
           type: string
           format: date-time
+          description: Modificationdate
         readDate:
           type: string
           format: date-time
+          description: Readdate
         size:
           type: integer
           format: int64
+          description: Size
         name:
           type: string
+          description: Name
     FormDataMultiPart:
       type: object
       description: Multipart form data container
@@ -6421,12 +6781,14 @@ components:
           $ref: '#/components/schemas/ContentDisposition'
         entity:
           type: object
+          description: Entity
         headers:
           type: object
           additionalProperties:
             type: array
             items:
               type: string
+          description: Headers
         mediaType:
           type: object
           properties:
@@ -6442,28 +6804,33 @@ components:
               type: boolean
             wildcardSubtype:
               type: boolean
+          description: Mediatype
         messageBodyWorkers:
           $ref: '#/components/schemas/MessageBodyWorkers'
         parent:
           $ref: '#/components/schemas/MultiPart'
         providers:
           type: object
+          description: Providers
         bodyParts:
           type: array
           items:
             $ref: '#/components/schemas/BodyPart'
+          description: Bodyparts
         fields:
           type: object
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/FormDataBodyPart'
+          description: Fields
         parameterizedHeaders:
           type: object
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/ParameterizedHeader'
+          description: Parameterizedheaders
     MessageBodyWorkers:
       type: object
       description: Message body workers for processing request/response bodies
@@ -6475,12 +6842,14 @@ components:
           $ref: '#/components/schemas/ContentDisposition'
         entity:
           type: object
+          description: Entity
         headers:
           type: object
           additionalProperties:
             type: array
             items:
               type: string
+          description: Headers
         mediaType:
           type: object
           properties:
@@ -6496,90 +6865,114 @@ components:
               type: boolean
             wildcardSubtype:
               type: boolean
+          description: Mediatype
         messageBodyWorkers:
           $ref: '#/components/schemas/MessageBodyWorkers'
         parent:
           $ref: '#/components/schemas/MultiPart'
         providers:
           type: object
+          description: Providers
         bodyParts:
           type: array
           items:
             $ref: '#/components/schemas/BodyPart'
+          description: Bodyparts
         parameterizedHeaders:
           type: object
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/ParameterizedHeader'
+          description: Parameterizedheaders
     ParameterizedHeader:
       type: object
       description: HTTP header with parameters
       properties:
         value:
           type: string
+          description: Value
         parameters:
           type: object
           additionalProperties:
             type: string
+          description: Parameters
     TrainingRequestBean:
       type: object
       description: Request payload for AI/ML training job
       properties:
         model:
           type: string
+          description: Model
         trainingFile:
           type: string
+          description: Trainingfile
         validationFile:
           type: string
+          description: Validationfile
         datasetId:
           type: string
+          description: Datasetid
         hyperparameters:
           type: object
           additionalProperties:
             type: object
+          description: Hyperparameters
     ModelPublishRequest:
       type: object
       description: Request payload for publishing a trained model
       properties:
         localModelPath:
           type: string
+          description: Localmodelpath
         modelName:
           type: string
+          description: Modelname
         description:
           type: string
+          description: Description
     DatasetUploadRequest:
       type: object
       description: Request payload for uploading a dataset
       properties:
         localPath:
           type: string
+          description: Localpath
         format:
           type: string
+          description: Format
         description:
           type: string
+          description: Description
     AgentDto:
       type: object
       description: PySpark agent data transfer object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         enabled:
           type: boolean
+          description: Enabled
         apiEndpoint:
           type: string
+          description: Apiendpoint
         executionMode:
           type: string
           enum:
           - MANUAL
           - SCHEDULED
           - EVENT_DRIVEN
+          description: Executionmode
         categoryId:
           type: string
+          description: Categoryid
         type:
           type: string
           enum:
@@ -6589,66 +6982,89 @@ components:
           - DATA_ANALYTICS_AGENT
           - REPORTING_AGENT
           - ML_AGENT
+          description: Type
         role:
           type: string
+          description: Role
         backstory:
           type: string
+          description: Backstory
         defaultPrompt:
           type: string
+          description: Defaultprompt
         prompts:
           type: string
+          description: Prompts
         config:
           type: string
+          description: Config
         code:
           type: string
+          description: Code
         codeTypeId:
           type: string
+          description: Codetypeid
         pysparkCode:
           type: string
+          description: Pysparkcode
         pythonExtensions:
           type: string
+          description: Pythonextensions
         generatedAt:
           type: string
           format: date-time
+          description: Generatedat
         toolIds:
           type: array
           items:
             type: string
+          description: Toolids
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
     JobCategoryDto:
       type: object
       description: Job category data transfer object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         icon:
           type: string
+          description: Icon
         visibility:
           type: string
           enum:
           - PUBLIC
           - PRIVATE
+          description: Visibility
         enabled:
           type: boolean
+          description: Enabled
         agentIds:
           type: array
           items:
             type: string
+          description: Agentids
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
     CloudCredential:
       type: object
       description: Cloud service credential configuration
@@ -6656,10 +7072,13 @@ components:
         id:
           type: integer
           format: int32
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         provider:
           type: string
           enum:
@@ -6694,200 +7113,286 @@ components:
           - CBOND
           - GOOGLE_SEARCH
           - BING_SEARCH
+          description: Provider
         apiKey:
           type: string
+          description: Apikey
         apiSecret:
           type: string
+          description: Apisecret
         organizationId:
           type: string
+          description: Organizationid
         projectId:
           type: string
+          description: Projectid
         region:
           type: string
+          description: Region
         endpoint:
           type: string
+          description: Endpoint
         accessKeyId:
           type: string
+          description: Accesskeyid
         secretAccessKey:
           type: string
+          description: Secretaccesskey
         sessionToken:
           type: string
+          description: Sessiontoken
         accountId:
           type: string
+          description: Accountid
         subscriptionId:
           type: string
+          description: Subscriptionid
         resourceGroup:
           type: string
+          description: Resourcegroup
         workspaceName:
           type: string
+          description: Workspacename
         huggingFaceToken:
           type: string
+          description: Huggingfacetoken
         cohereApiKey:
           type: string
+          description: Cohereapikey
         azureAiStudioEndpoint:
           type: string
+          description: Azureaistudioendpoint
         mosaicmlApiKey:
           type: string
+          description: Mosaicmlapikey
         replicateApiToken:
           type: string
+          description: Replicateapitoken
         twitterBearerToken:
           type: string
+          description: Twitterbearertoken
         twitterApiKey:
           type: string
+          description: Twitterapikey
         twitterApiSecret:
           type: string
+          description: Twitterapisecret
         redditClientId:
           type: string
+          description: Redditclientid
         redditClientSecret:
           type: string
+          description: Redditclientsecret
         redditUserAgent:
           type: string
+          description: Reddituseragent
         facebookAccessToken:
           type: string
+          description: Facebookaccesstoken
         facebookAppId:
           type: string
+          description: Facebookappid
         facebookAppSecret:
           type: string
+          description: Facebookappsecret
         instagramAccessToken:
           type: string
+          description: Instagramaccesstoken
         linkedinAccessToken:
           type: string
+          description: Linkedinaccesstoken
         linkedinClientId:
           type: string
+          description: Linkedinclientid
         linkedinClientSecret:
           type: string
+          description: Linkedinclientsecret
         tiktokClientKey:
           type: string
+          description: Tiktokclientkey
         tiktokClientSecret:
           type: string
+          description: Tiktokclientsecret
         youtubeApiKey:
           type: string
+          description: Youtubeapikey
         databricksWorkspaceUrl:
           type: string
+          description: Databricksworkspaceurl
         databricksAccessToken:
           type: string
+          description: Databricksaccesstoken
         databricksClusterId:
           type: string
+          description: Databricksclusterid
         oauthAccessToken:
           type: string
+          description: Oauthaccesstoken
         oauthRefreshToken:
           type: string
+          description: Oauthrefreshtoken
         oauthTokenExpiresAt:
           type: string
           format: date-time
+          description: Oauthtokenexpiresat
         oauthTokenType:
           type: string
+          description: Oauthtokentype
         alphavantageApiKey:
           type: string
+          description: Alphavantageapikey
         polygonApiKey:
           type: string
+          description: Polygonapikey
         twelvedataApiKey:
           type: string
+          description: Twelvedataapikey
         marketstackAccessKey:
           type: string
+          description: Marketstackaccesskey
         fmpApiKey:
           type: string
+          description: Fmpapikey
         iexcloudToken:
           type: string
+          description: Iexcloudtoken
         cbondApiKey:
           type: string
+          description: Cbondapikey
         cbondClientId:
           type: string
+          description: Cbondclientid
         cbondClientSecret:
           type: string
+          description: Cbondclientsecret
         googleSearchApiKey:
           type: string
+          description: Googlesearchapikey
         googleSearchEngineId:
           type: string
+          description: Googlesearchengineid
         bingSearchApiKey:
           type: string
+          description: Bingsearchapikey
         enabled:
           type: boolean
+          description: Enabled
     TimePeriod:
       type: object
       description: Time period with start and end times
       properties:
         startTimePeriod:
           type: string
+          description: Starttimeperiod
         endTimePeriod:
           type: string
+          description: Endtimeperiod
     DatasetUploadApiDto:
       type: object
       description: Dataset upload API data transfer object
       properties:
         name:
           type: string
+          description: Name
         version:
           type: string
+          description: Version
         comments:
           type: string
+          description: Comments
         attachmentName:
           type: string
+          description: Attachmentname
         headerline:
           type: string
+          description: Headerline
     DatasetDto:
       type: object
       description: Dataset data transfer object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         userId:
           type: string
+          description: Userid
         sourceUrl:
           type: string
+          description: Sourceurl
         sourceType:
           type: string
+          description: Sourcetype
         filePath:
           type: string
+          description: Filepath
         fileFormat:
           type: string
+          description: Fileformat
         fileSize:
           type: integer
           format: int64
+          description: Filesize
         schema:
           type: string
+          description: Schema
         metadata:
           type: string
+          description: Metadata
         enabled:
           type: boolean
+          description: Enabled
         fieldIds:
           type: array
           items:
             type: string
+          description: Fieldids
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
         storagePath:
           type: string
+          description: Storagepath
         format:
           type: string
+          description: Format
         datasetType:
           type: string
+          description: Datasettype
         trinoSchema:
           type: string
+          description: Trinoschema
     PrestoQueryRequest:
       type: object
       description: Request payload for executing a Presto SQL query
       properties:
         sql:
           type: string
+          description: Sql
         catalog:
           type: string
+          description: Catalog
         schema:
           type: string
+          description: Schema
         limit:
           type: integer
           format: int32
+          description: Limit
         offset:
           type: integer
           format: int32
+          description: Offset
     EtlLibraryVersionApiDto:
       type: object
       description: ETL library version API data transfer object
@@ -6895,27 +7400,37 @@ components:
         id:
           type: integer
           format: int64
+          description: Id
         buildType:
           type: string
+          description: Buildtype
         buildNumber:
           type: integer
           format: int32
+          description: Buildnumber
         version:
           type: string
+          description: Version
         jarPath:
           type: string
+          description: Jarpath
         jarPathObfuscated:
           type: string
+          description: Jarpathobfuscated
         jarSizeBytes:
           type: integer
           format: int64
+          description: Jarsizebytes
         uploadedAt:
           type: string
           format: date-time
+          description: Uploadedat
         active:
           type: boolean
+          description: Active
         description:
           type: string
+          description: Description
     PluginInstallation:
       type: object
       description: Plugin installation information
@@ -6923,65 +7438,91 @@ components:
         id:
           type: integer
           format: int64
+          description: Id
         pluginId:
           type: string
+          description: Pluginid
         pluginType:
           type: string
+          description: Plugintype
         buildType:
           type: string
+          description: Buildtype
         buildNumber:
           type: integer
           format: int32
+          description: Buildnumber
         version:
           type: string
+          description: Version
         jarPath:
           type: string
+          description: Jarpath
         manifestPath:
           type: string
+          description: Manifestpath
         enabled:
           type: boolean
+          description: Enabled
         organizationId:
           type: string
+          description: Organizationid
         organizationIdsJson:
           type: string
+          description: Organizationidsjson
         mainClass:
           type: string
+          description: Mainclass
         description:
           type: string
+          description: Description
         installedAt:
           type: string
           format: date-time
+          description: Installedat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
         enabledAt:
           type: string
           format: date-time
+          description: Enabledat
         enabledBy:
           type: string
+          description: Enabledby
         installedBy:
           type: string
+          description: Installedby
     JobDto:
       type: object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         projectId:
           type: string
+          description: Projectid
         agentId:
           type: string
+          description: Agentid
         inputDatasetId:
           type: string
+          description: Inputdatasetid
         cloudCredentialId:
           type: string
+          description: Cloudcredentialid
         cloudCredentialIds:
           type: array
           items:
             type: string
+          description: Cloudcredentialids
         executionStatus:
           type: string
           enum:
@@ -6989,67 +7530,89 @@ components:
           - RUNNING
           - COMPLETED
           - FAILED
+          description: Executionstatus
         scheduledTime:
           type: string
           format: date-time
+          description: Scheduledtime
         enabled:
           type: boolean
+          description: Enabled
         taskIds:
           type: array
           items:
             type: string
+          description: Taskids
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
     JobProjectDto:
       type: object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         cronSchedule:
           type: string
+          description: Cronschedule
         enabled:
           type: boolean
+          description: Enabled
         jobIds:
           type: array
           items:
             type: string
+          description: Jobids
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
     TaskDto:
       type: object
       properties:
         id:
           type: string
+          description: Id
         name:
           type: string
+          description: Name
         description:
           type: string
+          description: Description
         jobId:
           type: string
+          description: Jobid
         botId:
           type: string
+          description: Botid
         outputDatasetId:
           type: string
+          description: Outputdatasetid
         taskType:
           type: string
           enum:
           - SPARK
           - AUTONOMOUS_AGENT
           - BACKGROUND_TASK
+          description: Tasktype
         executionReferenceId:
           type: string
+          description: Executionreferenceid
         executionStatus:
           type: string
           enum:
@@ -7057,101 +7620,136 @@ components:
           - RUNNING
           - COMPLETED
           - FAILED
+          description: Executionstatus
         executionLog:
           type: string
+          description: Executionlog
         scheduledTime:
           type: string
           format: date-time
+          description: Scheduledtime
         executionMode:
           type: string
           enum:
           - MANUAL
           - SCHEDULED
           - EVENT_DRIVEN
+          description: Executionmode
         enabled:
           type: boolean
+          description: Enabled
         apiKey:
           type: string
+          description: Apikey
         createdAt:
           type: string
           format: date-time
+          description: Createdat
         updatedAt:
           type: string
           format: date-time
+          description: Updatedat
     JobCompletionWebhookRequest:
       type: object
       properties:
         jobId:
           type: string
+          description: Jobid
         executionId:
           type: string
+          description: Executionid
         sparkApplicationName:
           type: string
+          description: Sparkapplicationname
         status:
           type: string
+          description: Status
         outputDatasetPath:
           type: string
+          description: Outputdatasetpath
         outputDatasetFormat:
           type: string
+          description: Outputdatasetformat
         outputDatasetSchema:
           type: string
+          description: Outputdatasetschema
         durationSeconds:
           type: integer
           format: int64
+          description: Durationseconds
         recordsProcessed:
           type: integer
           format: int64
+          description: Recordsprocessed
         recordsOutput:
           type: integer
           format: int64
+          description: Recordsoutput
         outputFileSizeBytes:
           type: integer
           format: int64
+          description: Outputfilesizebytes
         partitionsCount:
           type: integer
           format: int32
+          description: Partitionscount
         driverMemoryUsedBytes:
           type: integer
           format: int64
+          description: Drivermemoryusedbytes
         executorMemoryUsedBytes:
           type: integer
           format: int64
+          description: Executormemoryusedbytes
         executorCount:
           type: integer
           format: int32
+          description: Executorcount
         totalCpuTimeSeconds:
           type: integer
           format: int64
+          description: Totalcputimeseconds
         errorCount:
           type: integer
           format: int32
+          description: Errorcount
         warningCount:
           type: integer
           format: int32
+          description: Warningcount
         errorMessage:
           type: string
+          description: Errormessage
         additionalMetrics:
           type: object
           additionalProperties:
             type: object
           writeOnly: true
+          description: Additionalmetrics
         startedAt:
           type: string
+          description: Startedat
         completedAt:
           type: string
+          description: Completedat
         sparkUiUrl:
           type: string
+          description: Sparkuiurl
         metrics:
           type: object
           additionalProperties:
             type: object
           writeOnly: true
+          description: Metrics
     ProjectScheduleRequest:
       type: object
       properties:
         cronSchedule:
           type: string
+          description: Cronschedule
         enabled:
           type: boolean
+          description: Enabled
         timezone:
           type: string
+          description: Timezone
