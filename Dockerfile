@@ -2,7 +2,7 @@
 # Build multi-stage per generare e servire documentazione HTML statica
 
 # Stage 1: Build
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Imposta working directory
 WORKDIR /app
@@ -17,7 +17,12 @@ RUN npm ci
 COPY . .
 
 # Build documentazione con redocly
-RUN npm run build
+# Commenta temporaneamente sezione docs per build-docs (non supporta docs mode)
+RUN sed -i.bak 's/^docs:/#docs:/' .redocly.yaml && \
+    sed -i.bak 's/^  root:/#  root:/' .redocly.yaml && \
+    sed -i.bak 's/^  sidebars:/#  sidebars:/' .redocly.yaml && \
+    npx redocly build-docs openapi.yaml -o redoc-static.html && \
+    mv .redocly.yaml.bak .redocly.yaml
 
 # Verifica che il file sia stato generato
 RUN ls -la redoc-static.html || (echo "❌ File redoc-static.html non trovato!" && exit 1)
