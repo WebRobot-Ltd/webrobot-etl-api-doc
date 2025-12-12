@@ -42,10 +42,12 @@ RUN mkdir -p /var/cache/nginx/client_temp \
 
 # Configurazione nginx come reverse proxy
 RUN echo 'pid /var/run/nginx/nginx.pid; \
+error_log /dev/stderr warn; \
 events { \
     worker_connections 1024; \
 } \
 http { \
+    access_log /dev/stdout; \
     client_body_temp_path /tmp/client_temp; \
     proxy_temp_path /tmp/proxy_temp; \
     fastcgi_temp_path /tmp/fastcgi_temp; \
