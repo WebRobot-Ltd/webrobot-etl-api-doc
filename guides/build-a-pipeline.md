@@ -48,31 +48,34 @@ Any extra top-level keys are ignored by the Scala parser (for example metadata, 
 
 ## Step 1: Create a Pipeline via API
 
-First, create a pipeline configuration using the API:
+There is **no dedicated** `/webrobot/api/pipelines` endpoint in the current Jersey API.
+Instead, YAML pipelines are stored on the **Agent** (field `pipelineYaml`) and executed by creating a **Job** that points to that Agent and calling `.../jobs/{jobId}/execute`.
+
+First, create (or update) an Agent with `pipelineYaml`:
 
 ```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
+curl -X POST https://api.webrobot.eu/api/webrobot/api/agents \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "projectId": "your-project-id",
-    "name": "my-pipeline",
-    "description": "E-commerce product scraper",
-    "yamlContent": "fetch:\n  url: \"https://shop.example.com\"\npipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }",
-    "enabled": true
+    "name": "my-agent",
+    "categoryId": "1",
+    "description": "E-commerce product scraper agent",
+    "pipelineYaml": "fetch:\n  url: \"https://shop.example.com\"\npipeline:\n  - stage: join\n    args: [\"a.product-link\", \"LeftOuter\"]\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }",
+    "enabled": true,
+    "codeTypeId": "python"
   }'
 ```
 
 **Response:**
 ```json
 {
-  "id": 1,
-  "projectId": "your-project-id",
-  "name": "my-pipeline",
-  "description": "E-commerce product scraper",
-  "yamlContent": "...",
-  "enabled": true,
-  "createdAt": "2025-12-12T10:00:00Z"
+  "id": "123",
+  "name": "my-agent",
+  "categoryId": "1",
+  "pipelineYaml": "...",
+  "pysparkCode": "...",
+  "enabled": true
 }
 ```
 
@@ -82,8 +85,10 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
 
 | Stage | Description | Arguments |
 |-------|-------------|-----------|
-| `join` | Follow links with HTTP (wget) | link selector (String or `$col`), optional joinType (`Inner`/`LeftOuter`) |
-| `explore` | Crawl links breadth-first with HTTP (wget) | link selector (String or `$col`), optional depth (Int, default 1) |
+| `join` | Follow links using HTTP trace (`Wget('A.href)`) | link selector (String or `$col`), optional joinType (`Inner`/`LeftOuter`) |
+| `explore` | Crawl links breadth-first using HTTP trace (`Wget('A.href)`) | link selector (String or `$col`), optional depth (Int, default 1) |
+| `wgetJoin` | Explicit HTTP join (`FetchedDataset.wgetJoin`) | link selector (String or `$col`), optional joinType |
+| `wgetExplore` | Explicit HTTP explore (`FetchedDataset.wgetExplore`) | link selector (String or `$col`), optional depth |
 | `visitJoin` | Follow links with a browser (Visit) | link selector (String or `$col`), optional joinType (`Inner`/`LeftOuter`) |
 | `visitExplore` | Crawl links breadth-first with a browser (Visit) | link selector (String or `$col`), optional depth (Int, default 1) |
 | `extract` | Extract fields (adds columns) | list of extractor definitions (maps or shorthands) |
@@ -284,32 +289,39 @@ pipeline:
     args: []
 ```
 
-## Step 7: Update Pipeline YAML via API
+## Step 7: Update Pipeline YAML via API (Agent)
 
-Update the pipeline YAML content:
+Update the YAML stored on the Agent:
 
 ```bash
-curl -X PUT https://api.webrobot.eu/api/webrobot/api/pipelines/1 \
+curl -X PUT https://api.webrobot.eu/api/webrobot/api/agents/1/123 \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "yamlContent": "fetch:\n  url: \"https://new-url.com\"\npipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }"
+    "pipelineYaml": "fetch:\n  url: \"https://new-url.com\"\npipeline:\n  - stage: join\n    args: [\"a.product-link\"]\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }"
   }'
 ```
 
-## Step 8: Execute Pipeline
+## Step 8: Execute Pipeline (Job)
 
-Execute the pipeline:
+Create a Job that points to the Agent, then execute it:
 
 ```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines/1/execute \
+curl -X POST https://api.webrobot.eu/api/webrobot/api/projects/your-project-id/jobs \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "parameters": {
-      "limit": 100
-    }
+    "name": "my-job",
+    "agentId": "123",
+    "inputDatasetId": "optional-dataset-id"
   }'
+```
+
+```bash
+curl -X POST https://api.webrobot.eu/api/webrobot/api/projects/your-project-id/jobs/your-job-id/execute \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{ "parameters": { "limit": 100 } }'
 ```
 
 ## Python Example
@@ -343,31 +355,37 @@ pipeline:
       - { selector: "span.price", method: "price", args: ["USD"], as: "price" }
 """
 
-# Create pipeline
-pipeline_data = {
-    "projectId": "your-project-id",
-    "name": "product-scraper",
-    "description": "E-commerce product scraper",
-    "yamlContent": pipeline_yaml,
+# Create Agent with pipeline YAML
+agent_data = {
+    "name": "product-scraper-agent",
+    "categoryId": "1",
+    "description": "E-commerce product scraper agent",
+    "pipelineYaml": pipeline_yaml,
     "enabled": True
 }
-
-response = requests.post(
-    f"{API_BASE}/webrobot/api/pipelines",
+agent = requests.post(
+    f"{API_BASE}/webrobot/api/agents",
     headers=HEADERS,
-    json=pipeline_data
-)
-pipeline = response.json()
-pipeline_id = pipeline["id"]
+    json=agent_data,
+).json()
+agent_id = agent["id"]
 
-# Execute pipeline
-response = requests.post(
-    f"{API_BASE}/webrobot/api/pipelines/{pipeline_id}/execute",
+# Create Job for the Agent
+project_id = "your-project-id"
+job = requests.post(
+    f"{API_BASE}/webrobot/api/projects/id/{project_id}/jobs",
     headers=HEADERS,
-    json={"parameters": {"limit": 50}}
-)
-execution = response.json()
-print(f"Execution ID: {execution['id']}")
+    json={"name": "product-scraper-job", "agentId": agent_id},
+).json()
+job_id = job["id"]
+
+# Execute Job (runs the Agent pipeline)
+execution = requests.post(
+    f"{API_BASE}/webrobot/api/projects/id/{project_id}/jobs/{job_id}/execute",
+    headers=HEADERS,
+    json={"parameters": {"limit": 50}},
+).json()
+print("Execution:", execution)
 ```
 
 ## Next Steps

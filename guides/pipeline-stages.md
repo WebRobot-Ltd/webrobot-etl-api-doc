@@ -873,28 +873,28 @@ pipeline:
 
 ## API Integration
 
-### Create Pipeline with YAML
+### Store pipeline YAML (Agent)
 
 ```bash
-curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
+curl -X POST https://api.webrobot.eu/api/webrobot/api/agents \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "projectId": "your-project-id",
-    "name": "my-pipeline",
-    "yamlContent": "pipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }",
+    "name": "my-agent",
+    "categoryId": "1",
+    "pipelineYaml": "pipeline:\n  - stage: join\n    args: [\"a.product-link\", \"LeftOuter\"]\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }",
     "enabled": true
   }'
 ```
 
-### Update Pipeline YAML
+### Update pipeline YAML (Agent)
 
 ```bash
-curl -X PUT https://api.webrobot.eu/api/webrobot/api/pipelines/1 \
+curl -X PUT https://api.webrobot.eu/api/webrobot/api/agents/1/123 \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "yamlContent": "pipeline:\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }"
+    "pipelineYaml": "pipeline:\n  - stage: join\n    args: [\"a.product-link\"]\n  - stage: extract\n    args:\n      - { selector: \"h1\", method: \"text\", as: \"title\" }"
   }'
 ```
 
