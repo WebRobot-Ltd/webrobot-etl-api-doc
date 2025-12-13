@@ -103,6 +103,7 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/agents \
 | `intelligentJoin` (alias `intelligent_join`) | Join with inferred selector + optional inferred actions | selectorPrompt (or `"auto"`), optional actionPrompt, optional limit (Int) |
 | `intelligentExplore` (alias `intelligent_explore`) | Explore using an NL prompt (link inference) | prompt, optional depth (Int, default 1) |
 | `iextract` | LLM extraction producing dynamic columns | html extractor (optional), prompt (String), prefix (optional) |
+| `intelligentFlatSelect` (alias `intelligent_flatSelect`) | Segment repeating blocks + extract multiple rows via inferred selector | segPrompt (or literal CSS), extrPrompt, optional prefix |
 
 ### Utility Stages
 
@@ -113,6 +114,14 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/agents \
 | `sentiment` | Calculate sentiment for single row |
 | `sentiment_monthly` | Aggregate sentiment by month |
 | `intelligent_table` | LLM table parsing |
+
+### Intelligent selector caching (RoadRunner)
+
+For stages that infer CSS selectors from prompts (notably `intelligentFlatSelect` and `iextract`), the engine uses a **template-aware selector cache**:
+
+- It fingerprints HTML into a **template cluster** (layout recognition).
+- It caches inferred selectors per `(cluster, prompt)` so subsequent pages with the same template avoid repeated inference.
+- It uses **RoadRunner** template induction to draft stable wrapper selectors when possible (good for repeated layouts).
 
 ## Step 3: Using Attribute Resolvers
 

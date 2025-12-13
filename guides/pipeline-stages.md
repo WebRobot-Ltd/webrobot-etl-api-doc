@@ -178,6 +178,16 @@ pipeline:
 
 ## Intelligent Stages (LLM-powered)
 
+### Selector inference caching + template recognition (RoadRunner)
+
+The Intelligent stages reduce repeated LLM calls by caching *inferred selectors* at **template-cluster level**:
+
+- **Template fingerprint**: the HTML is fingerprinted (SimHash) and assigned to a *cluster* (layout template).
+- **Cache key**: `(namespace, clusterId, kind, promptHash)`.
+- **RoadRunner prepopulation**: on cache miss (or to improve generic selectors), we record HTML samples for the cluster and run **RoadRunner template induction** to draft a stable wrapper selector. This draft can later be validated/overridden by the LLM inference pipeline.
+
+This is implemented in the core template layer (`SelectorResolver` + `RoadRunnerPrepopulator`) and used by stages like `intelligent_flatSelect` and `iextract`.
+
 ### 1. Intelligent Explore
 
 **Purpose**: Like `explore`, but uses LLM to infer selector from natural language prompt
@@ -243,7 +253,11 @@ pipeline:
 
 ### 4. Intelligent FlatSelect
 
-**Purpose**: Segmentation + LLM multiple extraction
+**Purpose**: Segmentation + multi-row extraction with intelligent selector inference.
+
+**Key behavior**:
+- Accepts either a **literal CSS selector** (fast path) or a **natural language segmentation prompt**.
+- Uses **template-aware selector caching** and **RoadRunner** (template recognition) to re-use inferred selectors across pages that share the same layout template.
 
 **YAML Syntax:**
 ```yaml
