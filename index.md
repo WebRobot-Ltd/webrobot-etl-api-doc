@@ -14,9 +14,44 @@ description: Comprehensive guides and API reference for building and managing ET
 
 ---
 
+## About WebRobot
+
+**WebRobot** is a **Spark-native, API-first data infrastructure** for building **agentic ETL pipelines** and **data products**.
+
+This documentation covers the **ETL component** of WebRobot, which provides:
+
+- **Spark-native processing**: Built on Apache Spark for scalable data processing
+- **API-first architecture**: Manage pipelines, projects, and jobs via REST API
+- **Agentic capabilities**: LLM-powered intelligent stages for adaptive web scraping and data extraction
+- **Extensible framework**: Custom plugins, stages, resolvers, and Python extensions
+
+## AI Agent Integration & MCP Protocol
+
+This documentation serves as a **reference knowledge base** for AI agents and development tools:
+
+### 🤖 AI Agent Support
+
+This documentation is designed to be consumed by AI coding assistants and agents, including:
+
+- **Cursor AI**: Integrated AI assistant for code generation and pipeline creation
+- **ChatGPT**: Reference documentation for WebRobot ETL capabilities
+- **Claude Desktop**: Knowledge base for understanding WebRobot architecture and APIs
+- **Integrated Development Agent**: Built-in AI agent within WebRobot for automated pipeline generation and optimization
+
+### 🔌 Model Context Protocol (MCP)
+
+All WebRobot ETL functionalities are exposed via **MCP (Model Context Protocol) endpoints**, enabling:
+
+- **Standardized AI integration**: Consistent interface for AI agents to interact with WebRobot
+- **Function calling**: AI agents can invoke WebRobot operations through MCP tools
+- **Context-aware assistance**: Agents can query pipeline schemas, stage capabilities, and API specifications
+- **Automated pipeline generation**: AI agents can create, validate, and execute pipelines programmatically
+
+Every feature documented here is accessible both via REST API and MCP endpoints, ensuring seamless integration with AI-powered development workflows.
+
 ## Quick Start (EN)
 
-Welcome to the WebRobot ETL API documentation. This site provides comprehensive guides and API reference for building and managing ETL pipelines.
+Welcome to the WebRobot ETL API documentation. This site provides comprehensive guides and API reference for building and managing ETL pipelines as part of the WebRobot platform.
 
 ## Quick Start
 

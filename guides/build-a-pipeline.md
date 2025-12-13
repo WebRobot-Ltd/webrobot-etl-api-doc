@@ -8,6 +8,8 @@ description: Guide to building ETL pipelines using YAML syntax and the WebRobot 
 
 This guide explains how to create ETL pipelines using YAML syntax and the WebRobot ETL API. It is aligned with the current **Scala YAML parser + stage implementations** shipped in the `webrobot-etl` core and `example-plugin`.
 
+> **WebRobot** is a **Spark-native, API-first data infrastructure** for building **agentic ETL pipelines** and **data products**. This ETL component provides scalable data processing, intelligent web scraping, and extensible pipeline management.
+
 ## Overview
 
 A pipeline YAML file defines:

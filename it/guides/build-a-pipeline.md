@@ -10,6 +10,8 @@ description: Guida per creare pipeline ETL in YAML e avviarle tramite WebRobot E
 
 Questa guida spiega come creare pipeline ETL usando YAML e come eseguirle via API.
 
+> **WebRobot** è un'**infrastruttura dati nativa Spark e API-first** per costruire **pipeline ETL agentiche** e **prodotti dati**. Questo componente ETL fornisce elaborazione dati scalabile, web scraping intelligente e gestione pipeline estendibile.
+
 ## Struttura del YAML
 
 ```yaml
