@@ -1,0 +1,16 @@
+fetch:
+  url: "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+
+pipeline:
+  - stage: extract
+    args:
+      # Base extraction
+      - { selector: "h1", method: "text", as: "title" }
+      - { selector: ".price_color", method: "text", as: "price_raw" }
+      - { selector: "#content_inner article", method: "text", as: "description_text" }
+
+      # Custom resolvers (registered by example-plugin)
+      - { field: "price_raw", method: "price", as: "price_numeric" }
+      - { field: "description_text", method: "llm", as: "llm_features" }
+      - { field: "description_text", method: "llm", args: ["extract 3 bullet points of benefits"], as: "llm_map" }
+

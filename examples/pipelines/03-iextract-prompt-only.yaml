@@ -1,0 +1,11 @@
+fetch:
+  url: "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+
+pipeline:
+  # NOTE: extractor is omitted on purpose.
+  # The engine injects a default html extractor { selector: "body", method: "code" }.
+  - stage: iextract
+    args:
+      - "Extract title as title and price as price and product code as sku"
+      - "prod_"
+

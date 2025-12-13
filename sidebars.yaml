@@ -9,6 +9,8 @@
       label: Build a Pipeline
     - page: guides/pipeline-stages.md
       label: Pipeline Stages Reference
+    - page: guides/pipeline-examples.md
+      label: Pipeline Examples
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

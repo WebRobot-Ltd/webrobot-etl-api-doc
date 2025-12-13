@@ -1,0 +1,19 @@
+fetch:
+  url: "https://books.toscrape.com"
+
+pipeline:
+  # Crawl pagination (static HTTP)
+  - stage: explore
+    args: [ "li.next a", 2 ]
+
+  # Visit each book detail page found on listing pages (static HTTP)
+  - stage: join
+    args: [ "article.product_pod h3 a", "LeftOuter" ]
+
+  # Extract scalar fields from the detail page
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+      - { selector: ".price_color", method: "text", as: "price_raw" }
+      - { selector: ".product_main img", method: "attr:src", as: "image_src" }
+

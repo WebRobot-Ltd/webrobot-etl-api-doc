@@ -1,0 +1,18 @@
+fetch:
+  url: "https://quotes.toscrape.com"
+  traces:
+    - { action: "visit", params: { url: "https://quotes.toscrape.com", cooldown: 0.5 } }
+    - { action: "wait", params: { seconds: 1 } }
+
+pipeline:
+  # Visit tag pages using the browser (Visit)
+  - stage: visitJoin
+    args: [ "a.tag", "LeftOuter" ]
+
+  # Extract all quotes on each tag page (one row per quote block)
+  - stage: flatSelect
+    args:
+      - "div.quote"
+      - - { selector: "span.text", method: "text", as: "quote_text" }
+        - { selector: "small.author", method: "text", as: "author" }
+

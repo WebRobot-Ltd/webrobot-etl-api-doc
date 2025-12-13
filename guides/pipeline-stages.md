@@ -17,6 +17,17 @@ Pipeline stages are categorized into:
 - **Use-Case Stages**: Domain-specific stages
 - **Python Extensions**: Custom Python stages
 
+### YAML constraints (important)
+
+- Each `pipeline` entry must be a mapping with **only**:
+  - `stage` (string)
+  - `args` (array, optional)
+- Extra keys on a stage item (for example `name`, `when`, etc.) are **not supported** by the Scala YAML parser and will fail parsing.
+
+### Stage name resolution (important)
+
+Stage lookup is case-insensitive and tolerant to underscores: `visitJoin`, `visit_join`, and `visitjoin` resolve to the same registered stage.
+
 ## Core Stages
 
 ### 1. Explore
@@ -31,9 +42,8 @@ pipeline:
 ```
 
 **Arguments:**
-- `selector` (String): CSS selector or prompt for link discovery
-- `depth` (Int): Maximum depth to crawl
-- `trace` (Optional): Browser interaction trace
+- `selector` (String): CSS selector for links (or a `$column` reference)
+- `depth` (Int, optional): Maximum depth to crawl (default: `1`)
 
 **Example:**
 ```yaml
@@ -46,30 +56,63 @@ pipeline:
 
 ### 2. Join
 
-**Purpose**: Visit N child links for each row
+**Purpose**: Follow links for each row using HTTP (wget)
 
 **YAML Syntax:**
 ```yaml
 pipeline:
   - stage: join
-    args: [ "a.product-link", "none", 20 ]  # selector, action, limit
+    args: [ "a.product-link", "LeftOuter" ]  # selector, optional joinType
 ```
 
 **Arguments:**
-- `selector` (String): CSS selector for links to visit
-- `action` (String): Action prompt (`"none"` if no action needed)
-- `limit` (Int): Maximum number of links to visit per row
+- `selector` (String): CSS selector for links (or a `$column` reference)
+- `joinType` (String, optional): `Inner` or `LeftOuter` (default: `LeftOuter`)
 
 **Example:**
 ```yaml
 pipeline:
   - stage: join
-    args: [ "a.detail-link", "none", 10 ]
+    args: [ "a.detail-link", "Inner" ]
 ```
 
 ---
 
-### 3. Extract
+### 3. WgetJoin
+
+**Purpose**: Follow links using the `wgetJoin(...)` primitive.
+
+**YAML Syntax:**
+```yaml
+pipeline:
+  - stage: wgetJoin  # also works as wget_join
+    args: [ "a.detail-link", "LeftOuter" ]
+```
+
+**Arguments:**
+- `selector` (String): CSS selector for links (or a `$column` reference)
+- `joinType` (String, optional): `Inner` or `LeftOuter` (default: `LeftOuter`)
+
+---
+
+### 4. WgetExplore
+
+**Purpose**: Breadth-first crawling using the `wgetExplore(...)` primitive.
+
+**YAML Syntax:**
+```yaml
+pipeline:
+  - stage: wgetExplore  # also works as wget_explore
+    args: [ "li.next a", 2 ]
+```
+
+**Arguments:**
+- `selector` (String): CSS selector for links (or a `$column` reference)
+- `depth` (Int, optional): Maximum depth to crawl (default: `1`)
+
+---
+
+### 5. Extract
 
 **Purpose**: Extract fields using selector-map configuration
 
@@ -86,8 +129,7 @@ pipeline:
 ```yaml
 - selector: "span.price"        # Required: CSS selector
   method: "price"               # Required: extraction method
-  args: [ "USD" ]               # Optional: method arguments
-  as: "price_usd"              # Optional: output column alias
+  as: "price_numeric"           # Optional: output column alias
 ```
 
 **Example:**
@@ -96,27 +138,31 @@ pipeline:
   - stage: extract
     args:
       - { selector: "h1", method: "text", as: "title" }
-      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
-      - { selector: "a", method: "attr(href)", as: "link" }
+      - { selector: "span.price", method: "price", as: "price_numeric" }
+      - { selector: "a", method: "attr:href", as: "link" }
 ```
 
 ---
 
-### 4. FlatSelect
+### 6. FlatSelect
 
-**Purpose**: Segment HTML block and create one row per segment
+**Purpose**: Segment HTML block and create one row per segment (one row per repeated element). Requires `example-plugin`.
 
 **YAML Syntax:**
 ```yaml
 pipeline:
   - stage: flatSelect
-    args: [ "div.product", "extraction_prompt_or_selector_map", "prefix" ]
+    args:
+      - "div.product"                   # segment selector
+      -                                # extractors applied inside each segment (relative selectors)
+        - { selector: "h3", method: "text", as: "name" }
+        - { selector: ".price", method: "text", as: "price_raw" }
+        - { selector: "img", method: "attr(src)", as: "img_src" }
 ```
 
 **Arguments:**
-- `selector` (String): CSS selector for segmentation
-- `extraction` (String/List): Extraction prompt or selector-map list
-- `prefix` (String): Prefix for output columns
+- `segmentSelector` (String): CSS selector used to split the page into segments
+- `extractors` (List[Map]): extractor maps applied to each segment (selectors are **relative**)
 
 **Example:**
 ```yaml
@@ -124,8 +170,8 @@ pipeline:
   - stage: flatSelect
     args:
       - "div.product-item"
-      - "Extract product name and price"
-      - "product"
+      - - { selector: "h3", method: "text", as: "product_name" }
+        - { selector: ".price", method: "text", as: "price_raw" }
 ```
 
 ---
@@ -180,14 +226,17 @@ pipeline:
 ```yaml
 pipeline:
   - stage: iextract
-    args: [ extractor, prompt, prefix ]
+    # extractor is optional; if omitted a default { selector: "body", method: "code" } is injected
+    args: [ prompt, prefix ]
 ```
 
 **Example:**
 ```yaml
 pipeline:
   - stage: iextract
-    args: [ "div.content", "Extract product specifications", "spec" ]
+    args:
+      - "Extract product specifications as title, price and sku"
+      - "spec_"
 ```
 
 ---
@@ -212,92 +261,426 @@ pipeline:
 
 ---
 
-## Utility Stages
+## Plugin Stages (example-plugin)
 
-### Echo
+All stages below are available only when the `example-plugin` is loaded and `Plugin.registerAll()` has been called.
 
-**Purpose**: Copy row (debug utility)
+### Browser / per-row fetch stages
+
+#### `wget` (alias: `fetch`)
+
+**Purpose**: Fetch a URL from a column using HTTP.
+
+**Args**:
+- `0` (optional): URL extractor (usually `$url`). Defaults to `_` (internal default column).
 
 ```yaml
 pipeline:
-  - stage: echo
+  - stage: wget
+    args: [ "$url" ]
+```
+
+#### `visit`
+
+**Purpose**: Fetch a URL from a column using browser automation.
+
+**Args**:
+- `0` (optional): URL extractor (usually `$url`). Defaults to `_`.
+
+```yaml
+pipeline:
+  - stage: visit
+    args: [ "$url" ]
+```
+
+#### `visitJoin`
+
+**Purpose**: Follow links using a browser (Visit) for each row.
+
+**Args**:
+- `0` (required): selector or `$column` containing URLs
+- `1` (optional): joinType (`Inner` / `LeftOuter`, default `LeftOuter`)
+
+```yaml
+pipeline:
+  - stage: visitJoin
+    args: [ "a.product-link", "LeftOuter" ]
+```
+
+#### `visitExplore`
+
+**Purpose**: Breadth-first crawling using a browser (Visit).
+
+**Args**:
+- `0` (required): selector or `$column` containing URLs
+- `1` (optional): depth (Int, default `1`)
+
+```yaml
+pipeline:
+  - stage: visitExplore
+    args: [ "li.next a", 2 ]
 ```
 
 ---
 
-### Filter Country
+### Extraction stages
 
-**Purpose**: Filter rows by country
+#### `flatSelect` (alias: `widen`)
 
-```yaml
-pipeline:
-  - stage: filter_country
-    args: [ "US" ]  # country code
-```
+**Purpose**: Segment the page into repeated blocks and extract one output row per block.
 
----
-
-### Sentiment
-
-**Purpose**: Calculate sentiment for single row
+**Args**:
+- `0` (required): segment selector (String)
+- `1` (optional): list of extractor maps applied inside each segment
 
 ```yaml
 pipeline:
-  - stage: sentiment
-    args: [ "text_column" ]  # column name
+  - stage: flatSelect
+    args:
+      - "div.product"
+      - - { selector: "h3", method: "text", as: "name" }
+        # NOTE: for flatSelect the plugin stage expects `attr(name)` style
+        - { selector: "img", method: "attr(src)", as: "img_src" }
 ```
 
----
+#### `intelligent_table` (**placeholder/no-op**)
 
-### Intelligent Table
+**Purpose**: Placeholder stage for LLM table extraction (currently does not perform extraction).
 
-**Purpose**: LLM table parsing
+**Args**: none (current implementation does not use `args`).
 
 ```yaml
 pipeline:
   - stage: intelligent_table
-    args: [ "table selector", "extraction prompt" ]
+    args: []
 ```
 
----
+#### `intelligentExtract`
 
-## Use-Case Stages
+**Purpose**: LLM-powered ad-hoc extraction from an HTML field (row transform).
 
-### E-commerce
+**Args**:
+- `0` (required): input field name containing HTML/text
+- `1` (required): query/prompt
+- `2` (required): output field name (result JSON string)
 
-| Stage | Purpose |
-|-------|---------|
-| `priceNormalize` | Normalize price formats |
-| `priceCompare` | Compare prices across sources |
-
-**Example:**
 ```yaml
 pipeline:
-  - stage: priceNormalize
-    args: []
-  - stage: priceCompare
+  - stage: intelligentExtract
+    args: [ "description_html", "Extract brand and model", "llm_json" ]
+```
+
+#### `iextract`
+
+**Purpose**: LLM extraction that produces multiple columns (usually with a prefix).
+
+**Args**:
+- If the first argument is omitted or is not an extractor map / `$column`, a default extractor `{ selector: "body", method: "code" }` is injected.
+- Then:
+  - `prompt` (String)
+  - `prefix` (optional String)
+
+```yaml
+pipeline:
+  - stage: iextract
+    args:
+      - "Extract title as title and price as price and product code as sku"
+      - "prod_"
+```
+
+---
+
+### Utility + aggregation stages
+
+#### `echo`
+
+**Purpose**: Debug helper; writes `_echo` column.
+
+**Args**:
+- `0` (optional): message string
+
+```yaml
+pipeline:
+  - stage: echo
+    args: [ "hello" ]
+```
+
+#### `filter_country`
+
+**Purpose**: Keep only rows whose `country` field is in the allowed list.
+
+**Args**: one or more country codes.
+
+```yaml
+pipeline:
+  - stage: filter_country
+    args: [ "IT", "FR" ]
+```
+
+#### `sentiment`
+
+**Purpose**: Simple lexicon-based sentiment on a text field; adds `sentiment` and `count`.
+
+**Args**:
+- `0` (optional): text field name (default: `message`)
+
+```yaml
+pipeline:
+  - stage: sentiment
+    args: [ "message" ]
+```
+
+#### `aggregatesentiment`
+
+**Purpose**: Reduce-by-key aggregation; sums `sentiment` and `count` by key.
+
+**Args**:
+- `0` (optional): group field name (default: `entity`)
+
+```yaml
+pipeline:
+  - stage: aggregatesentiment
+    args: [ "country" ]
+```
+
+#### `avg_sentiment_by_key`
+
+**Purpose**: Group-by-key and compute average sentiment into `avg_sentiment`.
+
+**Args**:
+- `0` (optional): group field name (default: `entity`)
+
+```yaml
+pipeline:
+  - stage: avg_sentiment_by_key
+    args: [ "country" ]
+```
+
+#### `sentiment_monthly`
+
+**Purpose**: Macro-stage that runs `sentiment`, derives `month` from `date` (YYYY-MM-DD), then runs `aggregatesentiment` by month.
+
+**Args**:
+- `0` (optional): text field name (default: `message`)
+
+```yaml
+pipeline:
+  - stage: sentiment_monthly
+    args: [ "message" ]
+```
+
+#### `sum_sales`
+
+**Purpose**: Reduce-by-key aggregation; sums numeric `sales` by `country`.
+
+**Args**: none.
+
+```yaml
+pipeline:
+  - stage: sum_sales
     args: []
 ```
 
 ---
 
-### Real Estate
+### I/O stages (CSV + connectors)
 
-| Stage | Purpose |
-|-------|---------|
-| `propertyNormalize` | Normalize property data |
-| `realEstateArbitrage` | Detect arbitrage opportunities |
+#### `load_csv`
+
+**Purpose**: Load a CSV into the pipeline (creates a new dataset).
+
+**Args**:
+- `0` (required): either a path string OR a map `{ path: "...", <spark_options...> }`
+- `1..n` (optional): `key=value` Spark read options
+
+```yaml
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "s3a://bucket/input.csv", header: "true", inferSchema: "true" }
+```
+
+#### `save_csv`
+
+**Purpose**: Save current dataset as CSV (returns the same plan so you can continue).
+
+**Args**:
+- `0` (required): output path
+- `1` (optional): mode (`overwrite|append|errorifexists|ignore`, default `overwrite`)
+
+```yaml
+pipeline:
+  - stage: save_csv
+    args: [ "s3a://bucket/out/", "overwrite" ]
+```
+
+#### Connector load stages
+
+All connector stages accept as first argument either:
+- a string (path / table / resource), or
+- a map `{ path: "...", <options...> }` depending on the connector.
+
+**Available stages**:
+- `load_avro`
+- `load_delta`
+- `load_iceberg`
+- `load_xml`
+- `load_bigquery` (table or options with `table`)
+- `load_athena` (JDBC options: `url`, `dbtable`, `driver`…)
+- `load_mongodb` (options: `uri`, `database`, `collection`…)
+- `load_cassandra` (`keyspace.table` or options with `keyspace` + `table`)
+- `load_elasticsearch` (options with `es.resource`, `es.nodes`…)
+- `load_kafka` (options with `kafka.bootstrap.servers`, `subscribe`…)
 
 ---
 
-### Bookmaker
+### External API fetch stages
 
-| Stage | Purpose |
-|-------|---------|
-| `oddsNormalize` | Normalize odds formats |
-| `arbitrageDetect` | Detect arbitrage opportunities |
+#### `searchEngine` (alias: `search`)
+
+**Purpose**: Search by EAN using a provider (Google Custom Search / Bing) and optionally enrich results.
+
+**Args**:
+- `0` (required): config map with keys like:
+  - `provider`: `google` or `bing`
+  - `ean`: literal EAN or `$ean_column`
+  - `api_key`, `cx` (google), optional if provided via environment
+  - `num_results`, `image_search`, `enrich`, `as`
+
+```yaml
+pipeline:
+  - stage: searchEngine
+    args:
+      - provider: "google"
+        ean: "$ean"
+        num_results: 10
+        image_search: true
+        enrich: true
+        as: "search_json"
+```
+
+#### `socialAPI` (alias: `social`)
+
+**Purpose**: Fetch JSON from social/financial APIs (GET/POST) with auth via header or query param.
+
+**Args**:
+- `0` (required): config map with keys like `provider`, `endpoint`, `params`, `auth_token`, `method`, `body`, `as`
+
+```yaml
+pipeline:
+  - stage: socialAPI
+    args:
+      - provider: "twitter"
+        endpoint: "tweets/search/recent"
+        params: { query: "python", max_results: 10 }
+        auth_token: "${TWITTER_BEARER_TOKEN}"
+        as: "tweets_json"
+```
+
+#### `eurostatAPI` (aliases: `eurostat`, `macroEU`)
+
+**Purpose**: Fetch Eurostat REST API JSON.
+
+**Args**:
+- `0` (required): config map: `dataset`, optional `filters`, optional `params`, `as`
+
+#### `istatAPI` (aliases: `istat`, `macroIT`)
+
+**Purpose**: Fetch ISTAT SDMX JSON.
+
+**Args**:
+- `0` (required): config map: `flow`, optional `key`, optional `provider`, optional `params`, `as`
 
 ---
+
+### Matching / scoring stages
+
+#### `enrichMatchingScore`
+
+**Purpose**: Recalculate matching score based on input fields and `iextract` output prefix.
+
+**Args**:
+- `0` (optional): config map (all keys optional; defaults are applied)
+
+```yaml
+pipeline:
+  - stage: enrichMatchingScore
+    args:
+      - ean_field: "EAN number"
+        description_field: "Item description"
+        brand_field: "Brand"
+        extracted_prefix: "prod_"
+        output_field: "matching_score"
+```
+
+#### `imageSimilarity`
+
+**Purpose**: Evaluate image similarity scores using LLM + heuristics. Expects image URLs in fields like `images` and `prod_product_image_urls`.
+
+**Args**: none.
+
+---
+
+### Use-case stages (mostly placeholders)
+
+These stages exist and are registered, but several are currently **no-op placeholders** (see code comments in `UseCaseStages.scala`).
+
+#### `priceNormalize`
+
+**Purpose**: normalize price strings into `price_numeric`, `price_currency`, and `price_<currency>`.
+
+**Args**:
+- `0` (optional): target currency (default `USD`)
+
+#### `priceCompare` (**placeholder/no-op**)
+
+**Args**: none.
+
+#### `oddsNormalize`
+
+**Purpose**: convert odds to `odds_decimal`.
+
+**Args**: none.
+
+#### `arbitrageDetect` (**placeholder/no-op**)
+
+**Args**: none.
+
+#### `propertyNormalize`
+
+**Purpose**: compute `area_sqm` and `price_per_sqm`.
+
+**Args**: none.
+
+#### `realEstateArbitrage`
+
+**Purpose**: compute simple z-score outliers (`arbitrage_z`, `is_arbitrage`) from `price_per_sqm`.
+
+**Args**: none.
+
+#### `trendAggregate` (**placeholder/no-op**)
+
+**Args**: none.
+
+#### `autoScroll` (**placeholder/no-op**)
+
+**Args**:
+- `0` (optional): max iterations (default `5`)
+- `1` (optional): wait seconds (default `1.0`)
+
+---
+
+### Advanced analytics stages
+
+All stages below accept a single optional config map as `args[0]`.
+
+#### `propertyCluster` (KMeans / DBSCAN fallback)
+#### `propertyClusterML` (KMeans / GMM)
+#### `surebetFinder`
+#### `fundamentalAnalysis`
+#### `portfolioDataPrep`
+#### `technicalIndicators`
+
 
 ## Attribute Resolvers
 
@@ -310,7 +693,7 @@ Built-in extraction methods available in `extract` stages:
 | `text` | Extract visible text | `{ selector: "h1", method: "text", as: "title" }` |
 | `code` | Extract full HTML | `{ selector: "div", method: "code", as: "html" }` |
 | `html` | Alias of `code` (legacy) | `{ selector: "article", method: "html", as: "content" }` |
-| `attr(name)` | Extract HTML attribute | `{ selector: "a", method: "attr(href)", as: "link" }` |
+| `attr:NAME` | Extract HTML attribute (recommended for `extract`) | `{ selector: "a", method: "attr:href", as: "link" }` |
 | `attrs` | Extract all attributes | `{ selector: "img", method: "attrs", as: "image_attrs" }` |
 
 ---
@@ -323,17 +706,16 @@ Custom resolvers are registered via plugins and can be used in YAML:
 
 | Resolver | Description | Arguments | Example |
 |----------|-------------|-----------|---------|
-| `price` | Extract and normalize price | 0-1 ⇒ targetCurrency | `{ selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }` |
-| `llm` | LLM-based extraction | prompt (String), optional prefix | `{ selector: "div", method: "llm", args: ["Extract dimensions"], as: "data" }` |
-| `sentiment` | Sentiment analysis | text | `{ selector: "p.review", method: "sentiment", as: "sentiment" }` |
+| `price` | Extract a numeric price token from text | none | `{ selector: "span.price", method: "price", as: "price_numeric" }` |
+| `llm` | LLM-based extraction | optional instruction string (`args: [...]`) | `{ selector: "div", method: "llm", args: ["extract brand and model"], as: "llm_map" }` |
 
 **Usage:**
 ```yaml
 pipeline:
   - stage: extract
     args:
-      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
-      - { selector: "div.product", method: "llm", args: ["Extract specifications"], as: "specs" }
+      - { selector: "span.price", method: "price", as: "price_numeric" }
+      - { selector: "div.product", method: "llm", args: ["extract specifications"], as: "specs" }
 ```
 
 **How Attribute Resolvers Work:**
@@ -357,8 +739,10 @@ Built-in action factories for browser interactions:
 
 | Action | Parameters | Example |
 |--------|------------|---------|
+| `visit` | `url` (String), optional `cooldown` (seconds) | `{ action: "visit", params: { url: "https://example.com", cooldown: 0.5 } }` |
 | `wait` | `seconds` (Int/Double) | `{ action: "wait", params: { seconds: 2 } }` |
 | `scroll_to_bottom` | `behavior` = `smooth\|auto` | `{ action: "scroll_to_bottom", params: { behavior: "smooth" } }` |
+| `prompt` | `prompt` (String) or `text` (String) | `{ action: "prompt", params: { prompt: "click the login button" } }` |
 
 **Usage:**
 ```yaml
@@ -367,18 +751,12 @@ fetch:
   traces:
     - { action: "wait", params: { seconds: 1 } }
     - { action: "scroll_to_bottom", params: { behavior: "smooth" } }
-    - { prompt: "click the login button" }  # AI-driven action
+    - { action: "prompt", params: { prompt: "click the login button" } }  # AI-driven action
 ```
 
 ### Custom Actions
 
-Custom actions can be registered via plugins:
-
-**Registration:**
-```scala
-// In plugin initialization
-ActionFactoryRegistry.register("custom_click", CustomClickFactory)
-```
+Custom actions can be added via plugins by implementing an `ActionFactory` and making it discoverable by the runtime (ServiceLoader-based discovery).
 
 **Usage in YAML:**
 ```yaml
@@ -418,84 +796,28 @@ python_registry.register_row_transform("my_transform", my_transform)
 ```yaml
 pipeline:
   - stage: python_row_transform:my_transform
-    name: "Transform data"
 ```
 
 ---
 
-### Python Attribute Resolvers
+### Runtime requirement
 
-Python functions that resolve specific attributes:
+Python row transforms require the Spark job runner to register the Python registry via Py4J (`PythonBridgeRegistry.setPythonRegistry(...)`). If a function name is not registered, the corresponding `python_row_transform:<name>` stage will fail at runtime.
 
-**Function Signature:**
-```python
-def my_resolver(elem: Any, attribute_name: Optional[str] = None) -> Any:
-    """Resolve attribute value"""
-    if not elem:
-        return None
-    # Your resolution logic
-    return resolved_value
-```
+### Inline `python_extensions` (for API code-generation)
 
-**Registration:**
-```python
-python_registry.register_attribute_resolver("my_resolver", my_resolver)
-```
-
-**Usage in YAML:**
-```yaml
-pipeline:
-  - stage: extract
-    args:
-      - { selector: "div.data", method: "python_resolver:my_resolver", as: "resolved_value" }
-```
-
----
-
-### Python Intelligent Actions
-
-Python functions for intelligent browser actions:
-
-**Function Signature:**
-```python
-def my_action(page: Any, params: Dict[str, Any]) -> bool:
-    """Execute custom browser action"""
-    # Your action logic
-    return True
-```
-
-**Registration:**
-```python
-python_registry.register_action("my_action", my_action)
-```
-
-**Usage in YAML:**
-```yaml
-fetch:
-  url: "https://example.com"
-  traces:
-    - { action: "python_action:my_action", params: { key: "value" } }
-```
-
----
-
-## Conditional Execution
-
-Stages can be conditionally executed using `when` clauses:
+Some API flows support providing `python_extensions` alongside the pipeline YAML. The Scala YAML parser ignores this section, but the API can use it to generate PySpark code that registers these functions.
 
 ```yaml
-pipeline:
-  - stage: extract
-    when:
-      condition: "env.LIMIT > 100"
-    args:
-      - { selector: "h1", method: "text", as: "title" }
+python_extensions:
+  stages:
+    my_transform:
+      type: row_transform
+      function: |
+        def my_transform(row):
+            row["processed"] = True
+            return row
 ```
-
-**Supported Conditions:**
-- Environment variables: `env.VAR_NAME == 'value'`
-- Parameters: `params.PARAM_NAME == 'value'`
-- Logical operators: `&&`, `||`, `!`
 
 ---
 
@@ -506,35 +828,28 @@ fetch:
   url: "https://shop.example.com"
   traces:
     - { action: "wait", params: { seconds: 1 } }
-    - { prompt: "accept cookies if present" }
-
-globals:
-  limit_pages: 50
+    - { action: "prompt", params: { prompt: "accept cookies if present" } }
 
 pipeline:
   # Intelligent exploration
   - stage: intelligent_explore
     args: [ "category links", 2 ]
   
-  # Join product pages
-  - stage: join
-    args: [ "a.product-link", "none", 20 ]
+  # Join product pages (LLM-assisted selector + optional inferred actions + optional limit)
+  - stage: intelligent_join
+    args: [ "product detail links", "none", 20 ]
   
   # Extract with native and custom resolvers
   - stage: extract
     args:
       - { selector: "h1.title", method: "text", as: "product_title" }
-      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
+      - { selector: "span.price", method: "price", as: "price_numeric" }
       - { selector: "div.description", method: "code", as: "description_html" }
-      - { selector: "img.product-image", method: "attr(src)", as: "image_url" }
+      - { selector: "img.product-image", method: "attr:src", as: "image_url" }
       - { selector: "div.reviews", method: "llm", args: ["Extract average rating"], as: "rating" }
   
   # Python transformation
   - stage: python_row_transform:normalize_price
-    name: "Normalize prices"
-  
-  # Price comparison
-  - stage: priceCompare
     args: []
   
   # Filter by country

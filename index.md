@@ -32,6 +32,7 @@ Get started with the WebRobot ETL API in minutes:
 ### 📚 Guides
 - **[Build a Pipeline](guides/build-a-pipeline.md)**: Guide to building ETL pipelines using YAML syntax, attribute resolvers, custom actions, and Python extensions
 - **[Pipeline Stages Reference](guides/pipeline-stages.md)**: Complete reference of pipeline stages, YAML syntax, attribute resolvers, custom actions, and Python extensions
+- **[Pipeline Examples](guides/pipeline-examples.md)**: Copy-pasteable YAML examples aligned with the current parser and stages
 
 ### 📖 API Reference
 - **[WebRobot ETL API](openapi.yaml)**: Complete OpenAPI specification with interactive documentation
@@ -42,7 +43,7 @@ Get started with the WebRobot ETL API in minutes:
 - **YAML Syntax**: Define pipelines using declarative YAML configuration
 - **Attribute Resolvers**: Custom extraction methods for flexible data extraction
 - **Custom Actions**: Extend browser interactions with custom action factories
-- **Python Extensions**: Create custom Python stages, resolvers, and actions
+- **Python Extensions**: Create custom Python row transform stages (`python_row_transform:<name>`)
 - **Intelligent Stages**: LLM-powered stages for adaptive web scraping
 
 ## Base URLs

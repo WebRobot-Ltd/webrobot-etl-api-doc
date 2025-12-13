@@ -6,16 +6,16 @@ description: Guide to building ETL pipelines using YAML syntax and the WebRobot 
 
 # Build a Pipeline
 
-This guide explains how to create ETL pipelines using YAML syntax and the WebRobot ETL API. You'll learn how to structure pipeline YAML files, define stages, use attribute resolvers, and extend pipelines with custom actions and Python extensions.
+This guide explains how to create ETL pipelines using YAML syntax and the WebRobot ETL API. It is aligned with the current **Scala YAML parser + stage implementations** shipped in the `webrobot-etl` core and `example-plugin`.
 
 ## Overview
 
 A pipeline YAML file defines:
-- **Fetch Configuration**: Initial URL and browser traces
-- **Pipeline Stages**: Sequential data processing steps
-- **Attribute Resolvers**: Custom extraction methods
-- **Custom Actions**: Browser interaction extensions
-- **Python Extensions**: Custom Python stages and resolvers
+- **Fetch configuration**: initial URL and optional `traces` (browser actions)
+- **Pipeline stages**: sequential processing steps
+- **Attribute resolvers**: custom extraction methods usable in `extract`/`flatSelect`
+- **Custom actions (factories)**: reusable actions usable in `fetch.traces`
+- **Python extensions**: custom Python row transforms usable as stages (`python_row_transform:<name>`)
 
 ## Pipeline YAML Structure
 
@@ -24,13 +24,11 @@ A pipeline YAML file defines:
 ```yaml
 fetch:          # Optional - initial page fetch
   url: "https://example.com"
-  traces:       # Optional - browser interactions
+  traces:       # Optional - pre-actions (ActionFactory)
+    - { action: "visit", params: { url: "https://example.com", cooldown: 0.5 } }
     - { action: "wait", params: { seconds: 2 } }
-    - { prompt: "click the accept cookies button" }
-
-globals:        # Optional - global variables
-  limit_pages: 50
-  site_url: "https://example.com"
+    - { action: "scroll_to_bottom", params: { behavior: "auto" } }
+    - { action: "prompt", params: { prompt: "click the accept cookies button" } }
 
 pipeline:       # REQUIRED - ordered list of stages
   - stage: explore
@@ -39,6 +37,14 @@ pipeline:       # REQUIRED - ordered list of stages
     args:
       - { selector: "h1", method: "text", as: "title" }
 ```
+
+### What the engine actually reads
+
+The execution engine reads:
+- `fetch` (optional)
+- `pipeline` (required)
+
+Any extra top-level keys are ignored by the Scala parser (for example metadata, comments, or `python_extensions` used by higher-level tooling).
 
 ## Step 1: Create a Pipeline via API
 
@@ -76,19 +82,22 @@ curl -X POST https://api.webrobot.eu/api/webrobot/api/pipelines \
 
 | Stage | Description | Arguments |
 |-------|-------------|-----------|
-| `explore` | Breadth-first link discovery | selector/prompt, depth (Int), optional trace |
-| `join` | Visit N child links per row | selector, action prompt (`"none"` if absent), limit (Int) |
-| `extract` | Extract fields using selector-map | List of selector-map objects |
-| `flatSelect` | Segment HTML block, create row per segment | selector, extraction prompt or selector-map list, prefix |
+| `join` | Follow links with HTTP (wget) | link selector (String or `$col`), optional joinType (`Inner`/`LeftOuter`) |
+| `explore` | Crawl links breadth-first with HTTP (wget) | link selector (String or `$col`), optional depth (Int, default 1) |
+| `visitJoin` | Follow links with a browser (Visit) | link selector (String or `$col`), optional joinType (`Inner`/`LeftOuter`) |
+| `visitExplore` | Crawl links breadth-first with a browser (Visit) | link selector (String or `$col`), optional depth (Int, default 1) |
+| `extract` | Extract fields (adds columns) | list of extractor definitions (maps or shorthands) |
+| `flatSelect` (alias `widen`) | Segment into repeated blocks and extract one row per block | segment selector (String), list of extractor maps |
+| `wget` (alias `fetch`) | Fetch a URL from a column using HTTP | optional extractor (usually `$url`, default `_`) |
+| `visit` | Fetch a URL from a column using browser automation | optional extractor (usually `$url`, default `_`) |
 
 ### Intelligent Stages (LLM-powered)
 
 | Stage | Description | Arguments |
 |-------|-------------|-----------|
-| `intelligent_explore` | Like `explore`, but uses LLM to infer selector from NL prompt | prompt, depth, optional trace |
-| `intelligent_join` | Join with inferred selector (PTA/LLM) + inferred actions | selectorPrompt or `"auto"`, actionPrompt, limit |
-| `iextract` | LLM extraction on HTML block (chunking) | extractor, prompt, prefix |
-| `intelligent_flatSelect` | Segmentation + LLM multiple extraction | segPrompt, extrPrompt, prefix |
+| `intelligentJoin` (alias `intelligent_join`) | Join with inferred selector + optional inferred actions | selectorPrompt (or `"auto"`), optional actionPrompt, optional limit (Int) |
+| `intelligentExplore` (alias `intelligent_explore`) | Explore using an NL prompt (link inference) | prompt, optional depth (Int, default 1) |
+| `iextract` | LLM extraction producing dynamic columns | html extractor (optional), prompt (String), prefix (optional) |
 
 ### Utility Stages
 
@@ -117,7 +126,7 @@ pipeline:
       - { selector: "div.content", method: "code", as: "html_content" }
       
       # Extract HTML attribute
-      - { selector: "a", method: "attr(href)", as: "link" }
+      - { selector: "a", method: "attr:href", as: "link" }
       
       # Extract all attributes
       - { selector: "img", method: "attrs", as: "image_attrs" }
@@ -131,23 +140,25 @@ Custom resolvers are registered via plugins and can be used in YAML:
 pipeline:
   - stage: extract
     args:
-      # Custom price resolver
-      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
+      # PriceResolver (example-plugin): extracts the first numeric token from text
+      - { selector: "span.price", method: "price", as: "price_numeric" }
       
-      # Custom LLM resolver
-      - { selector: "div.product", method: "llm", args: ["Extract dimensions and weight"], as: "llm_extracted" }
+      # LLMResolver (example-plugin): structured features
+      - { selector: "div.description", method: "llm", as: "llm_features" }
       
-      # Custom sentiment resolver
-      - { selector: "p.review", method: "sentiment", as: "review_sentiment" }
+      # LLMResolver with instruction (dynamic Map output)
+      - { selector: "div.description", method: "llm", args: ["extract brand, model, and color"], as: "llm_map" }
+
+      # Use a previously extracted field as input of a resolver (column-based)
+      - { field: "description_text", method: "llm", args: ["extract sku and main benefits"], as: "llm_analysis" }
 ```
 
 **Available Custom Resolvers:**
 
 | Resolver | Description | Arguments |
 |----------|-------------|-----------|
-| `price` | Extract and normalize price | 0-1 ⇒ targetCurrency (e.g., `"USD"`) |
-| `llm` | LLM-based extraction | prompt (String), optional prefix |
-| `sentiment` | Sentiment analysis | text |
+| `price` | Extract a numeric price token from text | none |
+| `llm` | LLM-based extraction (structured features or custom key-value map) | optional instruction string (`args: [...]`) |
 
 ## Step 4: Custom Actions (Traces)
 
@@ -159,6 +170,9 @@ Built-in action factories for browser interactions:
 fetch:
   url: "https://example.com"
   traces:
+    # Visit (browser)
+    - { action: "visit", params: { url: "https://shop.example.com", cooldown: 0.5 } }
+
     # Wait action
     - { action: "wait", params: { seconds: 2 } }
     
@@ -166,16 +180,18 @@ fetch:
     - { action: "scroll_to_bottom", params: { behavior: "smooth" } }
     
     # AI-driven action (requires TOGETHER_AI_API_KEY)
-    - { prompt: "click the login button" }
-    - { prompt: "fill the search form with 'laptop'" }
+    - { action: "prompt", params: { prompt: "click the login button" } }
+    - { action: "prompt", params: { prompt: "fill the search form with 'laptop'" } }
 ```
 
 **Available Actions:**
 
 | Action | Parameters |
 |--------|------------|
+| `visit` | `url` (String), optional `cooldown` (seconds) |
 | `wait` | `seconds` (Int/Double) |
 | `scroll_to_bottom` | `behavior` = `smooth|auto` |
+| `prompt` | `prompt` (String) or `text` (String) |
 
 ### Custom Actions
 
@@ -213,49 +229,25 @@ def my_transform(row: Dict[str, Any]) -> Dict[str, Any]:
 ```yaml
 pipeline:
   - stage: python_row_transform:my_transform
-    name: "Transform data"
 ```
 
-### Python Attribute Resolvers
+### Runtime requirement
 
-Python functions that resolve specific attributes:
+Python row transforms require the Spark job runner to register the Python registry via Py4J (`PythonBridgeRegistry.setPythonRegistry(...)`). If a function name is not registered, the corresponding `python_row_transform:<name>` stage will fail at runtime.
 
-```python
-def my_resolver(elem: Any, attribute_name: Optional[str] = None) -> Any:
-    """Resolve attribute value"""
-    if not elem:
-        return None
-    # Your resolution logic
-    return resolved_value
-```
+### Inline `python_extensions` (for API code-generation)
 
-**Usage in YAML:**
+Some API flows support providing `python_extensions` alongside the pipeline YAML. The Scala YAML parser ignores this section, but the API can use it to generate PySpark code that registers these functions.
 
 ```yaml
-pipeline:
-  - stage: extract
-    args:
-      - { selector: "div.data", method: "python_resolver:my_resolver", as: "resolved_value" }
-```
-
-### Python Intelligent Actions
-
-Python functions for intelligent browser actions:
-
-```python
-def my_action(page: Any, params: Dict[str, Any]) -> bool:
-    """Execute custom browser action"""
-    # Your action logic
-    return True
-```
-
-**Usage in YAML:**
-
-```yaml
-fetch:
-  url: "https://example.com"
-  traces:
-    - { action: "python_action:my_action", params: { key: "value" } }
+python_extensions:
+  stages:
+    my_transform:
+      type: row_transform
+      function: |
+        def my_transform(row):
+            row["processed"] = True
+            return row
 ```
 
 ## Step 6: Complete Pipeline Example
@@ -267,32 +259,28 @@ fetch:
   url: "https://shop.example.com"
   traces:
     - { action: "wait", params: { seconds: 1 } }
-    - { prompt: "accept cookies if present" }
+    - { action: "prompt", params: { prompt: "accept cookies if present" } }
 
 pipeline:
   # Intelligent exploration
   - stage: intelligent_explore
     args: [ "category links", 2 ]
   
-  # Join product pages
-  - stage: join
-    args: [ "a.product-link", "none", 20 ]
+  # Join product pages (LLM-assisted selector + optional inferred actions + optional limit)
+  - stage: intelligent_join
+    args: [ "product detail links", "none", 20 ]
   
   # Extract product data
   - stage: extract
     args:
       - { selector: "h1.title", method: "text", as: "product_title" }
-      - { selector: "span.price", method: "price", args: ["USD"], as: "price_usd" }
+      - { selector: "span.price", method: "price", as: "price_numeric" }
       - { selector: "div.description", method: "code", as: "description_html" }
-      - { selector: "img.product-image", method: "attr(src)", as: "image_url" }
-      - { selector: "div.reviews", method: "llm", args: ["Extract average rating"], as: "rating" }
+      - { selector: "img.product-image", method: "attr:src", as: "image_url" }
+      - { selector: "div.reviews", method: "llm", args: ["extract average rating"], as: "rating" }
   
   # Python transformation
   - stage: python_row_transform:normalize_price
-    name: "Normalize prices"
-  
-  # Price comparison
-  - stage: priceCompare
     args: []
 ```
 

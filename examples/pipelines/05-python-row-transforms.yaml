@@ -1,0 +1,36 @@
+# This YAML includes an optional python_extensions section used by some API flows
+# to generate PySpark code. The Scala pipeline parser ignores unknown top-level keys.
+python_extensions:
+  stages:
+    price_normalizer:
+      type: row_transform
+      function: |
+        def price_normalizer(row):
+            import re
+            price_str = str(row.get("price_raw", ""))
+            m = re.search(r"([0-9]+(?:\\.[0-9]{1,2})?)", price_str.replace(",", "."))
+            row["price_numeric"] = float(m.group(1)) if m else None
+            return row
+
+    echo:
+      type: row_transform
+      function: |
+        def echo(row):
+            row["_echo"] = True
+            return row
+
+fetch:
+  url: "https://books.toscrape.com"
+
+pipeline:
+  - stage: extract
+    args:
+      - { selector: ".product_pod h3 a", method: "text", as: "title" }
+      - { selector: ".product_pod .price_color", method: "text", as: "price_raw" }
+
+  - stage: python_row_transform:price_normalizer
+    args: []
+
+  - stage: python_row_transform:echo
+    args: []
+
