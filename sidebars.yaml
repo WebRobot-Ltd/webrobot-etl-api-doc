@@ -11,6 +11,8 @@
       label: Pipeline Stages Reference
     - page: guides/pipeline-examples.md
       label: Pipeline Examples
+    - page: guides/ean-image-sourcing.md
+      label: EAN Image Sourcing Plugin
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

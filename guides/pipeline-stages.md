@@ -919,4 +919,5 @@ curl -X PUT https://api.webrobot.eu/api/webrobot/api/agents/1/123 \
 - Learn how to [build a complete pipeline](build-a-pipeline.md)
 - Explore [Attribute Resolvers](build-a-pipeline.md#attribute-resolvers) in detail
 - Check out [Python Extensions](build-a-pipeline.md#python-extensions) guide
+- If you are using the EAN plugin, see [EAN Image Sourcing Plugin](ean-image-sourcing.md) for the stage set + CloudCredential injection behavior.
 - Review the [API Reference](../openapi.yaml) for complete endpoint documentation
