@@ -13,7 +13,7 @@ These examples are **real YAML files** in the repository under `examples/pipelin
 
 ## Static crawl (HTTP only)
 
-- File: `examples/pipelines/01-static-books.yaml`
+- File: [`examples/pipelines/01-static-books.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/01-static-books.yaml)
 
 ```yaml
 fetch:
@@ -33,7 +33,7 @@ pipeline:
 
 ## Dynamic crawl (browser + flatSelect)
 
-- File: `examples/pipelines/02-dynamic-quotes.yaml`
+- File: [`examples/pipelines/02-dynamic-quotes.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/02-dynamic-quotes.yaml)
 
 ```yaml
 fetch:
@@ -54,7 +54,7 @@ pipeline:
 
 ## LLM extraction (`iextract`) with prompt-only args
 
-- File: `examples/pipelines/03-iextract-prompt-only.yaml`
+- File: [`examples/pipelines/03-iextract-prompt-only.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/03-iextract-prompt-only.yaml)
 
 ```yaml
 fetch:
@@ -69,7 +69,7 @@ pipeline:
 
 ## Attribute resolvers (column-based + selector-based)
 
-- File: `examples/pipelines/04-attribute-resolvers.yaml`
+- File: [`examples/pipelines/04-attribute-resolvers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/04-attribute-resolvers.yaml)
 
 ```yaml
 fetch:
@@ -88,7 +88,7 @@ pipeline:
 
 ## Python row transforms (`python_row_transform:<name>`)
 
-- File: `examples/pipelines/05-python-row-transforms.yaml`
+- File: [`examples/pipelines/05-python-row-transforms.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/05-python-row-transforms.yaml)
 
 ```yaml
 python_extensions:
@@ -112,6 +112,18 @@ pipeline:
     args: []
 ```
 
+## I/O operations (CSV load/save)
+
+- File: [`examples/pipelines/06-io-load-save-csv.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/06-io-load-save-csv.yaml)
+
+## Search engine integration (EAN enrichment)
+
+- File: [`examples/pipelines/07-searchengine-ean-enrich.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/07-searchengine-ean-enrich.yaml)
+
+## Browser automation (fetch.traces with actions)
+
+- File: [`examples/pipelines/08-fetch-traces-browser-actions.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/08-fetch-traces-browser-actions.yaml)
+
 ## Multi-source aggregation (set union + dedup) — vertical-ready
 
 These examples are meant to “prepare the ground” for verticals where you aggregate records from **multiple sources**.
@@ -121,11 +133,11 @@ The key idea is:
 
 ### 1) Union seed lists, dedup by URL, then fetch + extract
 
-- File: `examples/pipelines/09-multi-source-seeds-union-dedup.yaml`
+- File: [`examples/pipelines/09-multi-source-seeds-union-dedup.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/09-multi-source-seeds-union-dedup.yaml)
 
 ### 2) Stitch outputs from multiple crawls, then dedup by business key
 
-- File: `examples/pipelines/10-multi-source-results-union-dedup.yaml`
+- File: [`examples/pipelines/10-multi-source-results-union-dedup.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/10-multi-source-results-union-dedup.yaml)
 
 ### 3) Vertical pattern: run 2 source pipelines, then stitch their outputs
 
@@ -135,18 +147,18 @@ This is the closest representation of “fetch+extract UNION fetch+extract” **
 - Run stitching pipeline → `load_union` + `dedup`
 
 Files:
-- Source A: `examples/pipelines/11-vertical-source-a-offers.yaml`
-- Source B: `examples/pipelines/12-vertical-source-b-offers.yaml`
-- Stitching: `examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml`
+- Source A: [`examples/pipelines/11-vertical-source-a-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/11-vertical-source-a-offers.yaml)
+- Source B: [`examples/pipelines/12-vertical-source-b-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/12-vertical-source-b-offers.yaml)
+- Stitching: [`examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml)
 
 ### 4) Append upstream dataset to the current dataset
 
-- File: `examples/pipelines/14-union-by-name-append-upstream.yaml`
+- File: [`examples/pipelines/14-union-by-name-append-upstream.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/14-union-by-name-append-upstream.yaml)
 
 ## Aggregations (group-by style)
 
-- `examples/pipelines/15-aggregation-group-by-key.yaml` (sentiment → aggregatesentiment by key)
-- `examples/pipelines/16-aggregation-monthly.yaml` (sentiment_monthly macro-stage)
+- [`examples/pipelines/15-aggregation-group-by-key.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/15-aggregation-group-by-key.yaml) (sentiment → aggregatesentiment by key)
+- [`examples/pipelines/16-aggregation-monthly.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/16-aggregation-monthly.yaml) (sentiment_monthly macro-stage)
 
 
 
