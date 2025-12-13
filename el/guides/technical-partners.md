@@ -1,7 +1,7 @@
 ---
 title: Τεχνικοί συνεργάτες (EL)
 version: 1.0.0
-description: Plugin API (Jersey) + plugin ETL (stage/resolver/action) + Python Extensions για AI-agent layer
+description: "Plugin API (Jersey) + plugin ETL (stage/resolver/action) + Python Extensions για AI-agent layer"
 ---
 
 # Τεχνικοί συνεργάτες (EL)
