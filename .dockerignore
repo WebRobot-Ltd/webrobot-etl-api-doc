@@ -2,12 +2,14 @@ node_modules
 npm-debug.log
 .git
 .gitignore
-README.md
 .env
 .env.local
 dist
 *.md
 !README.md
+!index.md
+!guides/**/*.md
+!it/**/*.md
 dataset_*.csv
 dataset_*.md
 .DS_Store
