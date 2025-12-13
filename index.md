@@ -6,6 +6,15 @@ description: Comprehensive guides and API reference for building and managing ET
 
 # WebRobot ETL API Documentation
 
+## Language / Lingua
+
+- **English**: continue on this page (default) or go to `guides/`
+- **Italiano**: vai a **[`it/index.md`](it/index.md)**
+
+---
+
+## Quick Start (EN)
+
 Welcome to the WebRobot ETL API documentation. This site provides comprehensive guides and API reference for building and managing ETL pipelines.
 
 ## Quick Start
@@ -33,6 +42,8 @@ Get started with the WebRobot ETL API in minutes:
 - **[Build a Pipeline](guides/build-a-pipeline.md)**: Guide to building ETL pipelines using YAML syntax, attribute resolvers, custom actions, and Python extensions
 - **[Pipeline Stages Reference](guides/pipeline-stages.md)**: Complete reference of pipeline stages, YAML syntax, attribute resolvers, custom actions, and Python extensions
 - **[Pipeline Examples](guides/pipeline-examples.md)**: Copy-pasteable YAML examples aligned with the current parser and stages
+- **[EAN Image Sourcing Plugin](guides/ean-image-sourcing.md)**: EAN plugin pipeline + CloudCredential injection behavior
+- **[Partner tecnici](guides/technical-partners.md)**: How to extend WebRobot (API plugins + ETL plugins + Python extensions)
 
 ### 📖 API Reference
 - **[WebRobot ETL API](openapi.yaml)**: Complete OpenAPI specification with interactive documentation

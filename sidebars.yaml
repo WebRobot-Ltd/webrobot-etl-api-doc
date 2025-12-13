@@ -3,6 +3,20 @@
   items:
     - page: index.md
       label: Home
+- label: Italiano
+  items:
+    - page: it/index.md
+      label: Home (IT)
+    - page: it/guides/build-a-pipeline.md
+      label: Costruire una pipeline (IT)
+    - page: it/guides/pipeline-stages.md
+      label: Riferimento stage (IT)
+    - page: it/guides/pipeline-examples.md
+      label: Esempi pipeline (IT)
+    - page: it/guides/ean-image-sourcing.md
+      label: Plugin EAN (IT)
+    - page: it/guides/technical-partners.md
+      label: Partner tecnici (IT)
 - label: Guides
   items:
     - page: guides/build-a-pipeline.md

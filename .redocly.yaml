@@ -12,6 +12,7 @@ docs:
 # Force root to point to index.md instead of auto-redirecting to first page
 redirects:
   '/': '/index'
+  '/it': '/it/index'
 
 # Theme configuration
 theme:
