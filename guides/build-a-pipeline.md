@@ -399,9 +399,57 @@ execution = requests.post(
 print("Execution:", execution)
 ```
 
+## Dataset Storage & Querying with Trino
+
+### Automatic Dataset Indexing
+
+When a pipeline execution completes and writes data to storage (S3/MinIO), the dataset is **automatically indexed in Trino**:
+
+- **Automatic Registration**: Datasets are automatically registered in Trino catalogs
+- **Schema Discovery**: Trino discovers the schema from stored data (Parquet, Delta, Iceberg, etc.)
+- **Table Metadata**: Table metadata is maintained in Trino's metastore for fast query planning
+- **Multi-format Support**: Supports Parquet, Delta Lake, Iceberg, and other formats
+
+### Post-Processing Queries
+
+The WebRobot API uses **Trino for all post-processing queries** on pipeline outputs:
+
+- **SQL Interface**: Query datasets using standard SQL through Trino
+- **Fast Analytics**: Trino's distributed query engine provides fast analytical queries
+- **Federation**: Query across multiple data sources in a single query
+- **API Integration**: All dataset query endpoints use Trino under the hood
+
+### Querying Pipeline Outputs
+
+After a pipeline execution completes, you can query the output dataset:
+
+```python
+# Query dataset using SQL
+query_response = requests.post(
+    f"{API_BASE}/webrobot/api/projects/id/{project_id}/jobs/{job_id}/datasets/{dataset_id}/query",
+    headers=HEADERS,
+    json={
+        "sql": "SELECT * FROM output_table WHERE price > 100 LIMIT 100",
+        "format": "json"
+    }
+).json()
+
+print("Query results:", query_response["rows"])
+```
+
+### Benefits
+
+- **Immediate Access**: Query data immediately after pipeline execution
+- **Standard SQL**: Use familiar SQL syntax for data exploration
+- **Performance**: Fast analytical queries on large datasets
+- **Unified Interface**: Single query interface for all datasets regardless of storage format
+
+For more details, see the [Observability & Metrics](observability-metrics.md#data-access--post-processing) guide.
+
 ## Next Steps
 
 - Learn about [available pipeline stages](pipeline-stages.md)
 - Explore [Attribute Resolvers](pipeline-stages.md#attribute-resolvers) in detail
 - Check out [Python Extensions](pipeline-stages.md#python-extensions) guide
+- Review [Observability & Metrics](observability-metrics.md) for dataset querying and post-processing
 - Review the [API Reference](../openapi.yaml) for complete endpoint documentation

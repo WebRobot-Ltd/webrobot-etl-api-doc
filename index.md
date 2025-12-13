@@ -23,7 +23,8 @@ This documentation covers the **ETL component** of WebRobot, which provides:
 - **Spark-native processing**: Built on Apache Spark for scalable data processing
 - **API-first architecture**: Manage pipelines, projects, and jobs via REST API
 - **Agentic capabilities**: LLM-powered intelligent stages for adaptive web scraping and data extraction
-- **Extensible framework**: Custom plugins, stages, resolvers, and Python extensions
+- **Maximum extensibility**: The agentic nature requires maximum pipeline extensibility, enabled through **Python Extensions** for auto-programming custom stages without compiling plugins
+- **Extensible framework**: Custom plugins (for technical partners), stages, resolvers, and Python extensions (for admin and technical partners)
 
 ## AI Agent Integration & MCP Protocol
 
@@ -78,6 +79,7 @@ Get started with the WebRobot ETL API in minutes:
 - **[Build a Pipeline](guides/build-a-pipeline.md)**: Guide to building ETL pipelines using YAML syntax, attribute resolvers, custom actions, and Python extensions
 - **[Pipeline Stages Reference](guides/pipeline-stages.md)**: Complete reference of pipeline stages, YAML syntax, attribute resolvers, custom actions, and Python extensions
 - **[Pipeline Examples](guides/pipeline-examples.md)**: Copy-pasteable YAML examples aligned with the current parser and stages
+- **[Observability & Metrics](guides/observability-metrics.md)**: Comprehensive observability, metrics collection, and pay-to-use billing integration with cloud provider partners
 - **[EAN Image Sourcing Plugin](guides/ean-image-sourcing.md)**: EAN plugin pipeline + CloudCredential injection behavior
 - **[Partner tecnici](guides/technical-partners.md)**: How to extend WebRobot (API plugins + ETL plugins + Python extensions)
 
@@ -92,6 +94,8 @@ Get started with the WebRobot ETL API in minutes:
 - **Custom Actions**: Extend browser interactions with custom action factories
 - **Python Extensions**: Create custom Python row transform stages (`python_row_transform:<name>`)
 - **Intelligent Stages**: LLM-powered stages for adaptive web scraping
+- **Observability & Metrics**: Comprehensive metrics collection with real-time monitoring and cost correlation
+- **Pay-to-Use Billing**: Automatic correlation of metrics with cloud provider billing for transparent usage-based pricing
 
 ## Base URLs
 
