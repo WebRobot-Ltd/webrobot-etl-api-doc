@@ -5,13 +5,15 @@ apis:
 
 # Docs configuration for multi-page documentation
 docs:
-  root: index.md
+  # Docs content root directory (all markdown lives under repo root: index.md, guides/, it/, ...)
+  root: .
+  # Explicit homepage (otherwise Realm may choose the first sidebar page)
+  homePage: index.md
   sidebars: sidebars.yaml
 
 # Explicit redirects configuration
-# Force root to point to index.md instead of auto-redirecting to first page
+# Note: index.md is served at `/` (there is no `/index` route).
 redirects:
-  '/': '/index'
   '/it': '/it/index'
 
 # Theme configuration
