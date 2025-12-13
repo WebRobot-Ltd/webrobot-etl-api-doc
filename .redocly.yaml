@@ -15,6 +15,7 @@ docs:
 # Note: index.md is served at `/` (there is no `/index` route).
 redirects:
   '/it': '/it/index'
+  '/el': '/el/index'
 
 # Theme configuration
 theme:

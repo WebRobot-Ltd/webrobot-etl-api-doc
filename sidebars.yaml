@@ -17,6 +17,20 @@
       label: Plugin EAN (IT)
     - page: it/guides/technical-partners.md
       label: Partner tecnici (IT)
+- label: Ελληνικά
+  items:
+    - page: el/index.md
+      label: Home (EL)
+    - page: el/guides/build-a-pipeline.md
+      label: Κατασκευή pipeline (EL)
+    - page: el/guides/pipeline-stages.md
+      label: Αναφορά stages (EL)
+    - page: el/guides/pipeline-examples.md
+      label: Παραδείγματα pipeline (EL)
+    - page: el/guides/ean-image-sourcing.md
+      label: Plugin EAN (EL)
+    - page: el/guides/technical-partners.md
+      label: Τεχνικοί συνεργάτες (EL)
 - label: Guides
   items:
     - page: guides/build-a-pipeline.md

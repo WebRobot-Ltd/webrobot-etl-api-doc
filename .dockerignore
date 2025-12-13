@@ -10,6 +10,7 @@ dist
 !index.md
 !guides/**/*.md
 !it/**/*.md
+!el/**/*.md
 dataset_*.csv
 dataset_*.md
 .DS_Store
