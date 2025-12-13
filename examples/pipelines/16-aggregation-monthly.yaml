@@ -1,0 +1,15 @@
+# Aggregation example:
+# sentiment_monthly is a macro-stage (example-plugin) that produces monthly aggregates.
+
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/inputs/messages_with_date.csv", header: "true", inferSchema: "true" }
+
+  - stage: sentiment_monthly
+    args: [ "message" ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/agg/sentiment_monthly/", "overwrite" ]
+
+

@@ -112,4 +112,41 @@ pipeline:
     args: []
 ```
 
+## Multi-source aggregation (set union + dedup) — vertical-ready
+
+These examples are meant to “prepare the ground” for verticals where you aggregate records from **multiple sources**.
+The key idea is:
+- **Union** records coming from different upstream crawls / sources (even if schemas differ).
+- Apply **set semantics** via **dedup** using a stable key (e.g. `sku`, `ean`, `url`, plus `source`).
+
+### 1) Union seed lists, dedup by URL, then fetch + extract
+
+- File: `examples/pipelines/09-multi-source-seeds-union-dedup.yaml`
+
+### 2) Stitch outputs from multiple crawls, then dedup by business key
+
+- File: `examples/pipelines/10-multi-source-results-union-dedup.yaml`
+
+### 3) Vertical pattern: run 2 source pipelines, then stitch their outputs
+
+This is the closest representation of “fetch+extract UNION fetch+extract” **with the current YAML capabilities**:
+- Run source pipeline A → save output
+- Run source pipeline B → save output
+- Run stitching pipeline → `load_union` + `dedup`
+
+Files:
+- Source A: `examples/pipelines/11-vertical-source-a-offers.yaml`
+- Source B: `examples/pipelines/12-vertical-source-b-offers.yaml`
+- Stitching: `examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml`
+
+### 4) Append upstream dataset to the current dataset
+
+- File: `examples/pipelines/14-union-by-name-append-upstream.yaml`
+
+## Aggregations (group-by style)
+
+- `examples/pipelines/15-aggregation-group-by-key.yaml` (sentiment → aggregatesentiment by key)
+- `examples/pipelines/16-aggregation-monthly.yaml` (sentiment_monthly macro-stage)
+
+
 

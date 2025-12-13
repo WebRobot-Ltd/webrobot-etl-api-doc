@@ -1,0 +1,22 @@
+# Stitching pattern for verticals:
+# union outputs produced by multiple upstream crawls (different schemas allowed)
+
+pipeline:
+  - stage: load_union
+    args:
+      # Crawl A output
+      - { format: "delta", path: "s3a://your-bucket/out/crawl_a_delta/" }
+      # Crawl B output
+      - { format: "delta", path: "s3a://your-bucket/out/crawl_b_delta/" }
+      # Optional: add a third source from CSV
+      - { format: "csv", path: "s3a://your-bucket/out/crawl_c.csv", options: { header: "true", inferSchema: "true" } }
+
+  # Set-union semantics: keep 1 record per key.
+  # Choose keys that make sense for the vertical (e.g. sku/ean/url + source).
+  - stage: dedup
+    args: [ "sku", "source" ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical_union_dedup/", "overwrite" ]
+
+

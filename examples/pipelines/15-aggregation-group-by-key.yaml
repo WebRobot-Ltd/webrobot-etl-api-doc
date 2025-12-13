@@ -1,0 +1,20 @@
+# Aggregation example:
+# Group-by a key and compute aggregate features (example-plugin stages).
+
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/inputs/messages.csv", header: "true", inferSchema: "true" }
+
+  # Compute sentiment per row (adds sentiment + count)
+  - stage: sentiment
+    args: [ "message" ]
+
+  # Aggregate by a key field (e.g., entity / country / productId)
+  - stage: aggregatesentiment
+    args: [ "entity" ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/agg/sentiment_by_entity/", "overwrite" ]
+
+

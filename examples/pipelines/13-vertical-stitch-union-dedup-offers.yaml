@@ -1,0 +1,22 @@
+# Vertical example (stitching):
+# Union the outputs of two upstream "source pipelines" and deduplicate.
+#
+# IMPORTANT:
+# - YAML does not support branching ("run pipeline A then run pipeline B then union") in a single job today.
+# - The supported pattern is: run pipelines separately (A + B) -> stitch their outputs here.
+
+pipeline:
+  - stage: load_union
+    args:
+      - { format: "csv", path: "s3a://your-bucket/out/vertical/source_a_offers/", options: { header: "true", inferSchema: "true" } }
+      - { format: "csv", path: "s3a://your-bucket/out/vertical/source_b_offers/", options: { header: "true", inferSchema: "true" } }
+
+  # Set-union semantics for records (pick a stable key for your vertical).
+  # If you do not have a stable entity id (ean/sku), use url-level dedup as a safe baseline.
+  - stage: dedup
+    args: [ "url" ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical/stitched_offers/", "overwrite" ]
+
+

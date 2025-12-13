@@ -11,7 +11,7 @@ description: Plugin API (Jersey) + plugin ETL (stage/resolver/action) + Python E
 Questa guida spiega come estendere WebRobot in modo supportato:
 
 - **Plugin Jersey (API)**: endpoint REST nel backend (es. EAN plugin).
-- **Plugin ETL (Spark/SpookyStuff)**: nuovi stage/resolver/actions usabili nelle pipeline YAML (es. `example-plugin`).
+- **Plugin ETL (Spark/runtime ETL)**: nuovi stage/resolver/actions usabili nelle pipeline YAML (es. `example-plugin`).
 - **Python Extensions**: ideali per logica generata dinamicamente dall’AI-agent layer, con endpoint dedicato.
 
 ## Plugin Jersey (API)

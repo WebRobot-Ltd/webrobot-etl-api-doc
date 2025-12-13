@@ -1,0 +1,28 @@
+# Multi-source web aggregation pattern:
+# 1) union seed lists from multiple sources
+# 2) deduplicate by URL
+# 3) fetch + extract
+
+pipeline:
+  - stage: load_union
+    args:
+      - { format: "csv", path: "s3a://your-bucket/seeds/source_a.csv", options: { header: "true" } }
+      - { format: "csv", path: "s3a://your-bucket/seeds/source_b.csv", options: { header: "true" } }
+
+  # Expect both CSVs to expose a column like: url
+  - stage: dedup
+    args: [ "url" ]
+
+  # Fetch each URL (HTTP). For dynamic sites use stage: visit
+  - stage: wget
+    args: [ "$url" ]
+
+  - stage: extract
+    args:
+      - { selector: "title", method: "text", as: "page_title" }
+      - { selector: "meta[name=description]", method: "attr:content", as: "meta_description" }
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical_seed_union/", "overwrite" ]
+
+

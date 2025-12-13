@@ -548,6 +548,54 @@ All connector stages accept as first argument either:
 
 ---
 
+### Set operations (multi-source “vertical stitching”)
+
+These stages help you aggregate records from **multiple upstream sources/pipelines** using set semantics:
+- **union**: combine rows from different sources (schema differences allowed)
+- **dedup**: enforce “set union” by keeping 1 row per key
+
+#### `load_union`
+
+**Purpose**: Start a pipeline by loading **multiple datasets** and unioning them by column name (`allowMissingColumns=true`).
+
+**Args**: one or more **source spec maps**:
+- `format` (required): `csv|delta|avro|bigquery|mongo|...`
+- `path` (optional): dataset path/table identifier (depends on connector)
+- `options` (optional): reader options
+
+```yaml
+pipeline:
+  - stage: load_union
+    args:
+      - { format: "csv", path: "s3a://bucket/a.csv", options: { header: "true" } }
+      - { format: "csv", path: "s3a://bucket/b.csv", options: { header: "true" } }
+```
+
+#### `unionByName` (alias: `union_by_name`)
+
+**Purpose**: Union the **current** dataset with one or more external datasets loaded from specs (also allows missing columns).
+
+```yaml
+pipeline:
+  - stage: unionByName
+    args:
+      - { format: "delta", path: "s3a://bucket/upstream_delta/" }
+```
+
+#### `dedup`
+
+**Purpose**: Deduplicate rows.
+- If `args` is empty: full-row distinct
+- Else: `args` are key column names (recommended for vertical stitching)
+
+```yaml
+pipeline:
+  - stage: dedup
+    args: [ "sku", "source" ]
+```
+
+---
+
 ### External API fetch stages
 
 #### `searchEngine` (alias: `search`)

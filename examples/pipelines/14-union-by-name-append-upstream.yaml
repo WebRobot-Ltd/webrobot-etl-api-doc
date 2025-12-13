@@ -1,0 +1,20 @@
+# Example: append upstream results to the current dataset.
+# This is useful when you want to enrich/extend a dataset with another dataset that was produced elsewhere.
+
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/out/vertical/source_a_offers/", header: "true", inferSchema: "true" }
+
+  # Append rows from another dataset (schema differences allowed; missing columns become nulls)
+  - stage: unionByName
+    args:
+      - { format: "csv", path: "s3a://your-bucket/out/vertical/source_b_offers/", options: { header: "true", inferSchema: "true" } }
+
+  - stage: dedup
+    args: [ "url" ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical/appended_offers/", "overwrite" ]
+
+

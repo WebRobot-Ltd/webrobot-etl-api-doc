@@ -1,0 +1,27 @@
+# Vertical example (source A):
+# Crawl a site, extract "offer-like" records, save the result.
+#
+# This pipeline is meant to be paired with:
+# - 12-vertical-source-b-offers.yaml
+# - 13-vertical-stitch-union-dedup-offers.yaml
+
+fetch:
+  url: "https://books.toscrape.com"
+
+pipeline:
+  - stage: explore
+    args: [ "li.next a", 2 ]
+
+  - stage: join
+    args: [ "article.product_pod h3 a", "LeftOuter" ]
+
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+      - { selector: ".price_color", method: "text", as: "price_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical/source_a_offers/", "overwrite" ]
+
+

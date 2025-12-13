@@ -1,0 +1,32 @@
+# Example aligned with EAN plugin flow:
+# load_csv -> searchEngine -> visit -> iextract -> enrichMatchingScore -> save_csv
+
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/ean_input.csv", header: "true", inferSchema: "true" }
+
+  - stage: searchEngine
+    args:
+      - provider: "google"
+        ean: "$EAN number"
+        num_results: 10
+        image_search: true
+        enrich: true
+        as: "search_json"
+
+  - stage: visit
+    args: [ "$result_link" ]
+
+  - stage: iextract
+    args:
+      - "Extract: product name, brand, price, EAN if visible, and all product image URLs"
+      - "prod_"
+
+  - stage: enrichMatchingScore
+    args: [ { input_ean_field: "EAN number", iextract_prefix: "prod_" } ]
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/ean_enriched/", "overwrite" ]
+
+

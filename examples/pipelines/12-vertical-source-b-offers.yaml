@@ -1,0 +1,35 @@
+# Vertical example (source B):
+# Use an API-based discovery (search) + browser fetch, then extract offer-like records.
+#
+# This is intentionally "source B" to demonstrate multi-source stitching.
+
+pipeline:
+  # Seed list (could come from your partner DB / CRM / catalog).
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/inputs/ean_list.csv", header: "true", inferSchema: "true" }
+
+  # Discover candidate pages via search (per-row)
+  - stage: searchEngine
+    args:
+      - provider: "google"
+        ean: "$ean"
+        num_results: 5
+        enrich: true
+
+  # Visit each discovered page (browser)
+  - stage: visit
+    args: [ "$result_link" ]
+
+  # Extract a canonical "offer-like" schema (keep it similar across sources)
+  - stage: extract
+    args:
+      - { selector: "title", method: "text", as: "title" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      # If a site exposes price in meta tags, this is often more reliable than DOM scraping:
+      - { selector: "meta[property='product:price:amount']", method: "attr:content", as: "price_raw" }
+
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/vertical/source_b_offers/", "overwrite" ]
+
+

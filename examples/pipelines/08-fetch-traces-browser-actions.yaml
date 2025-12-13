@@ -1,0 +1,20 @@
+fetch:
+  url: "https://quotes.toscrape.com"
+  traces:
+    # Actions can be specified either as 'action' (common) or 'factory' (custom factory name).
+    - { action: "visit", params: { url: "https://quotes.toscrape.com", cooldown: 0.5 } }
+    - { action: "wait", params: { seconds: 1 } }
+    # Example of a factory-based action (depends on plugin ActionFactoryRegistry)
+    - { factory: "scrollToBottom", params: { step: 800, pauseMs: 250 } }
+
+pipeline:
+  - stage: visitExplore
+    args: [ "li.next a", 1 ]
+
+  - stage: flatSelect
+    args:
+      - "div.quote"
+      - - { selector: "span.text", method: "text", as: "quote_text" }
+        - { selector: "small.author", method: "text", as: "author" }
+
+

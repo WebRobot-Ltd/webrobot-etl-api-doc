@@ -11,7 +11,7 @@ Questa sezione è per partner che vogliono estendere WebRobot in modo **supporta
 Esistono 2 categorie principali:
 
 - **Plugin Jersey (API)**: aggiungono endpoint REST nel backend (es. EAN plugin).
-- **Plugin ETL (Spark/SpookyStuff)**: aggiungono stage/resolver/actions usabili nelle pipeline YAML (es. `example-plugin`).
+- **Plugin ETL (Spark/ETL runtime)**: aggiungono stage/resolver/actions usabili nelle pipeline YAML (es. `example-plugin`).
 
 Inoltre, per logica generata dinamicamente (AI-agent layer) consigliamo **Python Extensions**.
 

@@ -1,0 +1,18 @@
+fetch:
+  url: "https://example.com"  # optional; ignored if you start with load_csv
+
+pipeline:
+  # Start a pipeline from a CSV dataset (new dataset)
+  - stage: load_csv
+    args:
+      - { path: "s3a://your-bucket/input.csv", header: "true", inferSchema: "true" }
+
+  # Optional debug marker (example-plugin)
+  - stage: echo
+    args: [ "loaded_csv" ]
+
+  # Save intermediate results (keeps pipeline running)
+  - stage: save_csv
+    args: [ "s3a://your-bucket/out/csv/", "overwrite" ]
+
+
