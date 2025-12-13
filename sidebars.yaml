@@ -13,6 +13,8 @@
       label: Pipeline Examples
     - page: guides/ean-image-sourcing.md
       label: EAN Image Sourcing Plugin
+    - page: guides/technical-partners.md
+      label: Partner tecnici
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1
