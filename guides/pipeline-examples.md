@@ -141,15 +141,49 @@ The key idea is:
 
 ### 3) Vertical pattern: run 2 source pipelines, then stitch their outputs
 
-This is the closest representation of “fetch+extract UNION fetch+extract” **with the current YAML capabilities**:
-- Run source pipeline A → save output
-- Run source pipeline B → save output
+**Current approach (workaround)**: Since YAML pipelines are sequential and don't support branching, the pattern is:
+- Run source pipeline A → save output to disk
+- Run source pipeline B → save output to disk
 - Run stitching pipeline → `load_union` + `dedup`
 
 Files:
 - Source A: [`examples/pipelines/11-vertical-source-a-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/11-vertical-source-a-offers.yaml)
 - Source B: [`examples/pipelines/12-vertical-source-b-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/12-vertical-source-b-offers.yaml)
 - Stitching: [`examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/13-vertical-stitch-union-dedup-offers.yaml)
+
+**Single-pipeline (now supported via store/reset/union_with)**:
+
+To avoid intermediate disk I/O, you can branch in-memory and merge within the same pipeline using helper stages:
+
+- **Option A (single pipeline with in-memory branches)**: [`examples/pipelines/17-single-pipeline-multi-source-union.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/17-single-pipeline-multi-source-union.yaml)
+  - `cache` (optional but recommended) before `store` to avoid recompute when reusing the branch
+  - `store` caches the current dataset under a label
+  - `reset` starts a fresh dataset
+  - `union_with` unions the current dataset with a stored branch
+
+- **Option B (same helpers, alternative flow)**: [`examples/pipelines/18-single-pipeline-alternative-syntax.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/18-single-pipeline-alternative-syntax.yaml)
+
+## Vertical use cases
+
+### Price comparison (5 e-commerce sites)
+
+- File: [`examples/pipelines/19-price-comparison-5-sites.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/19-price-comparison-5-sites.yaml)
+
+Aggregates product offers from Amazon, eBay, Walmart, Target, and Best Buy, with product matching by EAN.
+
+### Sports betting odds aggregation (5 bookmakers)
+
+- File: [`examples/pipelines/20-sports-betting-5-bookmakers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/20-sports-betting-5-bookmakers.yaml)
+
+Aggregates odds from bet365, Pinnacle, Betfair, William Hill, and Unibet for odds comparison.
+
+### Surebet detection (intelligent extraction)
+
+- File: [`examples/pipelines/21-surebet-intelligent-extraction.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/21-surebet-intelligent-extraction.yaml)
+
+Uses `intelligent_explore` and `intelligent_flatSelect` to extract odds from bookmaker sites with complex, non-trivial table structures, then detects arbitrage (surebet) opportunities.
+
+Note: Paths can use environment placeholders `${VAR_NAME}` (resolved by the runner before parsing).
 
 ### 4) Append upstream dataset to the current dataset
 
