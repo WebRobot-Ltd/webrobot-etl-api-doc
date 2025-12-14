@@ -212,6 +212,24 @@ Enrich records with additional data:
 
 **Example Output**: 100K+ instruction-following examples in Alpaca format, ready for LLM fine-tuning.
 
+---
+
+### 💼 [Portfolio Management & 90-Day Asset Prediction](vertical-portfolio-management.md)
+
+**Use Case**: Build training datasets for 90-day asset price prediction models, designed for LLM fine-tuning on NVIDIA DGX SPARK (Feeless portfolio management layer).
+
+**Key Features**:
+- Multi-source financial data aggregation (prices, macro, sentiment, alternative data)
+- Technical indicator calculation (RSI, MACD, Bollinger Bands, volatility)
+- 90-day forward target generation
+- Time-series alignment and feature engineering
+- LLM fine-tuning format (instruction-following with temporal context)
+- Export for distributed training on NVIDIA DGX SPARK
+
+**Example Output**: JSONL/Parquet training dataset with 50+ features for 90-day price prediction, ready for LLM fine-tuning.
+
+**Related**: Part of the Feeless portfolio management layer for agentic pools.
+
 ## Getting Started
 
 1. **Choose your vertical**: Review the guides above to find the use case that matches your needs

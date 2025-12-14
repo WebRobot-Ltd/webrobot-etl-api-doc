@@ -55,6 +55,8 @@
       label: Real Estate Arbitrage & Clustering
     - page: guides/vertical-llm-finetuning.md
       label: LLM Fine-Tuning Dataset Construction
+    - page: guides/vertical-portfolio-management.md
+      label: Portfolio Management & 90-Day Prediction
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

@@ -193,6 +193,12 @@ Aggregates property listings from 5 real estate sites, clusters similar properti
 
 - File: [`examples/pipelines/23-llm-finetuning-dataset.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/23-llm-finetuning-dataset.yaml)
 
+### Portfolio management & 90-day asset prediction
+
+- File: [`examples/pipelines/24-portfolio-management-90d-prediction.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/24-portfolio-management-90d-prediction.yaml)
+
+Aggregates multi-source financial data (historical prices from Alpha Vantage, macroeconomic indicators from FRED, news sentiment from GDELT, social sentiment from Reddit, alternative data from CoinGecko), calculates 50+ technical indicators (RSI, MACD, Bollinger Bands, volatility), generates 90-day forward targets, aligns time-series data, and formats for LLM fine-tuning (instruction-following format). Exports to JSONL/Parquet for distributed training on NVIDIA DGX SPARK. Part of the Feeless portfolio management layer for agentic pools.
+
 Aggregates Q&A data from multiple sources (Stack Overflow, Reddit, documentation sites, GitHub issues, Wikipedia), cleans and normalizes text, converts to instruction-following format (Alpaca style), and exports to JSONL for LLM fine-tuning.
 
 Note: Paths can use environment placeholders `${VAR_NAME}` (resolved by the runner before parsing).

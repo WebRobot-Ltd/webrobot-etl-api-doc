@@ -8,6 +8,7 @@ This document outlines **proposed vertical use cases** to implement as complete,
 2. **Sports Betting & Odds Aggregation** - Surebet detection with intelligent extraction, event matching
 3. **Real Estate Arbitrage & Clustering** - Property clustering, market statistics integration
 4. **LLM Fine-Tuning Dataset Construction** - Multi-format dataset building (instruction, chat, code)
+5. **Portfolio Management & 90-Day Asset Prediction** - Training dataset construction for LLM fine-tuning on NVIDIA DGX SPARK (Feeless project)
 
 ## 🎯 High Priority (Next to Implement)
 

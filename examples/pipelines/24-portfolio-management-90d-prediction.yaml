@@ -1,0 +1,268 @@
+# Concrete example: Build training dataset for 90-day asset price prediction
+# This pipeline aggregates price data, macroeconomic indicators, news sentiment,
+# social sentiment, and alternative data to create a comprehensive training set
+# for fine-tuning LLM models on NVIDIA DGX SPARK.
+
+# Target asset: BTC-USD (Bitcoin)
+# Prediction horizon: 90 days
+# Output format: JSONL for LLM fine-tuning
+
+fetch:
+  url: "https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=BTC&market=USD&apikey=${ALPHAVANTAGE_API_KEY}"
+
+pipeline:
+  # ============================================
+  # Source 1: Historical Price Data (Alpha Vantage)
+  # ============================================
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "price_json" }
+  - stage: python_row_transform:parse_alphavantage_crypto
+    args: []
+  - stage: python_row_transform:calculate_returns
+    args:
+      - method: "log"
+  - stage: python_row_transform:calculate_technical_indicators
+    args:
+      - window: 14
+      - indicators: ["rsi", "macd", "bollinger_bands", "sma", "ema", "volatility"]
+  - stage: python_row_transform:add_metadata
+    args:
+      - asset_symbol: "BTC-USD"
+        asset_class: "crypto"
+        source: "alphavantage"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "price_data" ]
+
+  # ============================================
+  # Source 2: Macroeconomic Data (FRED API)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.stlouisfed.org/fred/series/observations?series_id=SP500&api_key=${FRED_API_KEY}&file_type=json&limit=1000" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "sp500_json" }
+  - stage: python_row_transform:parse_fred_series
+    args:
+      - series_id: "SP500"
+        field_name: "sp500_close"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "sp500_data" ]
+
+  # VIX data
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.stlouisfed.org/fred/series/observations?series_id=VIXCLS&api_key=${FRED_API_KEY}&file_type=json&limit=1000" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "vix_json" }
+  - stage: python_row_transform:parse_fred_series
+    args:
+      - series_id: "VIXCLS"
+        field_name: "vix"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "vix_data" ]
+
+  # US 10-year Treasury yield
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&api_key=${FRED_API_KEY}&file_type=json&limit=1000" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "us10y_json" }
+  - stage: python_row_transform:parse_fred_series
+    args:
+      - series_id: "DGS10"
+        field_name: "us10y_yield"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "us10y_data" ]
+
+  # Gold price
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.stlouisfed.org/fred/series/observations?series_id=GOLDAMGBD228NLBM&api_key=${FRED_API_KEY}&file_type=json&limit=1000" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "gold_json" }
+  - stage: python_row_transform:parse_fred_series
+    args:
+      - series_id: "GOLDAMGBD228NLBM"
+        field_name: "gold_price"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "gold_data" ]
+
+  # ============================================
+  # Source 3: News Sentiment (GDELT Project)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.gdeltproject.org/api/v2/doc/doc?query=bitcoin%20OR%20BTC&mode=artlist&format=json&timespan=90d&maxrecords=1000" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "news_json" }
+  - stage: python_row_transform:parse_gdelt_news
+    args: []
+  - stage: python_row_transform:calculate_news_sentiment
+    args:
+      - sentiment_field: "tone"
+        normalize: true
+  - stage: python_row_transform:aggregate_sentiment_by_date
+    args:
+      - date_field: "date"
+        window: 1
+        aggregation: "mean"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "gdelt"
+        data_type: "news_sentiment"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "news_sentiment" ]
+
+  # ============================================
+  # Source 4: Social Sentiment (Reddit)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.reddit.com/r/Bitcoin/hot.json?limit=100" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "reddit_json" }
+  - stage: python_row_transform:parse_reddit_posts
+    args:
+      - subreddit: "Bitcoin"
+      - extract_fields: ["title", "selftext", "score", "created_utc"]
+  - stage: python_row_transform:calculate_social_sentiment
+    args:
+      - text_fields: ["title", "selftext"]
+      - method: "vader"  # VADER sentiment analyzer
+  - stage: python_row_transform:aggregate_sentiment_by_date
+    args:
+      - date_field: "created_utc"
+        window: 1
+        aggregation: "mean"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "reddit"
+        data_type: "social_sentiment"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "social_sentiment" ]
+
+  # ============================================
+  # Source 5: Alternative Data (CoinGecko)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365&interval=daily" ]
+  - stage: extract
+    args:
+      - { selector: "pre", method: "text", as: "coingecko_json" }
+  - stage: python_row_transform:parse_coingecko_market_chart
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "coingecko"
+        data_type: "market_data"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "alternative_data" ]
+
+  # ============================================
+  # Union All Sources
+  # ============================================
+  - stage: union_with
+    args: [ "price_data" ]
+  - stage: union_with
+    args: [ "sp500_data" ]
+  - stage: union_with
+    args: [ "vix_data" ]
+  - stage: union_with
+    args: [ "us10y_data" ]
+  - stage: union_with
+    args: [ "gold_data" ]
+  - stage: union_with
+    args: [ "news_sentiment" ]
+  - stage: union_with
+    args: [ "social_sentiment" ]
+  - stage: union_with
+    args: [ "alternative_data" ]
+
+  # ============================================
+  # Time-Series Alignment & Feature Engineering
+  # ============================================
+  - stage: python_row_transform:align_time_series
+    args:
+      - date_field: "timestamp"
+      - frequency: "daily"
+      - method: "forward_fill"
+  - stage: python_row_transform:calculate_90d_target
+    args:
+      - price_field: "price_close"
+      - future_days: 90
+  - stage: python_row_transform:enrich_with_macro_correlations
+    args:
+      - correlation_window: 30
+  - stage: python_row_transform:fill_missing_values
+    args:
+      - method: "forward_fill"
+      - limit: 7
+  - stage: python_row_transform:normalize_features
+    args:
+      - method: "standardize"
+      - exclude_fields: ["timestamp", "asset_symbol", "target_price_90d", "target_return_90d"]
+  - stage: dedup
+    args: [ "timestamp", "asset_symbol" ]
+
+  # ============================================
+  # Format for LLM Fine-Tuning
+  # ============================================
+  - stage: python_row_transform:format_for_llm_finetuning
+    args:
+      - asset_symbol: "BTC-USD"
+      - format: "instruction_following"
+      - include_context: true
+      - context_window: 30
+  - stage: python_row_transform:validate_training_dataset
+    args: []
+  - stage: filter
+    args:
+      - "validation_status == 'valid'"
+
+  # ============================================
+  # Export for NVIDIA DGX SPARK
+  # ============================================
+  - stage: save_csv
+    args:
+      - path: "s3://webrobot-data/portfolio-management/btc-90d-training-set.jsonl"
+        format: "jsonl"
+        mode: "overwrite"
+        partitionBy: []
+  - stage: save_csv
+    args:
+      - path: "s3://webrobot-data/portfolio-management/btc-90d-training-set.parquet"
+        format: "parquet"
+        mode: "overwrite"
+        partitionBy: ["year", "month"]
+
