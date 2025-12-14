@@ -183,6 +183,12 @@ Aggregates odds from bet365, Pinnacle, Betfair, William Hill, and Unibet for odd
 
 Uses `intelligent_explore` and `intelligent_flatSelect` to extract odds from bookmaker sites with complex, non-trivial table structures, then detects arbitrage (surebet) opportunities.
 
+### Real estate arbitrage (property clustering)
+
+- File: [`examples/pipelines/22-real-estate-arbitrage-clustering.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/22-real-estate-arbitrage-clustering.yaml)
+
+Aggregates property listings from 5 real estate sites, clusters similar properties to identify the same property across sources, and detects arbitrage opportunities using external statistical sources (market averages, price percentiles).
+
 Note: Paths can use environment placeholders `${VAR_NAME}` (resolved by the runner before parsing).
 
 ### 4) Append upstream dataset to the current dataset

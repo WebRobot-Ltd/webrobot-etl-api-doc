@@ -49,6 +49,10 @@
       label: Vertical Use Cases Overview
     - page: guides/vertical-price-comparison.md
       label: Price Comparison & E-commerce
+    - page: guides/vertical-sports-betting.md
+      label: Sports Betting & Odds Aggregation
+    - page: guides/vertical-real-estate.md
+      label: Real Estate Arbitrage & Clustering
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

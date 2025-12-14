@@ -1,0 +1,197 @@
+# Concrete example: Real estate arbitrage detection with property clustering
+# This pipeline aggregates property listings from 5 real estate sites,
+# clusters similar properties to identify the same property across sources,
+# and detects arbitrage opportunities using external statistical sources.
+
+fetch:
+  url: "https://www.zillow.com/homes/for_sale/"  # Starting URL for Zillow
+
+pipeline:
+  # ============================================
+  # Site 1: Zillow (Direct crawl)
+  # ============================================
+  - stage: explore
+    args: [ "a.pagination-next", 10 ]  # Navigate through search pages
+  - stage: join
+    args: [ "a.property-link", "LeftOuter" ]  # Click on property listings
+  - stage: extract
+    args:
+      - { selector: "h1.property-title", method: "text", as: "title" }
+      - { selector: "span.address", method: "text", as: "address" }
+      - { selector: "span.price", method: "text", as: "price_raw" }
+      - { selector: "span.sqft", method: "text", as: "area_sqft_raw" }
+      - { selector: "span.bedrooms", method: "text", as: "bedrooms_raw" }
+      - { selector: "span.bathrooms", method: "text", as: "bathrooms_raw" }
+      - { selector: "span.property-type", method: "text", as: "property_type" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "span.listing-date", method: "text", as: "listing_date" }
+  - stage: python_row_transform:normalize_zillow
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "zillow.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "zillow_listings" ]
+
+  # ============================================
+  # Site 2: Realtor.com (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.realtor.com/realestateandhomes-search" ]
+  - stage: explore
+    args: [ "a.pagination-next", 10 ]
+  - stage: join
+    args: [ "a.property-card-link", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.property-address", method: "text", as: "address" }
+      - { selector: "span.price", method: "text", as: "price_raw" }
+      - { selector: "span.sqft", method: "text", as: "area_sqft_raw" }
+      - { selector: "span.beds", method: "text", as: "bedrooms_raw" }
+      - { selector: "span.baths", method: "text", as: "bathrooms_raw" }
+      - { selector: "span.property-type", method: "text", as: "property_type" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_realtor
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "realtor.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "realtor_listings" ]
+
+  # ============================================
+  # Site 3: Trulia (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.trulia.com/for_sale/" ]
+  - stage: explore
+    args: [ "a.pagination-next", 10 ]
+  - stage: join
+    args: [ "a.property-link", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.address", method: "text", as: "address" }
+      - { selector: "span.price", method: "text", as: "price_raw" }
+      - { selector: "span.sqft", method: "text", as: "area_sqft_raw" }
+      - { selector: "span.beds", method: "text", as: "bedrooms_raw" }
+      - { selector: "span.baths", method: "text", as: "bathrooms_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_trulia
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "trulia.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "trulia_listings" ]
+
+  # ============================================
+  # Site 4: Redfin (API-based - CSV input)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${REDFIN_API_RESPONSE_PATH}", header: "true", inferSchema: "true" }
+  - stage: python_row_transform:normalize_redfin
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "redfin.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "redfin_listings" ]
+
+  # ============================================
+  # Site 5: Apartments.com (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.apartments.com/apartments/" ]
+  - stage: explore
+    args: [ "a.pagination-next", 10 ]
+  - stage: join
+    args: [ "a.property-link", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.address", method: "text", as: "address" }
+      - { selector: "span.rent", method: "text", as: "price_raw" }
+      - { selector: "span.sqft", method: "text", as: "area_sqft_raw" }
+      - { selector: "span.beds", method: "text", as: "bedrooms_raw" }
+      - { selector: "span.baths", method: "text", as: "bathrooms_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_apartments
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "apartments.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "apartments_listings" ]
+
+  # ============================================
+  # Merge: Union all sources
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "zillow_listings", "realtor_listings", "trulia_listings", "redfin_listings", "apartments_listings" ]
+
+  # ============================================
+  # Normalize Addresses and Geocode
+  # ============================================
+  - stage: python_row_transform:normalize_address
+    args: []
+  - stage: python_row_transform:geocode_address
+    args: []  # Uses external geocoding API
+
+  # ============================================
+  # Calculate Price per Square Meter
+  # ============================================
+  - stage: python_row_transform:calculate_price_per_sqm
+    args: []
+
+  # ============================================
+  # Enrich with External Statistical Sources
+  # ============================================
+  - stage: python_row_transform:enrich_with_market_stats
+    args: []  # Fetches average prices per zip code, neighborhood stats, etc.
+
+  # ============================================
+  # Cluster Properties (Identify Same Property)
+  # ============================================
+  - stage: propertyCluster
+    args:
+      - algorithm: "kmeans"
+        k: 50
+        features: ["latitude", "longitude", "price_per_sqm", "area_sqm", "bedrooms", "bathrooms"]
+        epsilon: 0.5
+        minPoints: 2
+
+  # ============================================
+  # Detect Arbitrage Opportunities
+  # Compare prices within clusters and against market statistics
+  # ============================================
+  - stage: python_row_transform:detect_arbitrage_opportunities
+    args:
+      - price_deviation_threshold: 0.15  # 15% below market average
+      - cluster_price_variance_threshold: 0.20  # 20% variance within cluster
+
+  # ============================================
+  # Save Results
+  # ============================================
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_ARBITRAGE_OPPORTUNITIES}", "overwrite" ]
+
