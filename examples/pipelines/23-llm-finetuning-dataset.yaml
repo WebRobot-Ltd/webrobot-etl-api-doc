@@ -1,0 +1,219 @@
+# Concrete example: Build instruction-following dataset for LLM fine-tuning
+# This pipeline aggregates Q&A data from multiple sources (Stack Overflow, Reddit,
+# documentation sites, GitHub issues, Wikipedia) and converts them into Alpaca format.
+
+fetch:
+  url: "https://stackoverflow.com/questions/tagged/python"  # Starting URL for Stack Overflow
+
+pipeline:
+  # ============================================
+  # Source 1: Stack Overflow (Q&A pairs)
+  # ============================================
+  - stage: explore
+    args: [ "a.pagination-next", 20 ]  # Navigate through question pages
+  - stage: join
+    args: [ "h3.question-summary a", "LeftOuter" ]  # Click on questions
+  - stage: extract
+    args:
+      - { selector: "h1.question-title", method: "text", as: "question" }
+      - { selector: "div.question-body", method: "text", as: "question_body" }
+      - { selector: "div.accepted-answer", method: "text", as: "answer" }
+      - { selector: "span.post-tag", method: "text", as: "tags" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_stackoverflow
+    args: []
+  - stage: python_row_transform:convert_to_instruction_format
+    args:
+      - format: "instruction_following"
+      - instruction_field: "question"
+      - output_field: "answer"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "stackoverflow.com"
+        domain: "programming"
+        format: "instruction_following"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "stackoverflow_dataset" ]
+
+  # ============================================
+  # Source 2: Reddit (Discussion threads)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.reddit.com/r/learnprogramming/" ]
+  - stage: explore
+    args: [ "a.next-button", 20 ]
+  - stage: join
+    args: [ "a.title", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.title", method: "text", as: "title" }
+      - { selector: "div.post-content", method: "text", as: "post_content" }
+      - { selector: "div.top-comment", method: "text", as: "top_comment" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_reddit
+    args: []
+  - stage: python_row_transform:convert_to_instruction_format
+    args:
+      - format: "instruction_following"
+      - instruction_field: "title"
+      - output_field: "top_comment"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "reddit.com"
+        domain: "programming"
+        format: "instruction_following"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "reddit_dataset" ]
+
+  # ============================================
+  # Source 3: Documentation Sites (Tutorials)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://docs.python.org/3/tutorial/" ]
+  - stage: explore
+    args: [ "a.next", 10 ]
+  - stage: join
+    args: [ "a.section-link", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.section-title", method: "text", as: "section_title" }
+      - { selector: "div.section-content", method: "text", as: "section_content" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_documentation
+    args: []
+  - stage: python_row_transform:convert_to_instruction_format
+    args:
+      - format: "instruction_following"
+      - instruction_field: "section_title"
+      - output_field: "section_content"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "python.org"
+        domain: "programming"
+        format: "instruction_following"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "documentation_dataset" ]
+
+  # ============================================
+  # Source 4: GitHub Issues (Problem-Solution)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${GITHUB_ISSUES_CSV_PATH}", header: "true", inferSchema: "true" }
+  - stage: python_row_transform:normalize_github_issues
+    args: []
+  - stage: python_row_transform:convert_to_instruction_format
+    args:
+      - format: "instruction_following"
+      - instruction_field: "issue_title"
+      - output_field: "solution"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "github.com"
+        domain: "programming"
+        format: "instruction_following"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "github_dataset" ]
+
+  # ============================================
+  # Source 5: Wikipedia (Article Summaries)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://en.wikipedia.org/wiki/Special:Random" ]
+  - stage: explore
+    args: [ "a.random-article", 100 ]
+  - stage: extract
+    args:
+      - { selector: "h1.firstHeading", method: "text", as: "article_title" }
+      - { selector: "div.mw-parser-output p", method: "text", as: "article_summary" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_wikipedia
+    args: []
+  - stage: python_row_transform:convert_to_instruction_format
+    args:
+      - format: "instruction_following"
+      - instruction_field: "article_title"
+      - output_field: "article_summary"
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "wikipedia.org"
+        domain: "general_knowledge"
+        format: "instruction_following"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "wikipedia_dataset" ]
+
+  # ============================================
+  # Merge: Union all sources
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "stackoverflow_dataset", "reddit_dataset", "documentation_dataset", "github_dataset", "wikipedia_dataset" ]
+
+  # ============================================
+  # Clean and Normalize Text
+  # ============================================
+  - stage: python_row_transform:clean_text
+    args: []
+  - stage: python_row_transform:normalize_text
+    args: []
+
+  # ============================================
+  # Deduplicate Similar Examples
+  # ============================================
+  - stage: python_row_transform:generate_text_hash
+    args: []  # Generate hash for deduplication
+  - stage: dedup
+    args: [ "text_hash" ]  # Remove duplicates
+
+  # ============================================
+  # Filter by Quality Metrics
+  # ============================================
+  - stage: python_row_transform:filter_by_quality
+    args:
+      - min_instruction_length: 10
+      - min_output_length: 20
+      - max_instruction_length: 500
+      - max_output_length: 2000
+
+  # ============================================
+  # Split into Train/Val/Test
+  # ============================================
+  - stage: python_row_transform:split_dataset
+    args:
+      - train_ratio: 0.8
+      - val_ratio: 0.1
+      - test_ratio: 0.1
+
+  # ============================================
+  # Export to JSONL Format
+  # ============================================
+  - stage: python_row_transform:export_to_jsonl
+    args:
+      - output_format: "instruction_following"
+      - fields: ["instruction", "input", "output"]
+
+  # ============================================
+  # Save Final Dataset
+  # ============================================
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_DATASET_JSONL}", "overwrite" ]
+

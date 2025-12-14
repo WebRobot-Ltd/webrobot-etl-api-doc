@@ -196,6 +196,22 @@ Enrich records with additional data:
 
 **Example Output**: Drug interaction database with clinical evidence.
 
+---
+
+### 🤖 [LLM Fine-Tuning Dataset Construction](vertical-llm-finetuning.md)
+
+**Use Case**: Build high-quality datasets for fine-tuning Large Language Models (LLMs) by aggregating, cleaning, and structuring data from multiple sources.
+
+**Key Features**:
+- Multi-source data aggregation (forums, documentation, Q&A sites, code repositories)
+- Text cleaning and normalization
+- Format conversion (instruction-following, chat, code completion)
+- Quality filtering and deduplication
+- Dataset balancing and train/val/test splitting
+- Export to JSONL/Parquet formats
+
+**Example Output**: 100K+ instruction-following examples in Alpaca format, ready for LLM fine-tuning.
+
 ## Getting Started
 
 1. **Choose your vertical**: Review the guides above to find the use case that matches your needs

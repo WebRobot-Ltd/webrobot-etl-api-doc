@@ -53,6 +53,8 @@
       label: Sports Betting & Odds Aggregation
     - page: guides/vertical-real-estate.md
       label: Real Estate Arbitrage & Clustering
+    - page: guides/vertical-llm-finetuning.md
+      label: LLM Fine-Tuning Dataset Construction
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

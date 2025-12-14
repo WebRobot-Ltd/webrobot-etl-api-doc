@@ -189,6 +189,12 @@ Uses `intelligent_explore` and `intelligent_flatSelect` to extract odds from boo
 
 Aggregates property listings from 5 real estate sites, clusters similar properties to identify the same property across sources, and detects arbitrage opportunities using external statistical sources (market averages, price percentiles).
 
+### LLM fine-tuning dataset construction
+
+- File: [`examples/pipelines/23-llm-finetuning-dataset.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/23-llm-finetuning-dataset.yaml)
+
+Aggregates Q&A data from multiple sources (Stack Overflow, Reddit, documentation sites, GitHub issues, Wikipedia), cleans and normalizes text, converts to instruction-following format (Alpaca style), and exports to JSONL for LLM fine-tuning.
+
 Note: Paths can use environment placeholders `${VAR_NAME}` (resolved by the runner before parsing).
 
 ### 4) Append upstream dataset to the current dataset
