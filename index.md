@@ -83,6 +83,10 @@ Get started with the WebRobot ETL API in minutes:
 - **[EAN Image Sourcing Plugin](guides/ean-image-sourcing.md)**: EAN plugin pipeline + CloudCredential injection behavior
 - **[Partner tecnici](guides/technical-partners.md)**: How to extend WebRobot (API plugins + ETL plugins + Python extensions)
 
+### 🏭 Vertical Use Cases
+- **[Vertical Use Cases Overview](guides/vertical-use-cases.md)**: Industry-specific use cases and complete pipeline examples
+- **[Price Comparison & E-commerce](guides/vertical-price-comparison.md)**: Aggregate product offers from multiple sources, compare prices, track availability
+
 ### 📖 API Reference
 - **[WebRobot ETL API](openapi.yaml)**: Complete OpenAPI specification with interactive documentation
 

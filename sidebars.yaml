@@ -43,6 +43,12 @@
       label: EAN Image Sourcing Plugin
     - page: guides/technical-partners.md
       label: Partner tecnici
+- label: Vertical Use Cases
+  items:
+    - page: guides/vertical-use-cases.md
+      label: Vertical Use Cases Overview
+    - page: guides/vertical-price-comparison.md
+      label: Price Comparison & E-commerce
 - label: API Reference
   items:
     - api: webrobot-etl-api@v1

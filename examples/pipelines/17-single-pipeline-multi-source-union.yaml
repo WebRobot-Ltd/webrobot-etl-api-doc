@@ -1,0 +1,64 @@
+# Single-pipeline pattern for multi-source union (now supported via store/reset/union_with).
+# Uses in-memory branches (no intermediate disk I/O).
+
+pipeline:
+  # ============================================
+  # Source A: crawl
+  # ============================================
+  - stage: explore
+    args: [ "li.next a", 2 ]
+
+  - stage: join
+    args: [ "article.product_pod h3 a", "LeftOuter" ]
+
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+      - { selector: ".price_color", method: "text", as: "price_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+
+  # Cache current dataset in memory with a label
+  - stage: store
+    args: [ "source_a" ]
+
+  # ============================================
+  # Source B: API + browser (fresh start)
+  # ============================================
+  - stage: reset
+    args: []
+
+  - stage: load_csv
+    args:
+      - { path: "${INPUT_PATH}", header: "true", inferSchema: "true" }
+
+  - stage: searchEngine
+    args:
+      - provider: "google"
+        ean: "$ean"
+        num_results: 5
+        enrich: true
+
+  - stage: visit
+    args: [ "$result_link" ]
+
+  - stage: extract
+    args:
+      - { selector: "title", method: "text", as: "title" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "meta[property='product:price:amount']", method: "attr:content", as: "price_raw" }
+
+  # ============================================
+  # Merge: union with branch A (in-memory)
+  # ============================================
+  - stage: union_with
+    args: [ "source_a" ]
+
+  # ============================================
+  # Final processing
+  # ============================================
+  - stage: dedup
+    args: [ "url" ]
+
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_STITCHED}", "overwrite" ]
+
