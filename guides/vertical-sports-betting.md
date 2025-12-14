@@ -275,9 +275,297 @@ def generate_event_id(row):
     return row
 ```
 
+## Event Matching Logic: Recognizing the Same Sports Event Across Bookmakers
+
+**Critical Challenge**: The same sports event can appear with **different names and formats** across different bookmakers. For example:
+- "Manchester United vs Liverpool" vs "Man Utd v Liverpool" vs "MUFC vs LFC"
+- "Arsenal vs Chelsea FC" vs "Arsenal vs Chelsea" vs "Arsenal v Chelsea"
+- Date formats: "2025-01-15 15:00" vs "15/01/2025 3:00 PM" vs "Jan 15, 2025"
+
+The surebet finder **must consult aggregated odds by event** to detect arbitrage opportunities.
+
+### Event Matching Strategy
+
+1. **Event Normalization**:
+   - Standardize team names (abbreviations, full names, aliases)
+   - Normalize date/time formats
+   - Remove special characters and standardize separators
+   - Handle league/competition variations
+
+2. **Event ID Generation**:
+   - Create stable `event_id` from normalized event name + date
+   - Use hashing for consistent matching across bookmakers
+
+3. **Aggregation by Event**: All odds comparisons must be **aggregated by event_id** before surebet detection.
+
+### Event Name Normalization
+
+```python
+# python_extensions:
+#   stages:
+#     normalize_event_name:
+#       type: row_transform
+#       function: |
+def normalize_event_name(row):
+    """Normalize event name for matching across bookmakers."""
+    import re
+    from datetime import datetime
+    
+    event_name = row.get("event_name", "").strip()
+    event_date = row.get("event_date", "")
+    
+    # Common team name mappings (expand as needed)
+    team_mappings = {
+        "manchester united": ["man utd", "manchester utd", "mufc", "man united"],
+        "liverpool": ["liverpool fc", "lfc"],
+        "arsenal": ["arsenal fc"],
+        "chelsea": ["chelsea fc", "cfc"],
+        "tottenham": ["tottenham hotspur", "spurs", "tottenham fc"],
+        "manchester city": ["man city", "mcfc", "manchester city fc"],
+        # Add more mappings as needed
+    }
+    
+    # Normalize event name
+    event_name_lower = event_name.lower()
+    
+    # Replace common separators
+    event_name_lower = re.sub(r'\s+vs\.?\s+', ' vs ', event_name_lower)
+    event_name_lower = re.sub(r'\s+v\.?\s+', ' vs ', event_name_lower)
+    event_name_lower = re.sub(r'\s+-\s+', ' vs ', event_name_lower)
+    
+    # Standardize team names
+    for standard_name, variations in team_mappings.items():
+        for variation in variations:
+            event_name_lower = event_name_lower.replace(variation, standard_name)
+    
+    # Remove common prefixes/suffixes
+    event_name_lower = re.sub(r'^(live|upcoming|today|tomorrow)\s+', '', event_name_lower)
+    event_name_lower = re.sub(r'\s+(live|upcoming|today|tomorrow)$', '', event_name_lower)
+    
+    # Normalize whitespace
+    event_name_lower = re.sub(r'\s+', ' ', event_name_lower).strip()
+    
+    row["event_name_normalized"] = event_name_lower
+    
+    # Normalize event date
+    if event_date:
+        try:
+            # Try to parse various date formats
+            date_formats = [
+                "%Y-%m-%d %H:%M:%S",
+                "%Y-%m-%dT%H:%M:%SZ",
+                "%d/%m/%Y %H:%M",
+                "%m/%d/%Y %H:%M",
+                "%d-%m-%Y %H:%M",
+                "%Y-%m-%d %H:%M",
+            ]
+            
+            parsed_date = None
+            for fmt in date_formats:
+                try:
+                    parsed_date = datetime.strptime(event_date, fmt)
+                    break
+                except:
+                    continue
+            
+            if parsed_date:
+                # Standardize to ISO format
+                row["event_date_normalized"] = parsed_date.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                row["event_date_normalized"] = event_date
+        except:
+            row["event_date_normalized"] = event_date
+    else:
+        row["event_date_normalized"] = ""
+    
+    return row
+
+#     generate_event_id:
+#       type: row_transform
+#       function: |
+def generate_event_id(row):
+    """Generate stable event_id for matching across bookmakers."""
+    import hashlib
+    
+    event_name = row.get("event_name_normalized", "").lower().strip()
+    event_date = row.get("event_date_normalized", "")
+    sport = row.get("sport", "football").lower()
+    
+    # Create normalized key
+    normalized_key = f"{sport}_{event_name}_{event_date}"
+    
+    # Remove special characters for consistent hashing
+    normalized_key = normalized_key.replace(" ", "_").replace("-", "_")
+    normalized_key = "".join(c for c in normalized_key if c.isalnum() or c == "_")
+    
+    # Generate hash-based event_id
+    event_id_hash = hashlib.md5(normalized_key.encode()).hexdigest()[:16]
+    row["event_id"] = f"event_{event_id_hash}"
+    
+    return row
+```
+
+### Aggregation by Event ID
+
+Before surebet detection, **aggregate all odds by event_id**:
+
+```yaml
+# Pipeline: Aggregate odds by event for surebet detection
+pipeline:
+  - stage: load_csv
+    args:
+      - { path: "${OUTPUT_PATH_UNIFIED_ODDS}", header: "true", inferSchema: "true" }
+  
+  # Normalize event names and dates
+  - stage: python_row_transform:normalize_event_name
+    args: []
+  
+  # Generate stable event_id
+  - stage: python_row_transform:generate_event_id
+    args: []
+  
+  # Create matching key (event_id + market_type + selection)
+  - stage: python_row_transform:create_matching_key
+    args: []
+  
+  # Aggregate by event_id + market_type + selection
+  # Collect odds from all bookmakers for the same event/market/selection
+  - stage: aggregation_group_by_key
+    args:
+      - key_field: "matching_key"
+        aggregations:
+          - field: "odds_decimal"
+            type: "collect_list"
+            as: "odds_by_bookmaker"
+          - field: "bookmaker"
+            type: "collect_list"
+            as: "bookmakers"
+          - field: "url"
+            type: "collect_list"
+            as: "urls"
+          - field: "event_name_normalized"
+            type: "first"
+            as: "event_name_canonical"
+          - field: "market_type"
+            type: "first"
+            as: "market_type"
+          - field: "selection"
+            type: "first"
+            as: "selection"
+          - field: "event_id"
+            type: "first"
+            as: "event_id"
+  
+  # Create odds comparison columns (pivot-like structure)
+  - stage: python_row_transform:create_odds_comparison_by_event
+    args: []
+  
+  # Detect surebet opportunities
+  - stage: python_row_transform:detect_surebet_by_event
+    args:
+      - min_profit_margin: 0.02  # Minimum 2% profit margin
+  
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_SUREBET_BY_EVENT}", "overwrite" ]
+```
+
+```python
+# python_extensions:
+#   stages:
+#     create_odds_comparison_by_event:
+#       type: row_transform
+#       function: |
+def create_odds_comparison_by_event(row):
+    """Create odds comparison columns grouped by event."""
+    odds_by_bookmaker = row.get("odds_by_bookmaker", [])
+    bookmakers = row.get("bookmakers", [])
+    urls = row.get("urls", [])
+    
+    # Create columns for each bookmaker
+    bookmaker_odds_map = {}
+    bookmaker_url_map = {}
+    
+    for i, bookmaker in enumerate(bookmakers):
+        bookmaker_clean = bookmaker.replace(".com", "").replace(".", "_").lower()
+        if i < len(odds_by_bookmaker) and odds_by_bookmaker[i]:
+            bookmaker_odds_map[f"odds_{bookmaker_clean}"] = odds_by_bookmaker[i]
+        if i < len(urls) and urls[i]:
+            bookmaker_url_map[f"url_{bookmaker_clean}"] = urls[i]
+    
+    # Add odds columns
+    for key, value in bookmaker_odds_map.items():
+        row[key] = value
+    
+    # Add URL columns
+    for key, value in bookmaker_url_map.items():
+        row[key] = value
+    
+    row["bookmakers_count"] = len(bookmakers)
+    
+    return row
+
+#     detect_surebet_by_event:
+#       type: row_transform
+#       function: |
+def detect_surebet_by_event(row, min_profit_margin=0.02):
+    """Detect surebet opportunities for an event/market by consulting aggregated odds."""
+    # For match_winner market with 3 outcomes (home, draw, away)
+    # We need to find all outcomes for the same event + market
+    
+    # Get all odds for this event/market from different bookmakers
+    bookmakers = ["bet365", "pinnacle", "betfair", "williamhill", "unibet"]
+    
+    # Collect odds for each outcome
+    odds_home = []
+    odds_draw = []
+    odds_away = []
+    
+    for bookmaker in bookmakers:
+        odds_key = f"odds_{bookmaker}"
+        odds = row.get(odds_key)
+        if odds and odds > 0:
+            # Determine which outcome this is based on selection
+            selection = row.get("selection", "").lower()
+            if "home" in selection or "1" in selection:
+                odds_home.append(odds)
+            elif "draw" in selection or "x" in selection or "tie" in selection:
+                odds_draw.append(odds)
+            elif "away" in selection or "2" in selection:
+                odds_away.append(odds)
+    
+    # Find best odds for each outcome across all bookmakers
+    best_home = min(odds_home) if odds_home else 999
+    best_draw = min(odds_draw) if odds_draw else 999
+    best_away = min(odds_away) if odds_away else 999
+    
+    # Calculate implied probability
+    if best_home > 0 and best_draw > 0 and best_away > 0:
+        implied_prob = (1/best_home) + (1/best_draw) + (1/best_away)
+        
+        # Surebet exists if implied_prob < 1.0
+        if implied_prob < 1.0:
+            profit_margin = (1.0 - implied_prob) * 100  # Percentage profit
+            
+            if profit_margin >= min_profit_margin * 100:
+                row["surebet_exists"] = True
+                row["surebet_profit_pct"] = profit_margin
+                row["best_home_odds"] = best_home
+                row["best_draw_odds"] = best_draw
+                row["best_away_odds"] = best_away
+                row["implied_probability"] = implied_prob
+            else:
+                row["surebet_exists"] = False
+                row["surebet_profit_pct"] = 0.0
+        else:
+            row["surebet_exists"] = False
+            row["surebet_profit_pct"] = 0.0
+    
+    return row
+```
+
 ## Event Matching & Odds Comparison Table
 
-After aggregating odds from all bookmakers, create a **comparison table** that shows odds for the same event/market across all bookmakers:
+After aggregating odds from all bookmakers **by event_id**, create a **comparison table** that shows odds for the same event/market across all bookmakers. The surebet finder **consults these aggregated odds by event** to detect arbitrage opportunities.
 
 ### Step 1: Generate Event Matching Table
 
@@ -506,27 +794,65 @@ pipeline:
     args: [ "bet365_offers", "pinnacle_offers", "betfair_offers", "williamhill_offers", "unibet_offers" ]
 
   # ============================================
-  # Step 6: Generate Event ID for Matching
+  # Step 6: Normalize Event Names for Matching
+  # Critical: Same event can have different names across bookmakers
+  # ============================================
+  - stage: python_row_transform:normalize_event_name
+    args: []
+
+  # ============================================
+  # Step 7: Generate Event ID for Matching
+  # Creates stable event_id from normalized event name + date
   # ============================================
   - stage: python_row_transform:generate_event_id
     args: []
 
   # ============================================
-  # Step 7: Create Matching Table
+  # Step 8: Create Matching Key
   # Group by event_id + market_type + selection
   # ============================================
   - stage: python_row_transform:create_matching_key
     args: []
 
   # ============================================
-  # Step 8: Detect Surebet Opportunities
+  # Step 9: Aggregate Odds by Event
+  # CRITICAL: Aggregate all odds for the same event/market/selection
+  # before surebet detection
   # ============================================
-  - stage: python_row_transform:detect_surebet
+  - stage: aggregation_group_by_key
+    args:
+      - key_field: "matching_key"
+        aggregations:
+          - field: "odds_decimal"
+            type: "collect_list"
+            as: "odds_by_bookmaker"
+          - field: "bookmaker"
+            type: "collect_list"
+            as: "bookmakers"
+          - field: "event_name_normalized"
+            type: "first"
+            as: "event_name_canonical"
+          - field: "event_id"
+            type: "first"
+            as: "event_id"
+
+  # ============================================
+  # Step 10: Create Odds Comparison Table
+  # Pivot odds by bookmaker for each event/market/selection
+  # ============================================
+  - stage: python_row_transform:create_odds_comparison_by_event
+    args: []
+
+  # ============================================
+  # Step 11: Detect Surebet Opportunities
+  # Consult aggregated odds by event to find arbitrage
+  # ============================================
+  - stage: python_row_transform:detect_surebet_by_event
     args:
       - min_profit_margin: 0.02  # Minimum 2% profit margin
 
   # ============================================
-  # Step 9: Save Results
+  # Step 12: Save Results
   # ============================================
   - stage: save_csv
     args: [ "${OUTPUT_PATH_SUREBET_OPPORTUNITIES}", "overwrite" ]
@@ -632,6 +958,17 @@ def detect_surebet(row, min_profit_margin=0.02):
 - Adapting to different HTML layouts automatically
 - Extracting structured data even from complex, nested tables
 - Handling dynamic content that changes structure
+
+### Critical: Event Matching Before Surebet Detection
+
+**Important**: The surebet finder **must consult aggregated odds by event**. This means:
+
+1. **Normalize event names** across bookmakers (e.g., "Man Utd vs Liverpool" = "Manchester United v Liverpool")
+2. **Generate stable event_id** from normalized event name + date
+3. **Aggregate all odds** for the same event/market/selection from all bookmakers
+4. **Then detect surebet** by comparing aggregated odds across bookmakers
+
+Without proper event matching, the same event might be treated as different events, preventing surebet detection.
 
 ### Example Output: Surebet Opportunities Table
 

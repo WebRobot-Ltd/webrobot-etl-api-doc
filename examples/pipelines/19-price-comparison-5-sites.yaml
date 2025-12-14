@@ -1,0 +1,210 @@
+# Concrete example: Price comparison across 5 e-commerce sites
+# This pipeline aggregates product offers from Amazon, eBay, Walmart, Target, and Best Buy
+# and generates a unified product matching table for price comparison.
+
+fetch:
+  url: "https://www.amazon.com/s?k=electronics"  # Starting URL for Amazon
+
+pipeline:
+  # ============================================
+  # Site 1: Amazon (Direct crawl)
+  # ============================================
+  - stage: explore
+    args: [ "a.s-pagination-next", 5 ]  # Navigate through search pages
+  - stage: join
+    args: [ "h2 a.a-link-normal", "LeftOuter" ]  # Click on product links
+  - stage: extract
+    args:
+      - { selector: "span#productTitle", method: "text", as: "product_name" }
+      - { selector: "span.a-price-whole", method: "text", as: "price_raw" }
+      - { selector: "span.a-price-symbol", method: "text", as: "currency_symbol" }
+      - { selector: "span#productEAN", method: "text", as: "ean" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "img#landingImage", method: "attr:src", as: "image_url" }
+  - stage: python_row_transform:normalize_amazon
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "amazon.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "amazon_offers" ]
+
+  # ============================================
+  # Site 2: eBay (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.ebay.com/sch/i.html?_nkw=electronics" ]
+  - stage: explore
+    args: [ "a.pagination__next", 5 ]
+  - stage: join
+    args: [ "h3.s-item__title a", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1#x-item-title-label", method: "text", as: "product_name" }
+      - { selector: "span.notranslate", method: "text", as: "price_raw" }
+      - { selector: "span.ux-textspans", method: "text", as: "currency_symbol" }
+      - { selector: "div.ux-labels-values__values-content span", method: "text", as: "ean" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "img#icImg", method: "attr:src", as: "image_url" }
+  - stage: python_row_transform:normalize_ebay
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "ebay.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "ebay_offers" ]
+
+  # ============================================
+  # Site 3: Walmart (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.walmart.com/search?q=electronics" ]
+  - stage: explore
+    args: [ "a[data-testid='pagination-next']", 5 ]
+  - stage: join
+    args: [ "a[data-testid='product-title']", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.prod-ProductTitle", method: "text", as: "product_name" }
+      - { selector: "span.price-characteristic", method: "text", as: "price_raw" }
+      - { selector: "span.price-currency", method: "text", as: "currency_symbol" }
+      - { selector: "span[itemprop='gtin13']", method: "text", as: "ean" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "img[data-testid='product-image']", method: "attr:src", as: "image_url" }
+  - stage: python_row_transform:normalize_walmart
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "walmart.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "walmart_offers" ]
+
+  # ============================================
+  # Site 4: Target (API-based - CSV input)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${TARGET_API_RESPONSE_PATH}", header: "true", inferSchema: "true" }
+  - stage: python_row_transform:normalize_target
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "target.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "target_offers" ]
+
+  # ============================================
+  # Site 5: Best Buy (Direct crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "https://www.bestbuy.com/site/searchpage.jsp?st=electronics" ]
+  - stage: explore
+    args: [ "a[aria-label='Next page']", 5 ]
+  - stage: join
+    args: [ "h4.sku-title a", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.heading-5", method: "text", as: "product_name" }
+      - { selector: "div.priceView-customer-price span", method: "text", as: "price_raw" }
+      - { selector: "span.currency-symbol", method: "text", as: "currency_symbol" }
+      - { selector: "span[itemprop='gtin13']", method: "text", as: "ean" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+      - { selector: "img.product-image", method: "attr:src", as: "image_url" }
+  - stage: python_row_transform:normalize_bestbuy
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - source: "bestbuy.com"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bestbuy_offers" ]
+
+  # ============================================
+  # Merge: Union all sources
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "amazon_offers", "ebay_offers", "walmart_offers", "target_offers", "bestbuy_offers" ]
+
+  # ============================================
+  # Price Normalization & Currency Conversion
+  # ============================================
+  - stage: python_row_transform:normalize_price
+    args: []
+  - stage: python_row_transform:convert_currency
+    args:
+      - target_currency: "USD"  # Convert all prices to USD
+
+  # ============================================
+  # EAN Normalization and Validation
+  # CRITICAL: Normalize EAN codes for product matching
+  # ============================================
+  - stage: python_row_transform:normalize_ean
+    args: []
+
+  # ============================================
+  # Product Name Normalization (for fallback matching)
+  # ============================================
+  - stage: python_row_transform:normalize_product_name
+    args: []
+
+  # ============================================
+  # Aggregate Offers by EAN Code
+  # CRITICAL: Aggregate all prices for the same product (EAN) from all sources
+  # before price comparison. The comparison logic is aggregated by EAN code.
+  # ============================================
+  - stage: aggregation_group_by_key
+    args:
+      - key_field: "ean_normalized"
+        aggregations:
+          - field: "price_numeric"
+            type: "collect_list"
+            as: "prices_by_source"
+          - field: "source"
+            type: "collect_list"
+            as: "sources"
+          - field: "url"
+            type: "collect_list"
+            as: "urls"
+          - field: "product_name"
+            type: "first"
+            as: "product_name_canonical"
+
+  # ============================================
+  # Create Price Comparison Table by EAN
+  # Pivot prices by source for each product (EAN)
+  # ============================================
+  - stage: python_row_transform:create_price_comparison_by_ean
+    args: []
+
+  # ============================================
+  # Calculate Best Price and Price Differences
+  # ============================================
+  - stage: python_row_transform:calculate_best_price_by_ean
+    args: []
+
+  # ============================================
+  # Save price comparison table (aggregated by EAN)
+  # ============================================
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_PRICE_COMPARISON_BY_EAN}", "overwrite" ]
+
+
