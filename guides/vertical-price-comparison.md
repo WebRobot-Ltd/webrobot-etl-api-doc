@@ -50,12 +50,17 @@ This guide demonstrates how to build **production-ready price comparison pipelin
 
 ## Pipeline Patterns
 
+> **Important**: When starting a pipeline with crawling stages (`explore`, `join`, etc.), you **must** include a `fetch:` section with a starting URL. Pipelines that start with `load_csv` or other non-crawling stages don't require `fetch:`.
+
 ### Pattern 1: Multi-Source Union (Single Pipeline)
 
 Use in-memory branching to combine multiple sources in a single pipeline:
 
 ```yaml
 # Complete example: Multi-source price aggregation
+fetch:
+  url: "https://books.toscrape.com"  # Starting URL for Source A
+
 pipeline:
   # ============================================
   # Source A: Direct crawl

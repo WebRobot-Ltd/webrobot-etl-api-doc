@@ -21,12 +21,17 @@ Vertical use cases are **industry-specific data pipelines** that solve real busi
 
 ## Common Patterns Across Verticals
 
+> **Important**: When starting a pipeline with crawling stages (`explore`, `join`, etc.), you **must** include a `fetch:` section with a starting URL. Pipelines that start with `load_csv` or other non-crawling stages don't require `fetch:`.
+
 ### 1. Multi-Source Aggregation
 
 Most verticals require aggregating data from **multiple sources**:
 
 ```yaml
 # Pattern: Fetch from multiple sources, union, deduplicate
+fetch:
+  url: "https://example.com"  # Starting URL for Source A
+
 pipeline:
   # Source A: Direct crawl
   - stage: explore
@@ -206,6 +211,9 @@ Begin with one source, validate the extraction, then add more sources:
 
 ```yaml
 # Phase 1: Single source
+fetch:
+  url: "https://example.com"  # Starting URL
+
 pipeline:
   - stage: explore
     args: [ "li.next a", 2 ]
