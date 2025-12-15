@@ -17,6 +17,8 @@
       label: Plugin EAN (IT)
     - page: it/guides/technical-partners.md
       label: Partner tecnici (IT)
+    - page: it/guides/plugins.md
+      label: Plugin & estendibilità (IT)
     - page: it/guides/vertical-use-cases.md
       label: Use case verticali (IT)
     - page: it/guides/vertical-price-comparison.md
@@ -43,6 +45,8 @@
       label: Plugin EAN (EL)
     - page: el/guides/technical-partners.md
       label: Τεχνικοί συνεργάτες (EL)
+    - page: el/guides/plugins.md
+      label: Plugins & επεκτασιμότητα (EL)
     - page: el/guides/vertical-use-cases.md
       label: Κάθετα use cases (EL)
     - page: el/guides/vertical-price-comparison.md
@@ -67,6 +71,8 @@
       label: EAN Image Sourcing Plugin
     - page: guides/technical-partners.md
       label: Partner tecnici
+    - page: guides/plugins.md
+      label: Plugins & Extensibility
 - label: Vertical Use Cases
   items:
     - page: guides/vertical-use-cases.md
