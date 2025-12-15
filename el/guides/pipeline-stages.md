@@ -17,6 +17,10 @@ description: Αναφορά των κύριων stages και σημειώσει
   - `args` (προαιρετικός πίνακας)
 - Επιπλέον κλειδιά στο stage (π.χ. `name`, `when`) **δεν υποστηρίζονται** από τον parser Scala.
 
+### Σημείωση για `fetch:` (σημαντικό)
+
+Όταν ένα pipeline ξεκινά με crawling stages (`explore`, `join`, `visitExplore`, `visitJoin`, κ.λπ.) πρέπει πάντα να υπάρχει top-level `fetch:` με URL εκκίνησης.
+
 ## Join: wget vs visit
 
 - `join`: χρησιμοποιεί HTTP trace από προεπιλογή (wget-like).
@@ -44,6 +48,56 @@ pipeline:
   - stage: iextract
     args: [ "Extract fields...", "prod_" ]
 ```
+
+## Utility και σύνθεση πολλαπλών πηγών
+
+### `cache`
+
+Αποθήκευση/persist του τρέχοντος dataset (Spark `.cache()`).
+
+```yaml
+pipeline:
+  - stage: cache
+    args: []
+```
+
+### `store` / `reset` / `union_with`
+
+Helpers του runner για σύνθεση multi-source pipelines μέσα στο ίδιο YAML:
+
+- `store`: αποθηκεύει το τρέχον dataset με label
+- `reset`: ξεκινάει “blank” dataset
+- `union_with`: ενώνει το τρέχον dataset με ένα/περισσότερα αποθηκευμένα branches
+
+```yaml
+pipeline:
+  - stage: visit
+    args: [ "https://example.com" ]
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+  - stage: store
+    args: [ "a" ]
+
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${SOURCE_B_CSV}", header: "true", inferSchema: "true" }
+  - stage: store
+    args: [ "b" ]
+
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "a", "b" ]
+  - stage: dedup
+    args: [ "url" ]
+```
+
+### `propertyCluster`
+
+Stage (plugin) για unsupervised clustering (real estate). Δείτε τον οδηγό real estate για το use case.
 
 ## Plugin EAN
 

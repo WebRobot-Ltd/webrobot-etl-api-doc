@@ -17,6 +17,18 @@
       label: Plugin EAN (IT)
     - page: it/guides/technical-partners.md
       label: Partner tecnici (IT)
+    - page: it/guides/vertical-use-cases.md
+      label: Use case verticali (IT)
+    - page: it/guides/vertical-price-comparison.md
+      label: Price Comparison & E-commerce (IT)
+    - page: it/guides/vertical-sports-betting.md
+      label: Sports Betting & Odds (IT)
+    - page: it/guides/vertical-real-estate.md
+      label: Real Estate Arbitrage (IT)
+    - page: it/guides/vertical-llm-finetuning.md
+      label: Dataset Fine-tuning LLM (IT)
+    - page: it/guides/vertical-portfolio-management.md
+      label: Portfolio Management & Previsione 90g (IT)
 - label: Ελληνικά
   items:
     - page: el/index.md
@@ -31,6 +43,18 @@
       label: Plugin EAN (EL)
     - page: el/guides/technical-partners.md
       label: Τεχνικοί συνεργάτες (EL)
+    - page: el/guides/vertical-use-cases.md
+      label: Κάθετα use cases (EL)
+    - page: el/guides/vertical-price-comparison.md
+      label: Price Comparison & E-commerce (EL)
+    - page: el/guides/vertical-sports-betting.md
+      label: Sports Betting & Odds (EL)
+    - page: el/guides/vertical-real-estate.md
+      label: Real Estate Arbitrage (EL)
+    - page: el/guides/vertical-llm-finetuning.md
+      label: Dataset Fine-tuning LLM (EL)
+    - page: el/guides/vertical-portfolio-management.md
+      label: Portfolio Management & 90ήμερη Πρόβλεψη (EL)
 - label: Guides
   items:
     - page: guides/build-a-pipeline.md
