@@ -19,6 +19,8 @@
       label: Partner tecnici (IT)
     - page: it/guides/plugins.md
       label: Plugin & estendibilità (IT)
+    - page: it/guides/future-implementations.md
+      label: Implementazioni future (IT)
     - page: it/guides/vertical-use-cases.md
       label: Use case verticali (IT)
     - page: it/guides/vertical-price-comparison.md
@@ -47,6 +49,8 @@
       label: Τεχνικοί συνεργάτες (EL)
     - page: el/guides/plugins.md
       label: Plugins & επεκτασιμότητα (EL)
+    - page: el/guides/future-implementations.md
+      label: Μελλοντικές υλοποιήσεις (EL)
     - page: el/guides/vertical-use-cases.md
       label: Κάθετα use cases (EL)
     - page: el/guides/vertical-price-comparison.md
@@ -73,6 +77,8 @@
       label: Partner tecnici
     - page: guides/plugins.md
       label: Plugins & Extensibility
+    - page: guides/future-implementations.md
+      label: Future Implementations (Roadmap)
 - label: Vertical Use Cases
   items:
     - page: guides/vertical-use-cases.md

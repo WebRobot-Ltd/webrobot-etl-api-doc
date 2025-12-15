@@ -158,6 +158,23 @@ This document outlines **proposed vertical use cases** to implement as complete,
 
 ## 🔮 Lower Priority (Future)
 
+### 11. Streaming IoT / Smart City / Mobility / Drone Fleets ⭐⭐⭐
+
+**Why**: Enables real-time verticals and agentic decision loops (smart city operations, mobility optimization, fleet monitoring) and showcases streaming ingestion + geospatial/time-series patterns.
+
+**Key Features**:
+- Streaming ingestion (MQTT, Kafka/Pulsar, AMQP, webhooks)
+- Canonical event schema (event_time vs ingest_time, geo, provenance)
+- Real-time validation (schema evolution, dedup, out-of-order handling)
+- Aggregations and alerting (spatio-temporal metrics, anomalies)
+- Integration into agentic pools (near-real-time features, decision signals)
+
+**Complexity**: High (streaming + time series + geospatial + operational SLAs)
+
+**Example Output**: City mobility dashboard feeds, anomaly alerts, fleet telemetry snapshots, feature tables for downstream ML/LLM.
+
+---
+
 ### 7. Academic Research & Publication Monitoring
 
 **Features**: Paper aggregation, citation tracking, research trend analysis, collaboration networks
