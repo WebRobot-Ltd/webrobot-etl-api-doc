@@ -16,7 +16,7 @@ This guide demonstrates how to use WebRobot ETL to build **production-ready trai
 - **Feature engineering**: Calculating technical indicators (RSI, MACD, Bollinger Bands), returns, volatility, and macro correlations
 - **Target generation**: Computing actual 90-day forward returns and price movements
 - **Formatting for LLM fine-tuning**: Structuring data into time-series prediction format compatible with instruction-following models
-- **Export for NVIDIA DGX SPARK**: Generating JSONL/Parquet datasets optimized for distributed training
+- **Export for NVIDIA DGX SPARK**: Generating a CSV training dataset (convert to JSONL/Parquet downstream as needed)
 
 **Key Challenges**:
 - **Multi-asset coverage**: Support equity, crypto, bonds, commodities, FX
@@ -57,7 +57,7 @@ This guide demonstrates how to use WebRobot ETL to build **production-ready trai
                            │
                     ┌──────▼──────┐
                     │  Export     │
-                    │ (JSONL)     │
+                    │  (CSV)      │
                     └─────────────┘
 ```
 
@@ -420,71 +420,25 @@ def calculate_news_sentiment(row, sentiment_field="tone", normalize=True):
     
     return row
 
-#     parse_reddit_posts:
+# Optional (recommended for compliance): ingest pre-scored social sentiment from a licensed feed.
+# Expect CSV fields like: timestamp, social_sentiment_score, social_mention_count
+#
+#     normalize_social_sentiment_daily:
 #       type: row_transform
 #       function: |
-def parse_reddit_posts(row, subreddit="Bitcoin", extract_fields=None):
-    """
-    Parse Reddit JSON API response.
-    """
-    import json
-    import pandas as pd
-    
-    extract_fields = extract_fields or ["title", "selftext", "score", "created_utc"]
-    reddit_json = row.get("reddit_json")
-    if not reddit_json:
-        return row
-    
+def normalize_social_sentiment_daily(row):
+    """Normalize pre-scored daily social sentiment rows loaded from CSV."""
+    # Ensure types are consistent
     try:
-        data = json.loads(reddit_json)
-        posts = data.get("data", {}).get("children", [])
-        
-        records = []
-        for post_data in posts:
-            post = post_data.get("data", {})
-            record = {}
-            for field in extract_fields:
-                value = post.get(field)
-                if field == "created_utc":
-                    record["timestamp"] = pd.to_datetime(value, unit="s").isoformat() if value else None
-                else:
-                    record[field] = value
-            records.append(record)
-        
-        row["reddit_records"] = records
-        
-    except Exception as e:
-        row["parse_error"] = str(e)
-    
-    return row
-
-#     calculate_social_sentiment:
-#       type: row_transform
-#       function: |
-def calculate_social_sentiment(row, text_fields=None, method="vader"):
-    """
-    Calculate social media sentiment using VADER or simple keyword matching.
-    """
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-    
-    text_fields = text_fields or ["title", "selftext"]
-    reddit_records = row.get("reddit_records", [])
-    if not reddit_records:
-        return row
-    
-    if method == "vader":
-        analyzer = SentimentIntensityAnalyzer()
-        sentiments = []
-        for record in reddit_records:
-            text = " ".join([str(record.get(f, "")) for f in text_fields])
-            if text:
-                scores = analyzer.polarity_scores(text)
-                sentiments.append(scores["compound"])  # -1 to 1
-        
-        if sentiments:
-            row["social_sentiment_score"] = sum(sentiments) / len(sentiments)
-            row["social_mention_count"] = len(sentiments)
-    
+        if row.get("social_sentiment_score") is not None:
+            row["social_sentiment_score"] = float(row["social_sentiment_score"])
+    except (ValueError, TypeError):
+        row["social_sentiment_score"] = None
+    try:
+        if row.get("social_mention_count") is not None:
+            row["social_mention_count"] = int(float(row["social_mention_count"]))
+    except (ValueError, TypeError):
+        row["social_mention_count"] = None
     return row
 
 #     aggregate_sentiment_by_date:
@@ -497,7 +451,7 @@ def aggregate_sentiment_by_date(row, date_field="timestamp", window=1, aggregati
     import pandas as pd
     from collections import defaultdict
     
-    records = row.get("news_records", []) or row.get("reddit_records", [])
+    records = row.get("news_records", [])
     if not records:
         return row
     
@@ -735,7 +689,7 @@ def validate_training_dataset(row):
 1. **Price Data**: Alpha Vantage API (crypto daily OHLCV)
 2. **Macro Data**: FRED API (S&P 500, VIX, Treasury yields)
 3. **News Sentiment**: GDELT Project (news events, sentiment)
-4. **Social Sentiment**: Twitter/Reddit APIs (crypto mentions, sentiment)
+4. **Social Sentiment**: Licensed social sentiment feed (pre-curated daily CSV)
 5. **Alternative Data**: CoinGecko API (Fear & Greed Index, market cap)
 
 ### Pipeline Architecture
@@ -805,22 +759,13 @@ pipeline:
     args: [ "news_sentiment" ]
 
   # ============================================
-  # Source 4: Social Sentiment (Twitter/Reddit)
+  # Source 4: Social sentiment (licensed provider / customer-owned feed)
   # ============================================
   - stage: reset
     args: []
-  - stage: visit
-    args: [ "https://www.reddit.com/r/Bitcoin/hot.json" ]
-  - stage: extract
+  - stage: load_csv
     args:
-      - { selector: "pre", method: "text", as: "reddit_json" }
-  - stage: python_row_transform:parse_reddit_posts
-    args: []
-  - stage: python_row_transform:calculate_social_sentiment
-    args: []
-  - stage: python_row_transform:aggregate_sentiment_by_date
-    args:
-      - window: 1
+      - { path: "${SOCIAL_SENTIMENT_DAILY_CSV_PATH}", header: "true", inferSchema: "true" }
   - stage: cache
     args: []
   - stage: store
@@ -876,18 +821,15 @@ pipeline:
     args: [ "timestamp", "asset_symbol" ]
 
   # ============================================
-  # Export for NVIDIA DGX SPARK
+  # Export (CSV)
   # ============================================
   - stage: save_csv
-    args:
-      - path: "s3://webrobot-data/portfolio-management/btc-90d-training-set.jsonl"
-        format: "jsonl"
-        mode: "overwrite"
+    args: [ "${OUTPUT_PATH_TRAINSET_CSV}", "overwrite" ]
 ```
 
-## LLM Fine-Tuning Format (JSONL)
+## LLM Fine-Tuning Format (Instruction fields in CSV)
 
-### Instruction-Following Format (Alpaca style)
+### Instruction-Following Format (Alpaca style, stored as CSV columns)
 
 ```json
 {
@@ -911,7 +853,7 @@ pipeline:
 
 ### Dataset Requirements
 
-- **Format**: JSONL (one JSON object per line)
+- **Format**: CSV (columns: `instruction`, `input`, `output`)
 - **Size**: Optimized for distributed training (shardable)
 - **Schema**: Consistent across all records
 - **Partitioning**: By date range for efficient loading
@@ -926,7 +868,7 @@ spark-submit \
   --conf spark.executor.cores=16 \
   --class com.webrobot.llm.TrainingPipeline \
   webrobot-llm-training.jar \
-  --input s3://webrobot-data/portfolio-management/btc-90d-training-set.jsonl \
+  --input ${OUTPUT_PATH_TRAINSET_CSV} \
   --output s3://webrobot-data/portfolio-management/models/btc-90d-predictor \
   --model-path /models/llama2-7b \
   --format instruction_following

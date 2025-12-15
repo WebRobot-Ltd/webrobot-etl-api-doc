@@ -158,9 +158,9 @@ Enrich records with additional data:
 **Use Case**: Aggregate news, earnings transcripts, social sentiment for trading signals.
 
 **Key Features**:
-- News aggregation (Bloomberg, Reuters, FT)
+- News aggregation (licensed providers and/or public feeds)
 - Earnings call transcript extraction
-- Social sentiment analysis (Twitter, Reddit)
+- Social sentiment analysis (licensed social/sentiment providers)
 - SEC filing extraction
 - Trading signal generation
 

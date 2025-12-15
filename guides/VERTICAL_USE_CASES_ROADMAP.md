@@ -17,17 +17,17 @@ This document outlines **proposed vertical use cases** to implement as complete,
 **Why**: High-value use case, demonstrates time-series analysis, sentiment correlation, and multi-source aggregation.
 
 **Key Features**:
-- News aggregation from Bloomberg, Reuters, Financial Times, WSJ
+- News aggregation from licensed news providers and/or public feeds
 - Earnings call transcript extraction and summarization
-- Social sentiment analysis (Twitter, Reddit, StockTwits)
+- Social sentiment analysis (licensed social/sentiment providers)
 - SEC filing extraction (10-K, 10-Q, 8-K)
 - Trading signal generation based on sentiment + news correlation
 - Price movement prediction using multi-source signals
 
 **Data Sources**:
-- News sites (Bloomberg, Reuters, FT, WSJ, MarketWatch)
+- News sources (licensed providers and/or public feeds)
 - SEC EDGAR database
-- Social media APIs (Twitter, Reddit)
+- Social sentiment APIs (licensed providers)
 - Financial data APIs (Alpha Vantage, Yahoo Finance)
 
 **Complexity**: Medium-High (requires time-series, sentiment analysis, correlation)
@@ -148,7 +148,7 @@ This document outlines **proposed vertical use cases** to implement as complete,
 - Competitor websites
 - Product comparison sites (G2, Capterra, TrustRadius)
 - News sites (TechCrunch, industry publications)
-- Social media (Twitter, LinkedIn)
+- Social signals (licensed providers)
 
 **Complexity**: Medium (feature extraction, comparison, trend analysis)
 
@@ -168,7 +168,7 @@ This document outlines **proposed vertical use cases** to implement as complete,
 
 ### 8. Social Media Monitoring & Sentiment Analysis
 
-**Features**: Multi-platform aggregation (Twitter, Reddit, LinkedIn), sentiment analysis, trend detection, influencer tracking
+**Features**: Multi-platform aggregation (licensed providers), sentiment analysis, trend detection, influencer tracking
 
 **Complexity**: Medium-High (API rate limits, real-time processing)
 

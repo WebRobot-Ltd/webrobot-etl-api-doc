@@ -22,6 +22,6 @@ pipeline:
       - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
 
   - stage: save_csv
-    args: [ "s3a://your-bucket/out/vertical/source_a_offers/", "overwrite" ]
+    args: [ "${OUTPUT_PATH_A}", "overwrite" ]
 
 

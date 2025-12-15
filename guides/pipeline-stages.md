@@ -419,6 +419,59 @@ pipeline:
     args: [ "hello" ]
 ```
 
+#### `cache`
+
+**Purpose**: Persist the current dataset in Spark (equivalent to calling `.cache()` on the underlying dataset). Useful before expensive downstream stages.
+
+**Args**: none.
+
+```yaml
+pipeline:
+  - stage: cache
+    args: []
+```
+
+#### `store` / `reset` / `union_with`
+
+**Purpose**: Compose multi-source pipelines inside a single YAML file:
+
+- `store`: save the current dataset under a label
+- `reset`: start a fresh empty dataset
+- `union_with`: union the current dataset with one or more stored labels
+
+**Important**: These are implemented by the YAML pipeline runner as **control-flow helpers** (not standard `StageRegistry` stages). They are still written as normal `stage:` items and follow the same YAML constraints.
+
+```yaml
+pipeline:
+  # Source A
+  - stage: visit
+    args: [ "https://example.com" ]
+  - stage: extract
+    args:
+      - { selector: "h1", method: "text", as: "title" }
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "source_a" ]
+
+  # Source B
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${SOURCE_B_CSV}", header: "true", inferSchema: "true" }
+  - stage: store
+    args: [ "source_b" ]
+
+  # Merge
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "source_a", "source_b" ]
+  - stage: dedup
+    args: [ "url" ]
+```
+
 #### `filter_country`
 
 **Purpose**: Keep only rows whose `country` field is in the allowed list.
@@ -493,6 +546,22 @@ pipeline:
 pipeline:
   - stage: sum_sales
     args: []
+```
+
+#### `propertyCluster`
+
+**Purpose**: Cluster real-estate listings (or other entities) using unsupervised learning (example-plugin stage). Produces a `cluster_id` to support entity resolution and arbitrage analysis.
+
+**Args**: a single map with:
+- `algorithm`: `kmeans` | `dbscan` (best-effort) | others (plugin-dependent)
+- `k` (for kmeans), plus optional parameters depending on algorithm
+- `features`: list of numeric feature column names
+
+```yaml
+pipeline:
+  - stage: propertyCluster
+    args:
+      - { algorithm: "kmeans", k: 5, features: ["latitude", "longitude", "price_per_sqm", "area_sqm"] }
 ```
 
 ---

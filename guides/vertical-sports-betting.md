@@ -410,7 +410,7 @@ def generate_event_id(row):
 Before surebet detection, **aggregate all odds by event_id**:
 
 ```yaml
-# Pipeline: Aggregate odds by event for surebet detection
+# Pipeline: Prepare row-level odds for downstream surebet detection
 pipeline:
   - stage: load_csv
     args:
@@ -428,140 +428,16 @@ pipeline:
   - stage: python_row_transform:create_matching_key
     args: []
   
-  # Aggregate by event_id + market_type + selection
-  # Collect odds from all bookmakers for the same event/market/selection
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "matching_key"
-        aggregations:
-          - field: "odds_decimal"
-            type: "collect_list"
-            as: "odds_by_bookmaker"
-          - field: "bookmaker"
-            type: "collect_list"
-            as: "bookmakers"
-          - field: "url"
-            type: "collect_list"
-            as: "urls"
-          - field: "event_name_normalized"
-            type: "first"
-            as: "event_name_canonical"
-          - field: "market_type"
-            type: "first"
-            as: "market_type"
-          - field: "selection"
-            type: "first"
-            as: "selection"
-          - field: "event_id"
-            type: "first"
-            as: "event_id"
-  
-  # Create odds comparison columns (pivot-like structure)
-  - stage: python_row_transform:create_odds_comparison_by_event
-    args: []
-  
-  # Detect surebet opportunities
-  - stage: python_row_transform:detect_surebet_by_event
-    args:
-      - min_profit_margin: 0.02  # Minimum 2% profit margin
-  
+  # Deduplicate row-level odds
+  - stage: dedup
+    args: [ "matching_key", "bookmaker", "url" ]
+
+  # Save row-level odds dataset (ready for downstream aggregation + surebet detection)
   - stage: save_csv
-    args: [ "${OUTPUT_PATH_SUREBET_BY_EVENT}", "overwrite" ]
+    args: [ "${OUTPUT_PATH_ODDS_ROW_LEVEL}", "overwrite" ]
 ```
 
-```python
-# python_extensions:
-#   stages:
-#     create_odds_comparison_by_event:
-#       type: row_transform
-#       function: |
-def create_odds_comparison_by_event(row):
-    """Create odds comparison columns grouped by event."""
-    odds_by_bookmaker = row.get("odds_by_bookmaker", [])
-    bookmakers = row.get("bookmakers", [])
-    urls = row.get("urls", [])
-    
-    # Create columns for each bookmaker
-    bookmaker_odds_map = {}
-    bookmaker_url_map = {}
-    
-    for i, bookmaker in enumerate(bookmakers):
-        bookmaker_clean = bookmaker.replace(".com", "").replace(".", "_").lower()
-        if i < len(odds_by_bookmaker) and odds_by_bookmaker[i]:
-            bookmaker_odds_map[f"odds_{bookmaker_clean}"] = odds_by_bookmaker[i]
-        if i < len(urls) and urls[i]:
-            bookmaker_url_map[f"url_{bookmaker_clean}"] = urls[i]
-    
-    # Add odds columns
-    for key, value in bookmaker_odds_map.items():
-        row[key] = value
-    
-    # Add URL columns
-    for key, value in bookmaker_url_map.items():
-        row[key] = value
-    
-    row["bookmakers_count"] = len(bookmakers)
-    
-    return row
-
-#     detect_surebet_by_event:
-#       type: row_transform
-#       function: |
-def detect_surebet_by_event(row, min_profit_margin=0.02):
-    """Detect surebet opportunities for an event/market by consulting aggregated odds."""
-    # For match_winner market with 3 outcomes (home, draw, away)
-    # We need to find all outcomes for the same event + market
-    
-    # Get all odds for this event/market from different bookmakers
-    bookmakers = ["bet365", "pinnacle", "betfair", "williamhill", "unibet"]
-    
-    # Collect odds for each outcome
-    odds_home = []
-    odds_draw = []
-    odds_away = []
-    
-    for bookmaker in bookmakers:
-        odds_key = f"odds_{bookmaker}"
-        odds = row.get(odds_key)
-        if odds and odds > 0:
-            # Determine which outcome this is based on selection
-            selection = row.get("selection", "").lower()
-            if "home" in selection or "1" in selection:
-                odds_home.append(odds)
-            elif "draw" in selection or "x" in selection or "tie" in selection:
-                odds_draw.append(odds)
-            elif "away" in selection or "2" in selection:
-                odds_away.append(odds)
-    
-    # Find best odds for each outcome across all bookmakers
-    best_home = min(odds_home) if odds_home else 999
-    best_draw = min(odds_draw) if odds_draw else 999
-    best_away = min(odds_away) if odds_away else 999
-    
-    # Calculate implied probability
-    if best_home > 0 and best_draw > 0 and best_away > 0:
-        implied_prob = (1/best_home) + (1/best_draw) + (1/best_away)
-        
-        # Surebet exists if implied_prob < 1.0
-        if implied_prob < 1.0:
-            profit_margin = (1.0 - implied_prob) * 100  # Percentage profit
-            
-            if profit_margin >= min_profit_margin * 100:
-                row["surebet_exists"] = True
-                row["surebet_profit_pct"] = profit_margin
-                row["best_home_odds"] = best_home
-                row["best_draw_odds"] = best_draw
-                row["best_away_odds"] = best_away
-                row["implied_probability"] = implied_prob
-            else:
-                row["surebet_exists"] = False
-                row["surebet_profit_pct"] = 0.0
-        else:
-            row["surebet_exists"] = False
-            row["surebet_profit_pct"] = 0.0
-    
-    return row
-```
+Surebet detection and bookmaker-odds pivoting are computed downstream after grouping by `matching_key` (recommended: Trino/Spark SQL).
 
 ## Event Matching & Odds Comparison Table
 
@@ -815,47 +691,16 @@ pipeline:
     args: []
 
   # ============================================
-  # Step 9: Aggregate Odds by Event
-  # CRITICAL: Aggregate all odds for the same event/market/selection
-  # before surebet detection
+  # Step 9: Note on aggregation
   # ============================================
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "matching_key"
-        aggregations:
-          - field: "odds_decimal"
-            type: "collect_list"
-            as: "odds_by_bookmaker"
-          - field: "bookmaker"
-            type: "collect_list"
-            as: "bookmakers"
-          - field: "event_name_normalized"
-            type: "first"
-            as: "event_name_canonical"
-          - field: "event_id"
-            type: "first"
-            as: "event_id"
+  # Surebet detection requires aggregation across bookmakers by (event_id, market_type, selection).
+  # This example exports row-level odds; compute the pivot + surebet math downstream (Trino/Spark SQL).
 
-  # ============================================
-  # Step 10: Create Odds Comparison Table
-  # Pivot odds by bookmaker for each event/market/selection
-  # ============================================
-  - stage: python_row_transform:create_odds_comparison_by_event
-    args: []
+  - stage: dedup
+    args: [ "matching_key", "bookmaker", "url" ]
 
-  # ============================================
-  # Step 11: Detect Surebet Opportunities
-  # Consult aggregated odds by event to find arbitrage
-  # ============================================
-  - stage: python_row_transform:detect_surebet_by_event
-    args:
-      - min_profit_margin: 0.02  # Minimum 2% profit margin
-
-  # ============================================
-  # Step 12: Save Results
-  # ============================================
   - stage: save_csv
-    args: [ "${OUTPUT_PATH_SUREBET_OPPORTUNITIES}", "overwrite" ]
+    args: [ "${OUTPUT_PATH_ODDS_ROW_LEVEL}", "overwrite" ]
 ```
 
 ### Python Extensions for Intelligent Extraction Normalization

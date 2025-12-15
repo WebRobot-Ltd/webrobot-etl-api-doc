@@ -137,31 +137,18 @@ pipeline:
     args: [ "news_sentiment" ]
 
   # ============================================
-  # Source 4: Social Sentiment (Reddit)
+  # Source 4: Social sentiment (licensed provider / customer-owned feed)
   # ============================================
+  # To keep this example compliant with a No-CC policy (and to avoid scraping platforms with restrictive ToS),
+  # we assume social sentiment is provided as a pre-curated daily CSV.
   - stage: reset
     args: []
-  - stage: visit
-    args: [ "https://www.reddit.com/r/Bitcoin/hot.json?limit=100" ]
-  - stage: extract
+  - stage: load_csv
     args:
-      - { selector: "pre", method: "text", as: "reddit_json" }
-  - stage: python_row_transform:parse_reddit_posts
-    args:
-      - subreddit: "Bitcoin"
-      - extract_fields: ["title", "selftext", "score", "created_utc"]
-  - stage: python_row_transform:calculate_social_sentiment
-    args:
-      - text_fields: ["title", "selftext"]
-      - method: "vader"  # VADER sentiment analyzer
-  - stage: python_row_transform:aggregate_sentiment_by_date
-    args:
-      - date_field: "created_utc"
-        window: 1
-        aggregation: "mean"
+      - { path: "${SOCIAL_SENTIMENT_DAILY_CSV_PATH}", header: "true", inferSchema: "true" }
   - stage: python_row_transform:add_metadata
     args:
-      - source: "reddit"
+      - source: "social_vendor"
         data_type: "social_sentiment"
   - stage: cache
     args: []
@@ -246,23 +233,10 @@ pipeline:
       - context_window: 30
   - stage: python_row_transform:validate_training_dataset
     args: []
-  - stage: filter
-    args:
-      - "validation_status == 'valid'"
 
   # ============================================
-  # Export for NVIDIA DGX SPARK
+  # Export (CSV)
   # ============================================
   - stage: save_csv
-    args:
-      - path: "s3://webrobot-data/portfolio-management/btc-90d-training-set.jsonl"
-        format: "jsonl"
-        mode: "overwrite"
-        partitionBy: []
-  - stage: save_csv
-    args:
-      - path: "s3://webrobot-data/portfolio-management/btc-90d-training-set.parquet"
-        format: "parquet"
-        mode: "overwrite"
-        partitionBy: ["year", "month"]
+    args: [ "${OUTPUT_PATH_TRAINSET_CSV}", "overwrite" ]
 

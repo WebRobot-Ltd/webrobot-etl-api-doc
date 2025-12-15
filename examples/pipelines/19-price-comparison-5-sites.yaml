@@ -167,44 +167,17 @@ pipeline:
     args: []
 
   # ============================================
-  # Aggregate Offers by EAN Code
-  # CRITICAL: Aggregate all prices for the same product (EAN) from all sources
-  # before price comparison. The comparison logic is aggregated by EAN code.
+  # Note on aggregation
   # ============================================
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "ean_normalized"
-        aggregations:
-          - field: "price_numeric"
-            type: "collect_list"
-            as: "prices_by_source"
-          - field: "source"
-            type: "collect_list"
-            as: "sources"
-          - field: "url"
-            type: "collect_list"
-            as: "urls"
-          - field: "product_name"
-            type: "first"
-            as: "product_name_canonical"
+  # WebRobot ETL pipelines produce row-level outputs. Aggregations/pivots to build the final
+  # "product matching table" (grouped by EAN) should be done downstream (e.g., Trino/Spark SQL).
 
-  # ============================================
-  # Create Price Comparison Table by EAN
-  # Pivot prices by source for each product (EAN)
-  # ============================================
-  - stage: python_row_transform:create_price_comparison_by_ean
-    args: []
+  # Optional: Deduplicate at row-level (same offer scraped multiple times)
+  - stage: dedup
+    args: [ "ean_normalized", "source", "url" ]
 
-  # ============================================
-  # Calculate Best Price and Price Differences
-  # ============================================
-  - stage: python_row_transform:calculate_best_price_by_ean
-    args: []
-
-  # ============================================
-  # Save price comparison table (aggregated by EAN)
-  # ============================================
+  # Save unified offers (row-level, ready for downstream EAN aggregation)
   - stage: save_csv
-    args: [ "${OUTPUT_PATH_PRICE_COMPARISON_BY_EAN}", "overwrite" ]
+    args: [ "${OUTPUT_PATH_UNIFIED_OFFERS}", "overwrite" ]
 
 

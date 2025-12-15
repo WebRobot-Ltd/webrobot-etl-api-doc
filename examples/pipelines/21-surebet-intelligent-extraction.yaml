@@ -192,45 +192,17 @@ pipeline:
     args: []
 
   # ============================================
-  # Step 9: Aggregate Odds by Event
-  # CRITICAL: Aggregate all odds for the same event/market/selection
-  # before surebet detection. The surebet finder consults these aggregated odds.
+  # Note on aggregation
   # ============================================
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "matching_key"
-        aggregations:
-          - field: "odds_decimal"
-            type: "collect_list"
-            as: "odds_by_bookmaker"
-          - field: "bookmaker"
-            type: "collect_list"
-            as: "bookmakers"
-          - field: "event_name_normalized"
-            type: "first"
-            as: "event_name_canonical"
-          - field: "event_id"
-            type: "first"
-            as: "event_id"
+  # Surebet/arbitrage detection requires aggregation by (event_id, market_type, selection)
+  # across multiple bookmakers. The current YAML stage set focuses on row-level extraction;
+  # do the aggregation + surebet math downstream (e.g., Trino/Spark SQL) using `matching_key`.
 
-  # ============================================
-  # Step 10: Create Odds Comparison Table
-  # Pivot odds by bookmaker for each event/market/selection
-  # ============================================
-  - stage: python_row_transform:create_odds_comparison_by_event
-    args: []
+  # Optional: Deduplicate row-level odds
+  - stage: dedup
+    args: [ "matching_key", "bookmaker", "url" ]
 
-  # ============================================
-  # Step 11: Detect Surebet Opportunities
-  # Consult aggregated odds by event to find arbitrage
-  # ============================================
-  - stage: python_row_transform:detect_surebet_by_event
-    args:
-      - min_profit_margin: 0.02  # Minimum 2% profit margin
-
-  # ============================================
-  # Step 12: Save Results
-  # ============================================
+  # Save row-level odds dataset (ready for downstream surebet detection)
   - stage: save_csv
-    args: [ "${OUTPUT_PATH_SUREBET_OPPORTUNITIES}", "overwrite" ]
+    args: [ "${OUTPUT_PATH_ODDS_ROW_LEVEL}", "overwrite" ]
 

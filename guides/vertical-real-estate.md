@@ -518,97 +518,21 @@ After clustering, analyze clusters to:
 2. **Price variance within cluster**: High variance indicates price arbitrage opportunity
 3. **Compare cluster average to market**: Cluster average significantly below market = opportunity
 
-```yaml
-# Pipeline: Post-clustering analysis for arbitrage detection
-pipeline:
-  - stage: load_csv
-    args:
-      - { path: "${OUTPUT_PATH_CLUSTERED_PROPERTIES}", header: "true", inferSchema: "true" }
-  
-  # Aggregate by cluster to find price variance
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "cluster_id"
-        aggregations:
-          - field: "price_per_sqm"
-            type: "avg"
-            as: "cluster_avg_price_per_sqm"
-          - field: "price_per_sqm"
-            type: "stddev"
-            as: "cluster_price_stddev"
-          - field: "price"
-            type: "collect_list"
-            as: "prices_in_cluster"
-          - field: "address_normalized"
-            type: "collect_list"
-            as: "addresses_in_cluster"
-          - field: "source"
-            type: "collect_list"
-            as: "sources_in_cluster"
-  
-  # Detect same property (same address in cluster)
-  - stage: python_row_transform:identify_same_property
-    args: []
-  
-  # Calculate price arbitrage within cluster
-  - stage: python_row_transform:calculate_cluster_arbitrage
-    args:
-      - max_price_variance: 0.20  # 20% price difference = opportunity
-  
-  - stage: save_csv
-    args: [ "${OUTPUT_PATH_CLUSTER_ARBITRAGE}", "overwrite" ]
+```sql
+-- Downstream post-clustering analysis (recommended: Trino/Spark SQL)
+-- Build cluster-level stats and arbitrage signals from the row-level clustered dataset.
+SELECT
+  cluster_id,
+  avg(price_per_sqm) AS cluster_avg_price_per_sqm,
+  stddev_pop(price_per_sqm) AS cluster_price_stddev,
+  min(price_per_sqm) AS cluster_min_price_per_sqm,
+  max(price_per_sqm) AS cluster_max_price_per_sqm,
+  count(*) AS listings_in_cluster
+FROM clustered_properties
+GROUP BY 1;
 ```
 
-```python
-# python_extensions:
-#   stages:
-#     identify_same_property:
-#       type: row_transform
-#       function: |
-def identify_same_property(row):
-    """Identify if properties in cluster are the same property."""
-    addresses = row.get("addresses_in_cluster", [])
-    sources = row.get("sources_in_cluster", [])
-    
-    # If same normalized address appears in cluster, likely same property
-    if len(set(addresses)) == 1:
-        row["is_same_property"] = True
-        row["property_appears_in_sources"] = ",".join(set(sources))
-    elif len(set(addresses)) <= 2:
-        # Similar addresses (e.g., slight variations) = likely same property
-        row["is_same_property"] = True
-        row["property_appears_in_sources"] = ",".join(set(sources))
-    else:
-        row["is_same_property"] = False
-    
-    return row
-
-#     calculate_cluster_arbitrage:
-#       type: row_transform
-#       function: |
-def calculate_cluster_arbitrage(row, max_price_variance=0.20):
-    """Calculate arbitrage opportunities within cluster."""
-    prices = row.get("prices_in_cluster", [])
-    cluster_avg = row.get("cluster_avg_price_per_sqm", 0)
-    cluster_stddev = row.get("cluster_price_stddev", 0)
-    
-    if prices and len(prices) > 1 and cluster_avg > 0:
-        min_price = min(prices)
-        max_price = max(prices)
-        price_variance = (max_price - min_price) / cluster_avg if cluster_avg > 0 else 0
-        
-        if price_variance >= max_price_variance:
-            row["cluster_arbitrage_exists"] = True
-            row["cluster_price_variance"] = price_variance
-            row["cluster_min_price"] = min_price
-            row["cluster_max_price"] = max_price
-            row["potential_arbitrage_amount"] = max_price - min_price
-        else:
-            row["cluster_arbitrage_exists"] = False
-            row["cluster_price_variance"] = price_variance
-    
-    return row
-```
+Use the cluster-level stats above to flag opportunities (e.g., high intra-cluster variance, low percentile vs market stats) and then join back to row-level listings for actionable results.
 
 ## External Statistical Sources Integration
 

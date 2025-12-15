@@ -7,7 +7,7 @@ pipeline:
   # Seed list (could come from your partner DB / CRM / catalog).
   - stage: load_csv
     args:
-      - { path: "s3a://your-bucket/inputs/ean_list.csv", header: "true", inferSchema: "true" }
+      - { path: "${INPUT_PATH}", header: "true", inferSchema: "true" }
 
   # Discover candidate pages via search (per-row)
   - stage: searchEngine
@@ -30,6 +30,6 @@ pipeline:
       - { selector: "meta[property='product:price:amount']", method: "attr:content", as: "price_raw" }
 
   - stage: save_csv
-    args: [ "s3a://your-bucket/out/vertical/source_b_offers/", "overwrite" ]
+    args: [ "${OUTPUT_PATH_B}", "overwrite" ]
 
 

@@ -169,13 +169,13 @@ To avoid intermediate disk I/O, you can branch in-memory and merge within the sa
 
 - File: [`examples/pipelines/19-price-comparison-5-sites.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/19-price-comparison-5-sites.yaml)
 
-Aggregates product offers from Amazon, eBay, Walmart, Target, and Best Buy, with product matching by EAN.
+Aggregates product offers from 5 commercial e-commerce sources, with product matching by EAN.
 
 ### Sports betting odds aggregation (5 bookmakers)
 
 - File: [`examples/pipelines/20-sports-betting-5-bookmakers.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/20-sports-betting-5-bookmakers.yaml)
 
-Aggregates odds from bet365, Pinnacle, Betfair, William Hill, and Unibet for odds comparison.
+Aggregates odds from 5 bookmakers for odds comparison.
 
 ### Surebet detection (intelligent extraction)
 
@@ -193,13 +193,13 @@ Aggregates property listings from 5 real estate sites, clusters similar properti
 
 - File: [`examples/pipelines/23-llm-finetuning-dataset.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/23-llm-finetuning-dataset.yaml)
 
+Builds an instruction-following dataset under a **No-CC policy** by combining customer-owned documentation (crawl) with pre-curated public domain and permissive non-CC datasets (CSV), then cleans and deduplicates.
+
 ### Portfolio management & 90-day asset prediction
 
 - File: [`examples/pipelines/24-portfolio-management-90d-prediction.yaml`](https://github.com/WebRobot-Ltd/webrobot-etl-api-doc/blob/master/examples/pipelines/24-portfolio-management-90d-prediction.yaml)
 
-Aggregates multi-source financial data (historical prices from Alpha Vantage, macroeconomic indicators from FRED, news sentiment from GDELT, social sentiment from Reddit, alternative data from CoinGecko), calculates 50+ technical indicators (RSI, MACD, Bollinger Bands, volatility), generates 90-day forward targets, aligns time-series data, and formats for LLM fine-tuning (instruction-following format). Exports to JSONL/Parquet for distributed training on NVIDIA DGX SPARK. Part of the Feeless portfolio management layer for agentic pools.
-
-Aggregates Q&A data from multiple sources (Stack Overflow, Reddit, documentation sites, GitHub issues, Wikipedia), cleans and normalizes text, converts to instruction-following format (Alpaca style), and exports to JSONL for LLM fine-tuning.
+Aggregates multi-source financial data (prices, macroeconomic indicators, news/sentiment, alternative data), calculates technical indicators (RSI, MACD, Bollinger Bands, volatility), generates 90-day forward targets, aligns time-series data, and exports a training dataset for LLM fine-tuning. Part of the Feeless portfolio management layer for agentic pools.
 
 Note: Paths can use environment placeholders `${VAR_NAME}` (resolved by the runner before parsing).
 

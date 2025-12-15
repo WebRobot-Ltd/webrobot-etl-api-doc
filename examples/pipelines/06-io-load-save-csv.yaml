@@ -3,9 +3,10 @@ fetch:
 
 pipeline:
   # Start a pipeline from a CSV dataset (new dataset)
+  # Paths can use environment variable substitution: ${VAR_NAME}
   - stage: load_csv
     args:
-      - { path: "s3a://your-bucket/input.csv", header: "true", inferSchema: "true" }
+      - { path: "${INPUT_PATH}", header: "true", inferSchema: "true" }
 
   # Optional debug marker (example-plugin)
   - stage: echo
@@ -13,6 +14,6 @@ pipeline:
 
   # Save intermediate results (keeps pipeline running)
   - stage: save_csv
-    args: [ "s3a://your-bucket/out/csv/", "overwrite" ]
+    args: [ "${OUTPUT_PATH}", "overwrite" ]
 
 

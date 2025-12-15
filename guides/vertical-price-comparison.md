@@ -581,259 +581,34 @@ def normalize_product_name(row):
 
 ### Aggregation by EAN Code
 
-Before price comparison, **aggregate all offers by EAN code**:
-
-```yaml
-# Pipeline: Aggregate offers by EAN for price comparison
-pipeline:
-  - stage: load_csv
-    args:
-      - { path: "${OUTPUT_PATH_UNIFIED_OFFERS}", header: "true", inferSchema: "true" }
-  
-  # Normalize EAN codes
-  - stage: python_row_transform:normalize_ean
-    args: []
-  
-  # Normalize product names (for fallback matching)
-  - stage: python_row_transform:normalize_product_name
-    args: []
-  
-  # Group by EAN to create product matching table
-  # Use aggregation to collect prices from all sources
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "ean_normalized"
-        aggregations:
-          - field: "price_numeric"
-            type: "collect_list"
-            as: "prices_by_source"
-          - field: "source"
-            type: "collect_list"
-            as: "sources"
-          - field: "url"
-            type: "collect_list"
-            as: "urls"
-          - field: "product_name"
-            type: "first"
-            as: "product_name_canonical"
-  
-  # Create price comparison columns (pivot-like structure)
-  - stage: python_row_transform:create_price_comparison_by_ean
-    args: []
-  
-  # Calculate best price and price differences
-  - stage: python_row_transform:calculate_best_price_by_ean
-    args: []
-  
-  - stage: save_csv
-    args: [ "${OUTPUT_PATH_PRICE_COMPARISON_BY_EAN}", "overwrite" ]
-```
-
-```python
-# python_extensions:
-#   stages:
-#     create_price_comparison_by_ean:
-#       type: row_transform
-#       function: |
-def create_price_comparison_by_ean(row):
-    """Create price comparison columns grouped by EAN."""
-    prices_by_source = row.get("prices_by_source", [])
-    sources = row.get("sources", [])
-    urls = row.get("urls", [])
-    
-    # Create columns for each source
-    source_price_map = {}
-    source_url_map = {}
-    
-    for i, source in enumerate(sources):
-        source_clean = source.replace(".com", "").replace(".", "_")
-        if i < len(prices_by_source) and prices_by_source[i]:
-            source_price_map[f"price_{source_clean}"] = prices_by_source[i]
-        if i < len(urls) and urls[i]:
-            source_url_map[f"url_{source_clean}"] = urls[i]
-    
-    # Add price columns
-    for key, value in source_price_map.items():
-        row[key] = value
-    
-    # Add URL columns
-    for key, value in source_url_map.items():
-        row[key] = value
-    
-    row["sources_count"] = len(sources)
-    
-    return row
-
-#     calculate_best_price_by_ean:
-#       type: row_transform
-#       function: |
-def calculate_best_price_by_ean(row):
-    """Calculate best price and price differences for products grouped by EAN."""
-    sources = ["amazon", "ebay", "walmart", "target", "bestbuy"]
-    prices = {}
-    
-    for source in sources:
-        price_key = f"price_{source}"
-        price = row.get(price_key)
-        if price and price > 0:
-            prices[source] = price
-    
-    if prices:
-        best_source = min(prices, key=prices.get)
-        best_price = prices[best_source]
-        worst_price = max(prices.values())
-        
-        row["best_price"] = best_price
-        row["best_source"] = best_source
-        row["worst_price"] = worst_price
-        row["price_difference"] = worst_price - best_price
-        row["price_difference_pct"] = ((worst_price - best_price) / best_price * 100) if best_price > 0 else 0
-        row["sources_count"] = len(prices)
-    
-    return row
-```
+Before price comparison, aggregate all offers by EAN code (**downstream**). WebRobot ETL emits row-level offers; build the final EAN pivot/matching table using **Trino/Spark SQL** (see the next section for a concrete Trino query).
 
 ## Product Matching Table Generation
 
-After aggregating offers from all sources **by EAN code**, generate a **product matching table** that shows prices for the same product (identified by EAN) across all 5 sites.
+WebRobot ETL examples produce **row-level offers** (one row per offer per source). The final **product matching table** (pivoted by source and aggregated by `ean_normalized`) should be built downstream using **Trino/Spark SQL**.
 
-### Step 1: Generate Product Matching Table
+### Recommended: Trino query (pivot by source)
 
-```yaml
-# Pipeline: Generate product matching table
-pipeline:
-  - stage: load_csv
-    args:
-      - { path: "${OUTPUT_PATH_UNIFIED_OFFERS}", header: "true", inferSchema: "true" }
-  
-  # Group by EAN to create matching table
-  # Use joinWithByName to create a pivot-like structure
-  - stage: joinWithByName
-    args:
-      - joinType: "full"
-        joinKeys: ["ean"]
-        leftAlias: "amazon"
-        rightAlias: "ebay"
-  
-  # Save matching table
-  - stage: save_csv
-    args: [ "${OUTPUT_PATH_MATCHING_TABLE}", "overwrite" ]
+Assuming you exported the unified offers dataset to a table `offers` with at least:
+`ean_normalized`, `product_name`, `price_numeric`, `source`, `url`
+
+```sql
+SELECT
+  ean_normalized AS ean,
+  max_by(product_name, length(product_name)) AS product_name_canonical,
+  min(CASE WHEN source = 'source_a' THEN price_numeric END) AS price_source_a,
+  min(CASE WHEN source = 'source_b' THEN price_numeric END) AS price_source_b,
+  min(CASE WHEN source = 'source_c' THEN price_numeric END) AS price_source_c,
+  min(CASE WHEN source = 'source_d' THEN price_numeric END) AS price_source_d,
+  min(CASE WHEN source = 'source_e' THEN price_numeric END) AS price_source_e,
+  min(price_numeric) AS best_price,
+  count(*) AS offers_count
+FROM offers
+WHERE ean_normalized IS NOT NULL
+GROUP BY 1;
 ```
 
-### Step 2: Create Pivot Table for Price Comparison
-
-A more efficient approach is to use a Python transform to create a pivot table:
-
-```yaml
-# Pipeline: Create price comparison pivot table
-pipeline:
-  - stage: load_csv
-    args:
-      - { path: "${OUTPUT_PATH_UNIFIED_OFFERS}", header: "true", inferSchema: "true" }
-  
-  # Create pivot table grouped by EAN
-  - stage: python_row_transform:create_price_comparison_table
-    args: []
-  
-  - stage: save_csv
-    args: [ "${OUTPUT_PATH_PRICE_COMPARISON_TABLE}", "overwrite" ]
-```
-
-```python
-# python_extensions:
-#   stages:
-#     create_price_comparison_table:
-#       type: row_transform
-#       function: |
-def create_price_comparison_table(row):
-    """Create a price comparison table row for each EAN."""
-    # This would typically be done as a groupBy operation
-    # For now, we'll mark rows for later aggregation
-    ean = row.get("ean", "")
-    source = row.get("source", "")
-    price = row.get("price_numeric", 0)
-    
-    # Create columns for each source
-    if ean:
-        row["ean_key"] = ean
-        row[f"price_{source.replace('.com', '')}"] = price
-        row[f"url_{source.replace('.com', '')}"] = row.get("url", "")
-        row[f"available_{source.replace('.com', '')}"] = True
-    
-    return row
-```
-
-### Step 3: Final Aggregation (Group by EAN)
-
-For the final matching table, you'll need to aggregate by EAN. This is typically done in a separate pipeline or using Spark SQL:
-
-```yaml
-# Pipeline: Final product matching table with aggregated prices
-pipeline:
-  - stage: load_csv
-    args:
-      - { path: "${OUTPUT_PATH_PRICE_COMPARISON_TABLE}", header: "true", inferSchema: "true" }
-  
-  # Use aggregation to group by EAN and collect prices from all sources
-  - stage: aggregation_group_by_key
-    args:
-      - key_field: "ean_key"
-        aggregations:
-          - field: "price_amazon"
-            type: "first"
-            as: "price_amazon"
-          - field: "price_ebay"
-            type: "first"
-            as: "price_ebay"
-          - field: "price_walmart"
-            type: "first"
-            as: "price_walmart"
-          - field: "price_target"
-            type: "first"
-            as: "price_target"
-          - field: "price_bestbuy"
-            type: "first"
-            as: "price_bestbuy"
-          - field: "product_name"
-            type: "first"
-            as: "product_name"
-  
-  # Calculate best price and best source
-  - stage: python_row_transform:calculate_best_price
-    args: []
-  
-  - stage: save_csv
-    args: [ "${OUTPUT_PATH_FINAL_MATCHING_TABLE}", "overwrite" ]
-```
-
-```python
-# python_extensions:
-#   stages:
-#     calculate_best_price:
-#       type: row_transform
-#       function: |
-def calculate_best_price(row):
-    """Calculate best price and source."""
-    prices = {}
-    sources = ["amazon", "ebay", "walmart", "target", "bestbuy"]
-    
-    for source in sources:
-        price_key = f"price_{source}"
-        price = row.get(price_key)
-        if price and price > 0:
-            prices[source] = price
-    
-    if prices:
-        best_source = min(prices, key=prices.get)
-        best_price = prices[best_source]
-        
-        row["best_price"] = best_price
-        row["best_source"] = best_source
-        row["price_difference_pct"] = ((max(prices.values()) - best_price) / best_price * 100) if len(prices) > 1 else 0
-        row["sources_count"] = len(prices)
-    
-    return row
-```
+Replace `source_a..source_e` with your actual `source` values. You can also add URL pivots, availability flags, and price spread calculations in the same query.
 
 ### Example Output: Product Matching Table
 

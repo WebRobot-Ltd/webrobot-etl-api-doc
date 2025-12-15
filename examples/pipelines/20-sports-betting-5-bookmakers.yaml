@@ -1,0 +1,155 @@
+# Concrete example: Sports betting odds aggregation from 5 bookmakers
+#
+# Compliance note:
+# - The URLs below are placeholders. Use only sources you are authorized to access and extract.
+# - Prefer official bookmaker APIs or licensed data feeds when available.
+
+fetch:
+  url: "${BOOKMAKER_A_START_URL}"  # Starting URL for bookmaker A (placeholder)
+
+pipeline:
+  # ============================================
+  # Bookmaker 1: Bookmaker A (Direct crawl)
+  # ============================================
+  - stage: explore
+    args: [ "a.match-link", 10 ]  # Navigate to match pages
+  - stage: join
+    args: [ "div.market-container", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h1.match-title", method: "text", as: "event_name" }
+      - { selector: "span.match-date", method: "attr:data-timestamp", as: "event_date" }
+      - { selector: "div.market-type", method: "text", as: "market_type" }
+      - { selector: "span.selection-name", method: "text", as: "selection" }
+      - { selector: "span.odds-decimal", method: "text", as: "odds_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_bet365
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - bookmaker: "bookmaker_a"
+        sport: "football"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bookmaker_a" ]
+
+  # ============================================
+  # Bookmaker 2: Bookmaker B (API-based / licensed feed)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${PINNACLE_API_RESPONSE_PATH}", header: "true", inferSchema: "true" }
+  - stage: python_row_transform:normalize_pinnacle
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - bookmaker: "bookmaker_b"
+        sport: "football"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bookmaker_b" ]
+
+  # ============================================
+  # Bookmaker 3: Bookmaker C (Crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "${BOOKMAKER_C_START_URL}" ]
+  - stage: explore
+    args: [ "a.event-link", 10 ]
+  - stage: join
+    args: [ "div.market-row", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "span.event-name", method: "text", as: "event_name" }
+      - { selector: "span.event-time", method: "attr:data-time", as: "event_date" }
+      - { selector: "span.market-name", method: "text", as: "market_type" }
+      - { selector: "span.selection", method: "text", as: "selection" }
+      - { selector: "span.odds", method: "text", as: "odds_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_betfair
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - bookmaker: "bookmaker_c"
+        sport: "football"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bookmaker_c" ]
+
+  # ============================================
+  # Bookmaker 4: Bookmaker D (Crawl)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: visit
+    args: [ "${BOOKMAKER_D_START_URL}" ]
+  - stage: explore
+    args: [ "a.event", 10 ]
+  - stage: join
+    args: [ "div.bet-market", "LeftOuter" ]
+  - stage: extract
+    args:
+      - { selector: "h2.event-title", method: "text", as: "event_name" }
+      - { selector: "time.event-date", method: "attr:datetime", as: "event_date" }
+      - { selector: "span.market", method: "text", as: "market_type" }
+      - { selector: "button.selection", method: "text", as: "selection" }
+      - { selector: "span.price", method: "text", as: "odds_raw" }
+      - { selector: "link[rel=canonical]", method: "attr:href", as: "url" }
+  - stage: python_row_transform:normalize_williamhill
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - bookmaker: "bookmaker_d"
+        sport: "football"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bookmaker_d" ]
+
+  # ============================================
+  # Bookmaker 5: Bookmaker E (API-based / licensed feed)
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: load_csv
+    args:
+      - { path: "${UNIBET_API_RESPONSE_PATH}", header: "true", inferSchema: "true" }
+  - stage: python_row_transform:normalize_unibet
+    args: []
+  - stage: python_row_transform:add_metadata
+    args:
+      - bookmaker: "bookmaker_e"
+        sport: "football"
+  - stage: cache
+    args: []
+  - stage: store
+    args: [ "bookmaker_e" ]
+
+  # ============================================
+  # Merge: Union all bookmakers
+  # ============================================
+  - stage: reset
+    args: []
+  - stage: union_with
+    args: [ "bookmaker_a", "bookmaker_b", "bookmaker_c", "bookmaker_d", "bookmaker_e" ]
+
+  # ============================================
+  # Normalize event matching keys
+  # ============================================
+  - stage: python_row_transform:generate_event_id
+    args: []  # Creates event_id from event_name + event_date
+
+  # ============================================
+  # Save unified odds dataset
+  # ============================================
+  - stage: save_csv
+    args: [ "${OUTPUT_PATH_UNIFIED_ODDS}", "overwrite" ]
+
+

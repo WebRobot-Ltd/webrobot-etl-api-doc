@@ -2,14 +2,16 @@
 # union outputs produced by multiple upstream crawls (different schemas allowed)
 
 pipeline:
+  # Load and union outputs from multiple upstream crawls.
+  # Paths are resolved from environment variables at runtime.
   - stage: load_union
     args:
       # Crawl A output
-      - { format: "delta", path: "s3a://your-bucket/out/crawl_a_delta/" }
+      - { format: "delta", path: "${OUTPUT_PATH_A}" }
       # Crawl B output
-      - { format: "delta", path: "s3a://your-bucket/out/crawl_b_delta/" }
+      - { format: "delta", path: "${OUTPUT_PATH_B}" }
       # Optional: add a third source from CSV
-      - { format: "csv", path: "s3a://your-bucket/out/crawl_c.csv", options: { header: "true", inferSchema: "true" } }
+      - { format: "csv", path: "${OUTPUT_PATH_C}", options: { header: "true", inferSchema: "true" } }
 
   # Set-union semantics: keep 1 record per key.
   # Choose keys that make sense for the vertical (e.g. sku/ean/url + source).
@@ -17,6 +19,6 @@ pipeline:
     args: [ "sku", "source" ]
 
   - stage: save_csv
-    args: [ "s3a://your-bucket/out/vertical_union_dedup/", "overwrite" ]
+    args: [ "${OUTPUT_PATH_STITCHED}", "overwrite" ]
 
 
