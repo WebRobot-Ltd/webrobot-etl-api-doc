@@ -13,6 +13,10 @@ The plugin exposes simplified endpoints under:
 - `POST /webrobot/api/ean-image-sourcing/{country}/upload` (multipart CSV upload)
 - `POST /webrobot/api/ean-image-sourcing/{country}/execute`
 - `POST /webrobot/api/ean-image-sourcing/{country}/schedule`
+ - `POST /webrobot/api/ean-image-sourcing/{country}/query` (query the latest dataset)
+ - `POST /webrobot/api/ean-image-sourcing/{country}/images` (retrieve images, optional base64)
+ - `GET  /webrobot/api/ean-image-sourcing/{country}/status`
+ - `GET  /webrobot/api/ean-image-sourcing/info`
 
 Behind the scenes it manages Projects/Agents/Jobs and stores the YAML pipeline on the **Agent** (`pipelineYaml`).
 
@@ -119,5 +123,64 @@ If sensitive fields are encrypted, you can provide an encryption key:
 
 - Header: `X-Encryption-Key` (plugin endpoints)
 - Internally forwarded as `encryptionKey` for credential decryption during job submission.
+
+---
+
+## Dataset + images download for training / fit
+
+The EAN plugin is commonly used to build **vision+text** datasets (e.g., product catalog enrichment) that can be consumed for **model training/fit**.
+
+### 1) Download rows from the EAN dataset (API)
+
+There is no dedicated “download file” endpoint under the plugin; instead you can:
+
+- **Query the latest EAN dataset for a country** via:
+  - `POST /webrobot/api/ean-image-sourcing/{country}/query`
+
+This is the recommended way to fetch **filtered subsets** (e.g., a list of EANs, enriched columns, top-N).
+
+### 2) Retrieve product images (URL or base64)
+
+Use:
+
+- `POST /webrobot/api/ean-image-sourcing/{country}/images`
+
+Key request fields:
+- `eans`: list of EAN codes
+- `limit`: max images per EAN
+- `includeBase64`: set `true` to embed base64 (useful for training pipelines where you want a single JSON payload)
+
+Example (retrieve 1 best image with base64 per EAN):
+
+```bash
+curl -X POST "${WEBROBOT_BASE_URL}/webrobot/api/ean-image-sourcing/italy/images" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eans": ["5901234123457", "5901234123458"],
+    "includeBase64": true,
+    "limit": 1
+  }'
+```
+
+### 3) Download the full dataset (storage path)
+
+If you need the **full dataset** as a file, use the generic dataset endpoints:
+
+- `GET /webrobot/api/datasets` (list datasets)
+- `GET /webrobot/api/datasets/{datasetId}` (returns `storagePath` / `filePath` / `format`)
+
+Then download from object storage (MinIO/S3) using your infrastructure credentials.
+
+### 4) Training-ready “fit” record shape (recommended)
+
+For fine-tuning/training you typically want a record like:
+
+- `ean`
+- `product_name`
+- `brand`
+- `image_url` (or `image_base64`)
+- provenance fields: `source`, `url`, `retrieved_at`, `license`
+
+This makes it straightforward to produce JSONL training records downstream (Spark/Trino + your training stack).
 
 
