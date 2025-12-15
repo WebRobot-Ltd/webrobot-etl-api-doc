@@ -74,7 +74,7 @@
     - page: guides/ean-image-sourcing.md
       label: EAN Image Sourcing Plugin
     - page: guides/technical-partners.md
-      label: Partner tecnici
+      label: Technical Partners
     - page: guides/plugins.md
       label: Plugins & Extensibility
     - page: guides/future-implementations.md

@@ -81,7 +81,7 @@ Get started with the WebRobot ETL API in minutes:
 - **[Pipeline Examples](guides/pipeline-examples.md)**: Copy-pasteable YAML examples aligned with the current parser and stages
 - **[Observability & Metrics](guides/observability-metrics.md)**: Comprehensive observability, metrics collection, and pay-to-use billing integration with cloud provider partners
 - **[EAN Image Sourcing Plugin](guides/ean-image-sourcing.md)**: EAN plugin pipeline + CloudCredential injection behavior
-- **[Partner tecnici](guides/technical-partners.md)**: How to extend WebRobot (API plugins + ETL plugins + Python extensions)
+- **[Technical Partners](guides/technical-partners.md)**: How to extend WebRobot (API plugins + ETL runtime plugins + Python extensions)
 
 ### 🏭 Vertical Use Cases
 - **[Vertical Use Cases Overview](guides/vertical-use-cases.md)**: Industry-specific use cases and complete pipeline examples

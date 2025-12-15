@@ -1,102 +1,70 @@
 ---
-title: Partner tecnici
+title: Technical Partners
 version: 1.0.0
-description: "Come creare estensioni personalizzate: plugin Jersey (API) e plugin ETL (stages/resolvers/actions), e quando usare Python Extensions"
+description: "How to extend WebRobot in a supported way: API plugins (endpoints), ETL runtime plugins (stages/resolvers/actions), and Python Extensions"
 ---
 
-# Partner tecnici
+# Technical Partners
 
-Questa sezione è per **admin** e **partner tecnici** che vogliono estendere WebRobot in modo **supportato**.
+This section is for **admins** and **technical partners** who want to extend WebRobot in a **supported** way.
 
-Esistono 3 meccanismi principali di estensione:
+There are three primary extension mechanisms:
 
-- **Plugin Jersey (API)**: aggiungono endpoint REST nel backend (es. EAN plugin). Richiedono compilazione e deployment di JAR.
-- **Plugin ETL (Spark/ETL runtime)**: aggiungono stage/resolver/actions usabili nelle pipeline YAML (es. `example-plugin`). Richiedono compilazione e deployment di JAR.
-- **Python Extensions**: meccanismo chiave per **auto-programmazione agentica** di stage personalizzati **senza compilazione**. Riservato ad admin e partner tecnici. Presupposto fondamentale per massima estendibilità richiesta dalla natura agentica di WebRobot.
+- **API Plugins (endpoints)**: add REST endpoints to the backend (example: the EAN plugin). Typically delivered as a JAR and deployed server-side.
+- **ETL Runtime Plugins**: add stages/resolvers/actions usable from YAML pipelines (example: `example-plugin`). Typically delivered as a JAR and loaded by the ETL runtime.
+- **Python Extensions**: controlled mechanism for registering dynamic transforms (`python_row_transform:<name>`) without compiling a new plugin. Intended for admin/partner usage.
 
----
-
-## 1) Plugin Jersey (API) – stile EAN
-
-### Cos’è
-Un plugin Jersey è una risorsa JAX-RS (`@Path`) caricata:
-- **staticamente** dal classpath (core plugins),
-- oppure **dinamicamente** da MinIO/database tramite `PluginManager` (client plugins).
-
-### Struttura minima
-- una o più classi `@Path("/webrobot/api/<nome-plugin>")`
-- eventuale bootstrap (`@PostConstruct`) per creare risorse (Project/Agent/Job) e inizializzare configurazioni
-- se servono upload: `@Consumes(MediaType.MULTIPART_FORM_DATA)` (MultiPartFeature è già registrato)
-
-### Pattern consigliato (come EAN)
-- **Bootstrap**: crea/aggiorna `Organization` + `Project` + `Agent(pipelineYaml)` + `Job template`.
-- **Endpoint** “semplificati”: `upload`, `execute`, `schedule`, `status`, ecc.
-- **Pipeline YAML**: salvata su `Agent.pipelineYaml`; prima dell’esecuzione viene rigenerato `pysparkCode` per avere sempre l’ultima logica.
-- **Cloud credentials**: passabili via request (`cloudCredentialIds`) oppure auto-discovery per provider; poi vengono iniettate in env del job Spark.
-
-Vedi anche: guida [EAN Image Sourcing Plugin](ean-image-sourcing.md).
+> **Note (confidentiality / stability)**: This documentation focuses on **behavioral contracts** and recommended patterns. We intentionally avoid core engine implementation details.
 
 ---
 
-## 2) Plugin ETL (Spark) – stile `example-plugin`
+## 1) API Plugins (endpoint layer) — “EAN-style”
 
-### Cos’è
-Un plugin ETL aggiunge componenti al runtime ETL:
-- **Pipeline stages** (`PipelineStage`) invocabili da YAML (`stage: ...`)
-- **Attribute resolvers** (`AttributeResolver`) usabili in `extract`/`flatSelect` (`method: ...`)
-- **Action factories** (azioni in `fetch.traces`)
+### What it is
+An API plugin is a set of REST endpoints mounted under `/webrobot/api/<plugin-name>/...` that productizes one or more pipelines/jobs.
 
-### Stage plugin: requisiti
-Uno stage è una classe che implementa `PipelineStage` e definisce `stageName`, poi viene registrata in `StageRegistry`.
+### Recommended pattern
+- **Bootstrap**: create/ensure domain resources (e.g., project/agent/job templates) and defaults.
+- **Simplified endpoints**: `upload`, `execute`, `schedule`, `status`, `query`, domain-specific endpoints (e.g., `images`).
+- **Credential handling**: accept explicit `cloudCredentialIds` or use provider-based discovery; inject runtime env vars during execution.
 
-Nel `example-plugin` la registrazione avviene centralmente in `Plugin.registerAll()` (stage + alias).
-
-### Come viene “caricato” lo stage
-Il runtime Spark può caricare plugin ETL in 2 modi:
-- **Jar plugin** registrato nel job Spark (manuale / da DB) e poi `StageRegistry.register(...)`.
-- **Stage già incluso** nel classpath dell’immagine Spark (core).
-
-Per i partner: la modalità più comune è fornire un **JAR** (plugin ETL) e renderlo disponibile al job (DB/MinIO), così gli stage diventano usabili nella pipeline YAML.
-
-### Checklist per uno stage nuovo
-- Definire `stageName` stabile (e opzionali alias snake_case)
-- Documentare `args` e default
-- Validare con esempi YAML reali
+See also: [EAN Image Sourcing Plugin](ean-image-sourcing.md).
 
 ---
 
-## 3) Python Extensions (meccanismo chiave per auto-programmazione agentica)
+## 2) ETL Runtime Plugins (YAML layer) — “example-plugin style”
 
-### Natura agentica e massima estendibilità
+### What it is
+An ETL runtime plugin extends the pipeline runner with:
+- **Pipeline stages** usable as `stage: ...`
+- **Attribute resolvers** usable as `method: ...` inside `extract` / `flatSelect`
+- **Action factories** usable as `fetch.traces[].action`
 
-La **natura agentica** di WebRobot richiede **massimo livello di estendibilità** delle pipeline. Le **Python Extensions** sono il **presupposto fondamentale** per l'auto-programmazione di stage personalizzati da parte di AI agents, **senza la necessità di compilare plugin specifici**.
+### Documentation checklist for a new stage/resolver/action
+- Stable public name(s) and aliases
+- Arguments schema + defaults + validation rules
+- Input/output schema behavior
+- Operational requirements (browser, credentials, rate limits)
+- At least one runnable YAML example (no internal code details)
 
-### Caratteristiche chiave
+---
 
-- **No compilation required**: Le Python extensions vengono caricate dinamicamente a runtime, senza necessità di compilare e distribuire plugin JAR
-- **Auto-programmazione agentica**: Meccanismo ideale per AI agents che generano dinamicamente trasformazioni, resolver e stage personalizzati
-- **Accesso riservato**: Funzionalità riservata a **admin** e **partner tecnici** per garantire sicurezza e controllo
-- **Massima flessibilità**: Permette iterazione rapida e adattamento dinamico delle pipeline senza deployment di nuove versioni
+## 3) Python Extensions (dynamic transforms)
 
-### Quando usarle
+### Why this exists
+Agentic workflows often require fast iteration on normalization/enrichment logic. Python Extensions provide a controlled way to register transforms without shipping a new JAR.
 
-Le Python extensions sono indicate quando:
-- uno strato "AI agent" genera **dinamicamente** trasformazioni/resolver/stage in Python
-- vuoi iterare rapidamente senza pubblicare un nuovo JAR
-- necessiti di massima estendibilità per pipeline agentiche che si adattano dinamicamente
-
-### Endpoint dedicato (inline YAML mode)
-
-È disponibile un endpoint dedicato per processare YAML e generare/aggiornare codice PySpark dell'Agent:
+### Stable API flow (inline YAML mode)
+There is a dedicated endpoint to process YAML and generate/update an Agent’s Python registration code:
 
 - `POST /webrobot/api/python-extensions/process-yaml`
 
-**Autenticazione**: Richiede API key con privilegi di **admin** o **partner tecnico**.
-
-Payload tipico:
+Typical payload:
 - `agentId`
-- `yamlContent` (pipeline YAML + eventuale sezione `python_extensions` per codegen)
+- `yamlContent` (pipeline YAML + optional `python_extensions` for code generation)
 
-Nota: alcune API "DB-based" per estensioni possono risultare non attive a runtime (dipende dalla build); il flusso stabile oggi è **process-yaml** (inline).
+**Authentication**: requires an API key with admin/partner privileges.
+
+> Note: some DB-based extension flows may depend on the specific build; the stable flow is `process-yaml` (inline).
 
 
